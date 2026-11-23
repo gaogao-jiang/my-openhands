@@ -1,3 +1,29 @@
+# My OpenHands — 非官方个人二次开发版本
+
+本仓库由 [gaogao-jiang](https://github.com/gaogao-jiang) 基于
+[OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) 进行个人二次开发，
+不代表 OpenHands 官方项目或其维护者，也不表示获得其认可或背书。
+
+主要定制内容：
+
+- 优化聊天布局、消息操作栏、点赞与点踩反馈、朗读及北京时间显示。
+- 调整对话列表右侧的执行进度圆环与完成提示，查看结果后清除绿色提示点。
+- 改进首页启动反馈和语言切换体验。
+
+## 来源、版权与许可
+
+- 原项目：[OpenHands Agent Canvas](https://github.com/OpenHands/OpenHands)。
+- 原版权声明：`Copyright © 2025 OpenHands contributors`，完整许可文本保留于 [LICENSE](LICENSE)。
+- 本仓库保留原项目的 MIT 许可证；本人的代码修改也按 MIT 许可发布，第三方内容适用其各自许可。
+- 第三方依赖、字体、图片和其他素材须遵守各自许可。已随源码保留的 Newsreader 字体许可见
+  [SIL Open Font License](src/themes/color-theme/definitions/paper/newsreader-OFL.txt)。
+- 上游及第三方名称、商标和标识的权利属于各自权利人；MIT 代码许可不等于商标授权。
+
+下方保留上游项目文档作为参考；其中的官方徽章、npm 包、发布链接和品牌标识指向上游，
+不表示本仓库是官方发行版。
+
+---
+
 <a name="readme-top"></a>
 
 <div align="center">
