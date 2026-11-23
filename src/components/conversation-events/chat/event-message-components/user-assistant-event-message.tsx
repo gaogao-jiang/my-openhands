@@ -1,0 +1,198 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Split } from "lucide-react";
+import { MessageEvent } from "#/types/agent-server/core";
+import { ChatMessage } from "../../../features/chat/chat-message";
+import {
+  MessageReactions,
+  useMessageReactions,
+} from "../../../features/chat/message-reactions";
+import {
+  MessageEditedMark,
+  useMessageEdit,
+} from "../../../features/chat/message-edits";
+import { ImageCarousel } from "../../../features/images/image-carousel";
+import { parseMessageFromEvent } from "../event-content-helpers/parse-message-from-event";
+import { CriticResultDisplay } from "./critic-result-display";
+import { CollapsibleThinking } from "./collapsible-thinking";
+import {
+  getReasoningContent,
+  splitInlineThink,
+} from "../event-thought-helpers";
+import { I18nKey } from "#/i18n/declaration";
+import { useOptionalConversationId } from "#/hooks/use-conversation-id";
+import { useActiveBackend } from "#/contexts/active-backend-context";
+import {
+  forkConversationMutationKey,
+  useForkConversation,
+} from "#/hooks/mutation/use-fork-conversation";
+import ConversationService from "#/api/conversation-service/conversation-service.api";
+import { useIsMutating } from "@tanstack/react-query";
+import { useMessageFeedbackKey } from "#/hooks/use-message-feedback-key";
+
+interface UserAssistantEventMessageProps {
+  event: MessageEvent;
+  suppressReasoning?: boolean;
+  isLastMessage: boolean;
+  showActions?: boolean;
+  isFromPlanningAgent: boolean;
+}
+
+function UserAssistantEventMessageComponent({
+  event,
+  suppressReasoning = false,
+  isLastMessage,
+  showActions = isLastMessage,
+  isFromPlanningAgent,
+}: UserAssistantEventMessageProps) {
+  const { t } = useTranslation("openhands");
+  const feedbackKey = useMessageFeedbackKey(event.id);
+  const { conversationId } = useOptionalConversationId();
+  const isCloud = useActiveBackend().backend.kind === "cloud";
+  const { mutate: forkConversation } = useForkConversation(
+    conversationId ?? "",
+  );
+  // `useIsMutating` reads the cache entry, so it still reports a fork started
+  // before this row was virtualized out and back — unlike the row's own
+  // `isPending`, which belongs to a fresh observer and reads `false` on remount.
+  // The key is scoped to this conversation: an unscoped match would let a fork
+  // of another conversation block this one's `Branch` action. Without a
+  // conversation there is no Branch action, and an empty id would make every
+  // id-less view share the key `["fork-conversation", ""]`, so match nothing
+  // instead of reading that shared key.
+  const isForking =
+    useIsMutating(
+      conversationId
+        ? { mutationKey: forkConversationMutationKey(conversationId) }
+        : { predicate: () => false },
+    ) > 0;
+  // Blocks a same-tick double-click, before `isForking` flips.
+  const forkInFlightRef = React.useRef(false);
+
+  const reactionAuthor = event.source === "user" ? "user" : "agent";
+  const reactions = useMessageReactions(
+    event.source === "user" || event.source === "agent" ? event.id : undefined,
+    reactionAuthor,
+    { isFromPlanningAgent },
+  );
+
+  // The agent may have edited its message since (`edit_message`); the
+  // latest edit's text replaces the text it first wrote.
+  const editedText = useMessageEdit(
+    event.source === "agent" ? event.id : undefined,
+  );
+  const parsed = editedText ?? parseMessageFromEvent(event);
+  // Route an inline <think> block (e.g. from a streamed reply) to the thinking
+  // section so reloaded conversations match the live rendering.
+  const { reasoning: inlineThink, message } =
+    event.source === "agent"
+      ? splitInlineThink(parsed)
+      : { reasoning: "", message: parsed };
+  // The finished message replaces its streaming slot outright, so reasoning the
+  // model streamed must render from the message itself or it vanishes on
+  // finalize (and never shows after a reload).
+  const reasoning = [
+    event.source === "agent" ? getReasoningContent(event.llm_message) : "",
+    inlineThink,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
+  const imageUrls: string[] = [];
+  if (Array.isArray(event.llm_message.content)) {
+    event.llm_message.content.forEach((content) => {
+      if (content.type === "image") {
+        imageUrls.push(...content.image_urls);
+      }
+    });
+  }
+
+  // "Branch from here": a user message is "edit message" (excludes the message,
+  // restores its text to the composer); an assistant message branches
+  // inclusively. Local agent-server only, inside a conversation.
+  const canBranch = !isCloud && !!conversationId;
+  const handleBranch = () => {
+    if (!conversationId || isForking || forkInFlightRef.current) return;
+    forkInFlightRef.current = true;
+
+    // Distinct title so the fork doesn't read identically to its source.
+    // getCurrentConversation() is a shared singleton — match the id in case it
+    // still holds the previously-viewed conversation.
+    const source = ConversationService.getCurrentConversation();
+    const sourceTitle =
+      source?.id === conversationId ? source.title : undefined;
+    const branchTitle = sourceTitle ? `${sourceTitle} (branch)` : undefined;
+
+    // Only edit when there's text: an image-only message parses to "", so
+    // branch it inclusively rather than dropping the image.
+    const isEdit = event.source === "user" && message.length > 0;
+
+    forkConversation(
+      {
+        eventId: event.id,
+        ...(isEdit ? { editText: message } : {}),
+        ...(branchTitle ? { title: branchTitle } : {}),
+      },
+      {
+        // Only clears the same-tick guard; navigation, draft restoration and
+        // the error toast are handled by the mutation itself so they survive
+        // this row being virtualized out mid-flight.
+        onSettled: () => {
+          forkInFlightRef.current = false;
+        },
+      },
+    );
+  };
+  const actions = canBranch
+    ? [
+        {
+          icon: (
+            <Split
+              size={15}
+              strokeWidth={1.75}
+              className="rotate-90"
+              aria-hidden
+            />
+          ),
+          onClick: handleBranch,
+          tooltip: t(I18nKey.CHAT_INTERFACE$BRANCH_FROM_HERE),
+        },
+      ]
+    : undefined;
+
+  return (
+    <>
+      {!suppressReasoning && reasoning && (
+        <CollapsibleThinking
+          content={reasoning}
+          expansionId={`reasoning-${event.id}`}
+        />
+      )}
+      <ChatMessage
+        type={event.source}
+        message={message}
+        isFromPlanningAgent={isFromPlanningAgent}
+        actions={actions}
+        timestamp={event.timestamp}
+        feedbackKey={feedbackKey}
+        showActions={showActions}
+      >
+        {imageUrls.length > 0 && (
+          <ImageCarousel size="small" images={imageUrls} />
+        )}
+        {editedText !== undefined && <MessageEditedMark />}
+        {reactions.visible && <MessageReactions state={reactions} />}
+      </ChatMessage>
+      {event.source === "agent" && event.critic_result != null && (
+        <CriticResultDisplay criticResult={event.critic_result} />
+      )}
+    </>
+  );
+}
+
+// Appending at the live tail keeps historical event objects and these scalar
+// rendering inputs stable. Context and store subscriptions still propagate,
+// while unchanged message wrappers avoid reconciling their large DOM subtrees.
+export const UserAssistantEventMessage = React.memo(
+  UserAssistantEventMessageComponent,
+);
