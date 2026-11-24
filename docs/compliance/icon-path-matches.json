@@ -1,0 +1,153 @@
+[
+  {
+    "path": "src/icons/angle-down-solid.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "fa6",
+        "icon": "FaAngleDown"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/angle-up-solid.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "fa6",
+        "icon": "FaAngleUp"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/bell.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi2",
+        "icon": "HiOutlineBell"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/calendar.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi2",
+        "icon": "HiOutlineCalendar"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/check-circle-solid.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "fa6",
+        "icon": "FaCircleCheck"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/check-circle.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi2",
+        "icon": "HiOutlineCheckCircle"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/clock.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi",
+        "icon": "HiOutlineClock"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/cog.svg",
+    "totalPaths": 2,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi2",
+        "icon": "HiOutlineEye"
+      },
+      {
+        "family": "hi2",
+        "icon": "HiOutlineCog8Tooth"
+      },
+      {
+        "family": "hi2",
+        "icon": "HiOutlineCog6Tooth"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/npm.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "si",
+        "icon": "SiNpm"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/puzzle.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi2",
+        "icon": "HiOutlinePuzzlePiece"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/trash.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi",
+        "icon": "HiOutlineTrash"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/x-circle-solid.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "fa6",
+        "icon": "FaCircleXmark"
+      }
+    ]
+  },
+  {
+    "path": "src/icons/x-circle.svg",
+    "totalPaths": 1,
+    "matchedPaths": 1,
+    "candidates": [
+      {
+        "family": "hi2",
+        "icon": "HiOutlineXCircle"
+      }
+    ]
+  }
+]

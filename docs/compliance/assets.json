@@ -1,0 +1,1991 @@
+[
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/16948-after-refetch.png",
+    "bytes": 128881,
+    "git_blob_sha1": "a0dd3cda686252886b9e0b3f880bfc82395fadcc",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/16948-after-refetch.png",
+    "upstream_blob_sha1": "a0dd3cda686252886b9e0b3f880bfc82395fadcc",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/16948-before-refetch.png",
+    "bytes": 128971,
+    "git_blob_sha1": "b3d141e70e4b3498b90947370ff22bbd006ce09d",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/16948-before-refetch.png",
+    "upstream_blob_sha1": "b3d141e70e4b3498b90947370ff22bbd006ce09d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/17619-reconnected.png",
+    "bytes": 58646,
+    "git_blob_sha1": "9a0b5ec4c132de7626269e87ecce8c959395fb1a",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/17619-reconnected.png",
+    "upstream_blob_sha1": "9a0b5ec4c132de7626269e87ecce8c959395fb1a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-planner-100.png",
+    "bytes": 98576,
+    "git_blob_sha1": "831cc80e0ea73f1a0c3d8d5c1f3b06d41d576135",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-planner-100.png",
+    "upstream_blob_sha1": "831cc80e0ea73f1a0c3d8d5c1f3b06d41d576135",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-planner-99.png",
+    "bytes": 95338,
+    "git_blob_sha1": "4bdb8efe03b10e8aecc1f00930df22e0ae64a22b",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-planner-99.png",
+    "upstream_blob_sha1": "4bdb8efe03b10e8aecc1f00930df22e0ae64a22b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-schedule-custom.png",
+    "bytes": 62642,
+    "git_blob_sha1": "d6f03027e8a3a721a508436e8db229194d5e162d",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-schedule-custom.png",
+    "upstream_blob_sha1": "d6f03027e8a3a721a508436e8db229194d5e162d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-settings-keyboard.png",
+    "bytes": 74000,
+    "git_blob_sha1": "5737a0be037ab99c28aabd29b10cbf3861e6a75e",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-16-settings-keyboard.png",
+    "upstream_blob_sha1": "5737a0be037ab99c28aabd29b10cbf3861e6a75e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/automation-header-Arabic-long.png",
+    "bytes": 32941,
+    "git_blob_sha1": "2e6e4c9e6c20a1153b0d87b84cf5736df9fafd11",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/automation-header-Arabic-long.png",
+    "upstream_blob_sha1": "2e6e4c9e6c20a1153b0d87b84cf5736df9fafd11",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/automation-header-English-long.png",
+    "bytes": 33951,
+    "git_blob_sha1": "0c198ae9405d5638f2c004e954c1955d4e3e16b8",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/automation-header-English-long.png",
+    "upstream_blob_sha1": "0c198ae9405d5638f2c004e954c1955d4e3e16b8",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/final/checkedin-app-backend-fixture.png",
+    "bytes": 81765,
+    "git_blob_sha1": "b22b69cc46b2f920159871ed12ddc8077e3d9e76",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/final/checkedin-app-backend-fixture.png",
+    "upstream_blob_sha1": "b22b69cc46b2f920159871ed12ddc8077e3d9e76",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/invalid-draft-stale-success.png",
+    "bytes": 109596,
+    "git_blob_sha1": "fd8fba9b287b2a4962ee0cbccfdc6a3aa75e96cc",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/invalid-draft-stale-success.png",
+    "upstream_blob_sha1": "fd8fba9b287b2a4962ee0cbccfdc6a3aa75e96cc",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/library-host-mount-failure.png",
+    "bytes": 12746,
+    "git_blob_sha1": "e9f6430b99f1b83a97b13f89b0e9529c68f4293c",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/library-host-mount-failure.png",
+    "upstream_blob_sha1": "e9f6430b99f1b83a97b13f89b0e9529c68f4293c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/plugin-parameters-before-create.png",
+    "bytes": 70469,
+    "git_blob_sha1": "35388950075b007d05f5d343f27670f5efc9fe8e",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/plugin-parameters-before-create.png",
+    "upstream_blob_sha1": "35388950075b007d05f5d343f27670f5efc9fe8e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/preset-baseline.png",
+    "bytes": 85008,
+    "git_blob_sha1": "29da3f40a845382a7553a58d33b3d77d02a7f04e",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/preset-baseline.png",
+    "upstream_blob_sha1": "29da3f40a845382a7553a58d33b3d77d02a7f04e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/preset-target.png",
+    "bytes": 85219,
+    "git_blob_sha1": "cf8a6b2bbde7e30ccda3a3e707a8fec8bac7b807",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/preset-target.png",
+    "upstream_blob_sha1": "cf8a6b2bbde7e30ccda3a3e707a8fec8bac7b807",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/network-state-and-refetch.gif",
+    "bytes": 149294,
+    "git_blob_sha1": "fc47bd4741193d68dca82cac3206f4b881cab550",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/network-state-and-refetch.gif",
+    "upstream_blob_sha1": "fc47bd4741193d68dca82cac3206f4b881cab550",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".agents/skills/verify-openhands/references/backfills/evidence/network-state-and-refetch.mp4",
+    "bytes": 84392,
+    "git_blob_sha1": "3fbb96e7d0c2027e036e075c59904183a596c401",
+    "upstream_path": ".agents/skills/verify-openhands/references/backfills/evidence/network-state-and-refetch.mp4",
+    "upstream_blob_sha1": "3fbb96e7d0c2027e036e075c59904183a596c401",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/acp-enabled-skills-01-before.png",
+    "bytes": 79058,
+    "git_blob_sha1": "c524d96cde59492f9807e29d4c4da54eb0c08e1a",
+    "upstream_path": ".github/pr-assets/acp-enabled-skills-01-before.png",
+    "upstream_blob_sha1": "c524d96cde59492f9807e29d4c4da54eb0c08e1a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/acp-enabled-skills-02-after.png",
+    "bytes": 93588,
+    "git_blob_sha1": "d3df684d6bfa7aff32650f26d6bd6160c177317e",
+    "upstream_path": ".github/pr-assets/acp-enabled-skills-02-after.png",
+    "upstream_blob_sha1": "d3df684d6bfa7aff32650f26d6bd6160c177317e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-16505-01-before-desktop.png",
+    "bytes": 103553,
+    "git_blob_sha1": "9f7234f583844e7ba904138568fc65e9c81dbc8c",
+    "upstream_path": ".github/pr-assets/issue-16505-01-before-desktop.png",
+    "upstream_blob_sha1": "9f7234f583844e7ba904138568fc65e9c81dbc8c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-16505-02-after-desktop.png",
+    "bytes": 109879,
+    "git_blob_sha1": "c8749422f887ebd659f62586577100617499e323",
+    "upstream_path": ".github/pr-assets/issue-16505-02-after-desktop.png",
+    "upstream_blob_sha1": "c8749422f887ebd659f62586577100617499e323",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-16505-03-before-mobile.png",
+    "bytes": 27872,
+    "git_blob_sha1": "6afe9c7feb4d921b09da4bfd5109d773d36d0a9d",
+    "upstream_path": ".github/pr-assets/issue-16505-03-before-mobile.png",
+    "upstream_blob_sha1": "6afe9c7feb4d921b09da4bfd5109d773d36d0a9d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-16505-04-after-mobile.png",
+    "bytes": 32609,
+    "git_blob_sha1": "1ee6a53d8da69456b2a5ff7307c337c422a586d2",
+    "upstream_path": ".github/pr-assets/issue-16505-04-after-mobile.png",
+    "upstream_blob_sha1": "1ee6a53d8da69456b2a5ff7307c337c422a586d2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-16815-01-before.png",
+    "bytes": 67172,
+    "git_blob_sha1": "acc7d02fcfee410e2519065cd2509ce8995de39f",
+    "upstream_path": ".github/pr-assets/issue-16815-01-before.png",
+    "upstream_blob_sha1": "acc7d02fcfee410e2519065cd2509ce8995de39f",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-16815-02-after.png",
+    "bytes": 69250,
+    "git_blob_sha1": "57d7889b16a161f49fc2ebf6f4924749d62c7078",
+    "upstream_path": ".github/pr-assets/issue-16815-02-after.png",
+    "upstream_blob_sha1": "57d7889b16a161f49fc2ebf6f4924749d62c7078",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/issue-17168-oh-git-ref-default-evidence.png",
+    "bytes": 62526,
+    "git_blob_sha1": "36e824f51340987d555d0756b253c610b4e30b23",
+    "upstream_path": ".github/pr-assets/issue-17168-oh-git-ref-default-evidence.png",
+    "upstream_blob_sha1": "36e824f51340987d555d0756b253c610b4e30b23",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16268-01-thumbnail-in-message.png",
+    "bytes": 65033,
+    "git_blob_sha1": "472bd003ec38f4f307af2c222db1f4ee031ce5b3",
+    "upstream_path": ".github/pr-assets/pr-16268-01-thumbnail-in-message.png",
+    "upstream_blob_sha1": "472bd003ec38f4f307af2c222db1f4ee031ce5b3",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16268-02-lightbox-open.png",
+    "bytes": 323318,
+    "git_blob_sha1": "1d3c039170b8f0b05a13cb45b5042ee3869c2553",
+    "upstream_path": ".github/pr-assets/pr-16268-02-lightbox-open.png",
+    "upstream_blob_sha1": "1d3c039170b8f0b05a13cb45b5042ee3869c2553",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16268-03-lightbox-closed.png",
+    "bytes": 67713,
+    "git_blob_sha1": "05656fa316e85feced5d710b11b785323f3a3b6b",
+    "upstream_path": ".github/pr-assets/pr-16268-03-lightbox-closed.png",
+    "upstream_blob_sha1": "05656fa316e85feced5d710b11b785323f3a3b6b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16605-test-results.png",
+    "bytes": 223282,
+    "git_blob_sha1": "6bc0237ce35849d65f8715d31675aa81494d9a72",
+    "upstream_path": ".github/pr-assets/pr-16605-test-results.png",
+    "upstream_blob_sha1": "6bc0237ce35849d65f8715d31675aa81494d9a72",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16676-01-list.png",
+    "bytes": 132304,
+    "git_blob_sha1": "936191bcf22e4d2f1f4463eb6347494270e2fcf9",
+    "upstream_path": ".github/pr-assets/pr-16676-01-list.png",
+    "upstream_blob_sha1": "936191bcf22e4d2f1f4463eb6347494270e2fcf9",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16676-02-templates.png",
+    "bytes": 140840,
+    "git_blob_sha1": "e87524936073ef74cfa2bf866214ee38a4521f04",
+    "upstream_path": ".github/pr-assets/pr-16676-02-templates.png",
+    "upstream_blob_sha1": "e87524936073ef74cfa2bf866214ee38a4521f04",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16676-03-detail.png",
+    "bytes": 90153,
+    "git_blob_sha1": "f5ab84c5eeecc438a881099ee74777251791a7cc",
+    "upstream_path": ".github/pr-assets/pr-16676-03-detail.png",
+    "upstream_blob_sha1": "f5ab84c5eeecc438a881099ee74777251791a7cc",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16676-04-edit-modal.png",
+    "bytes": 102535,
+    "git_blob_sha1": "53d7ae4c98aaeae3c92e7cfb393a00e0dc7fd2a4",
+    "upstream_path": ".github/pr-assets/pr-16676-04-edit-modal.png",
+    "upstream_blob_sha1": "53d7ae4c98aaeae3c92e7cfb393a00e0dc7fd2a4",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16676-05-no-manifest-sidebar.png",
+    "bytes": 62342,
+    "git_blob_sha1": "1c8906e86f3a23425d5c23cb40dfb2c80c216021",
+    "upstream_path": ".github/pr-assets/pr-16676-05-no-manifest-sidebar.png",
+    "upstream_blob_sha1": "1c8906e86f3a23425d5c23cb40dfb2c80c216021",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16676-06-no-manifest-404.png",
+    "bytes": 8066,
+    "git_blob_sha1": "0441299c56fcf79f2e5c246ecbc8f635d3dcf299",
+    "upstream_path": ".github/pr-assets/pr-16676-06-no-manifest-404.png",
+    "upstream_blob_sha1": "0441299c56fcf79f2e5c246ecbc8f635d3dcf299",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16860-01-skills-default.png",
+    "bytes": 201598,
+    "git_blob_sha1": "91cb74c5dcf5077f8d312769064566af83e43678",
+    "upstream_path": ".github/pr-assets/pr-16860-01-skills-default.png",
+    "upstream_blob_sha1": "91cb74c5dcf5077f8d312769064566af83e43678",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16860-02-recommended-facet.png",
+    "bytes": 204087,
+    "git_blob_sha1": "62e5edbf0468621f3dd5d128ef0c40e08bc2999a",
+    "upstream_path": ".github/pr-assets/pr-16860-02-recommended-facet.png",
+    "upstream_blob_sha1": "62e5edbf0468621f3dd5d128ef0c40e08bc2999a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16959-telemetry-consent-retry.svg",
+    "bytes": 2073,
+    "git_blob_sha1": "db47cc4ea94266e04f40fec81771b586a68e3fca",
+    "upstream_path": ".github/pr-assets/pr-16959-telemetry-consent-retry.svg",
+    "upstream_blob_sha1": "db47cc4ea94266e04f40fec81771b586a68e3fca",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16970-terminal-verification.svg",
+    "bytes": 1468,
+    "git_blob_sha1": "84fff4498bfa11a554c85b5d0e69c9261559688d",
+    "upstream_path": ".github/pr-assets/pr-16970-terminal-verification.svg",
+    "upstream_blob_sha1": "84fff4498bfa11a554c85b5d0e69c9261559688d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16975-agent-canvas-loopback.png",
+    "bytes": 29278,
+    "git_blob_sha1": "5812cfd226c26dfeb33686c2e530eb20cfd1b4f9",
+    "upstream_path": ".github/pr-assets/pr-16975-agent-canvas-loopback.png",
+    "upstream_blob_sha1": "5812cfd226c26dfeb33686c2e530eb20cfd1b4f9",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16975-bind-policy.png",
+    "bytes": 79945,
+    "git_blob_sha1": "c025fd6bf5c9f2cc80cbbc84cf4b41bfc108bb58",
+    "upstream_path": ".github/pr-assets/pr-16975-bind-policy.png",
+    "upstream_blob_sha1": "c025fd6bf5c9f2cc80cbbc84cf4b41bfc108bb58",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-16982-validation.png",
+    "bytes": 76823,
+    "git_blob_sha1": "95f0eed403fed9a0f631b5b92fa8f61c11846fde",
+    "upstream_path": ".github/pr-assets/pr-16982-validation.png",
+    "upstream_blob_sha1": "95f0eed403fed9a0f631b5b92fa8f61c11846fde",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17083-test-results.svg",
+    "bytes": 1588,
+    "git_blob_sha1": "3a39cfb51d75950b145d4bcc809368602e6a1d89",
+    "upstream_path": ".github/pr-assets/pr-17083-test-results.svg",
+    "upstream_blob_sha1": "3a39cfb51d75950b145d4bcc809368602e6a1d89",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17556-node-env-pilot-timings.png",
+    "bytes": 138338,
+    "git_blob_sha1": "1e97f0239bde2540c46092b073bc813c5b14628b",
+    "upstream_path": ".github/pr-assets/pr-17556-node-env-pilot-timings.png",
+    "upstream_blob_sha1": "1e97f0239bde2540c46092b073bc813c5b14628b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17571-test-results.svg",
+    "bytes": 1895,
+    "git_blob_sha1": "eb502cd23019a7b8ac653ce7cace64354ff70b65",
+    "upstream_path": ".github/pr-assets/pr-17571-test-results.svg",
+    "upstream_blob_sha1": "eb502cd23019a7b8ac653ce7cace64354ff70b65",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17639-01-regression-test-fails-on-main.png",
+    "bytes": 157716,
+    "git_blob_sha1": "973fe8419dca6bcb10936a1a094a178919723303",
+    "upstream_path": ".github/pr-assets/pr-17639-01-regression-test-fails-on-main.png",
+    "upstream_blob_sha1": "973fe8419dca6bcb10936a1a094a178919723303",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17639-02-suites-pass-with-fix.png",
+    "bytes": 64257,
+    "git_blob_sha1": "34e215ceb0c1ce754d5eb0f08f58fc867675c817",
+    "upstream_path": ".github/pr-assets/pr-17639-02-suites-pass-with-fix.png",
+    "upstream_blob_sha1": "34e215ceb0c1ce754d5eb0f08f58fc867675c817",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17782-router-templates.png",
+    "bytes": 100855,
+    "git_blob_sha1": "c6080fa11dfbb4f4aed9cc92fe50ef2cacf4d5a4",
+    "upstream_path": ".github/pr-assets/pr-17782-router-templates.png",
+    "upstream_blob_sha1": "c6080fa11dfbb4f4aed9cc92fe50ef2cacf4d5a4",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-17860-router-flash-prompt-before-after.png",
+    "bytes": 80504,
+    "git_blob_sha1": "57d88eecbc0f3b74e4f3e6969e22c3f4a35eafbb",
+    "upstream_path": ".github/pr-assets/pr-17860-router-flash-prompt-before-after.png",
+    "upstream_blob_sha1": "57d88eecbc0f3b74e4f3e6969e22c3f4a35eafbb",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-18604-01-before-real-do-api-key-gate.png",
+    "bytes": 18060,
+    "git_blob_sha1": "3a5bed0d06e0f97148cc0e3f92c84136fbf703f3",
+    "upstream_path": ".github/pr-assets/pr-18604-01-before-real-do-api-key-gate.png",
+    "upstream_blob_sha1": "3a5bed0d06e0f97148cc0e3f92c84136fbf703f3",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-18604-02-after-real-do-session.png",
+    "bytes": 58388,
+    "git_blob_sha1": "68113a02bf200f3f8d96cd0c6d333d84b90ce8ca",
+    "upstream_path": ".github/pr-assets/pr-18604-02-after-real-do-session.png",
+    "upstream_blob_sha1": "68113a02bf200f3f8d96cd0c6d333d84b90ce8ca",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/pr-18604-03-after-reload-retained-no-gate.png",
+    "bytes": 58710,
+    "git_blob_sha1": "160f407d3e3b1497f46cbddd7ceea03672393f6f",
+    "upstream_path": ".github/pr-assets/pr-18604-03-after-reload-retained-no-gate.png",
+    "upstream_blob_sha1": "160f407d3e3b1497f46cbddd7ceea03672393f6f",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/table-cell-wrap-01-before.png",
+    "bytes": 50434,
+    "git_blob_sha1": "ad317263aae13a2f146efb752d0c7470d36d3bfa",
+    "upstream_path": ".github/pr-assets/table-cell-wrap-01-before.png",
+    "upstream_blob_sha1": "ad317263aae13a2f146efb752d0c7470d36d3bfa",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".github/pr-assets/table-cell-wrap-02-after.png",
+    "bytes": 94458,
+    "git_blob_sha1": "0db39f83b76314b698bc0b2cb05bfa2416e8514e",
+    "upstream_path": ".github/pr-assets/table-cell-wrap-02-after.png",
+    "upstream_blob_sha1": "0db39f83b76314b698bc0b2cb05bfa2416e8514e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/automation-form-return/after-1-agent-filled.png",
+    "bytes": 96369,
+    "git_blob_sha1": "0bacba10a3ae330db557e01054a24fc239fcc286",
+    "upstream_path": ".pr/automation-form-return/before-1-agent-filled.png",
+    "upstream_blob_sha1": "0bacba10a3ae330db557e01054a24fc239fcc286",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/automation-form-return/after-2-returned.png",
+    "bytes": 108976,
+    "git_blob_sha1": "af50bc54ed188394c400fdc9011c0f005c5a2045",
+    "upstream_path": ".pr/automation-form-return/after-2-returned.png",
+    "upstream_blob_sha1": "af50bc54ed188394c400fdc9011c0f005c5a2045",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/automation-form-return/before-1-agent-filled.png",
+    "bytes": 96369,
+    "git_blob_sha1": "0bacba10a3ae330db557e01054a24fc239fcc286",
+    "upstream_path": ".pr/automation-form-return/before-1-agent-filled.png",
+    "upstream_blob_sha1": "0bacba10a3ae330db557e01054a24fc239fcc286",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/automation-form-return/before-2-returned.png",
+    "bytes": 105294,
+    "git_blob_sha1": "bd795109c80741fd9e218d6bd36a773d261b40f7",
+    "upstream_path": ".pr/automation-form-return/before-2-returned.png",
+    "upstream_blob_sha1": "bd795109c80741fd9e218d6bd36a773d261b40f7",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/bugs/automation-create-enabled/after/01-wizard-filled.png",
+    "bytes": 78506,
+    "git_blob_sha1": "cb6abe1a798329526cb4f5c34636c827262826da",
+    "upstream_path": ".pr/bugs/automation-create-enabled/after/01-wizard-filled.png",
+    "upstream_blob_sha1": "cb6abe1a798329526cb4f5c34636c827262826da",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/bugs/automation-create-enabled/after/02-after-create.png",
+    "bytes": 79573,
+    "git_blob_sha1": "eb2e9a40460338b977d40d11911756756a223650",
+    "upstream_path": ".pr/bugs/automation-create-enabled/after/02-after-create.png",
+    "upstream_blob_sha1": "eb2e9a40460338b977d40d11911756756a223650",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/bugs/automation-create-enabled/before/01-wizard-filled.png",
+    "bytes": 78501,
+    "git_blob_sha1": "75cc0cffde4b8e4e482510fc34ef0eb849811648",
+    "upstream_path": ".pr/bugs/automation-create-enabled/before/01-wizard-filled.png",
+    "upstream_blob_sha1": "75cc0cffde4b8e4e482510fc34ef0eb849811648",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/bugs/automation-create-enabled/before/02-after-create.png",
+    "bytes": 69428,
+    "git_blob_sha1": "88e09b0cbccf12e50c17b060b6a765cb85511f57",
+    "upstream_path": ".pr/bugs/automation-create-enabled/before/02-after-create.png",
+    "upstream_blob_sha1": "88e09b0cbccf12e50c17b060b6a765cb85511f57",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/bugs/automation-create-enabled/debug-wizard.png",
+    "bytes": 86100,
+    "git_blob_sha1": "fae599cdd798a73c0bd06ca170ecc09c01f831f5",
+    "upstream_path": ".pr/bugs/automation-create-enabled/debug-wizard.png",
+    "upstream_blob_sha1": "fae599cdd798a73c0bd06ca170ecc09c01f831f5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/bump-pins/replay.png",
+    "bytes": 229254,
+    "git_blob_sha1": "736578cb49f84ffc1a35f4ee2ac18cda5edfb619",
+    "upstream_path": ".pr/bump-pins/replay.png",
+    "upstream_blob_sha1": "736578cb49f84ffc1a35f4ee2ac18cda5edfb619",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/decision-cards/answered-in-chat.png",
+    "bytes": 188571,
+    "git_blob_sha1": "a104836fc96190474452be9f75b560195060eed9",
+    "upstream_path": ".pr/decision-cards/answered-in-chat.png",
+    "upstream_blob_sha1": "a104836fc96190474452be9f75b560195060eed9",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/decision-cards/asked.png",
+    "bytes": 128874,
+    "git_blob_sha1": "bff95994ed0db4a179e090a7ec29cd4e661db3b2",
+    "upstream_path": ".pr/decision-cards/asked.png",
+    "upstream_blob_sha1": "bff95994ed0db4a179e090a7ec29cd4e661db3b2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/decision-cards/reaction-on-card.png",
+    "bytes": 172247,
+    "git_blob_sha1": "2469805d1a6eaa5af4ac0de2de6527d6a2770fe4",
+    "upstream_path": ".pr/decision-cards/reaction-on-card.png",
+    "upstream_blob_sha1": "2469805d1a6eaa5af4ac0de2de6527d6a2770fe4",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/decision-cards/tapped.png",
+    "bytes": 202330,
+    "git_blob_sha1": "0cebade3acd0bf05d87f76dd91d8306e560b1638",
+    "upstream_path": ".pr/decision-cards/tapped.png",
+    "upstream_blob_sha1": "0cebade3acd0bf05d87f76dd91d8306e560b1638",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/experimental-features-reactions/agent-eyes.png",
+    "bytes": 80125,
+    "git_blob_sha1": "6bc4bcc09425ec5355e7ac61e356590aefdc4478",
+    "upstream_path": ".pr/experimental-features-reactions/agent-eyes.png",
+    "upstream_blob_sha1": "6bc4bcc09425ec5355e7ac61e356590aefdc4478",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/experimental-features-reactions/experimental-on.png",
+    "bytes": 103404,
+    "git_blob_sha1": "7b1c88a35b24d2fb448b235a2b3ef6c8e9247d86",
+    "upstream_path": ".pr/experimental-features-reactions/experimental-on.png",
+    "upstream_blob_sha1": "7b1c88a35b24d2fb448b235a2b3ef6c8e9247d86",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/experimental-features-reactions/eyes-and-heart.png",
+    "bytes": 81267,
+    "git_blob_sha1": "5b8be6b809b4cd461d1a6a659180d9bf94803e7e",
+    "upstream_path": ".pr/experimental-features-reactions/eyes-and-heart.png",
+    "upstream_blob_sha1": "5b8be6b809b4cd461d1a6a659180d9bf94803e7e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/experimental-features-reactions/flag-off.png",
+    "bytes": 80601,
+    "git_blob_sha1": "5b724f31249a245058dd4df90c7fb4a324da8fa9",
+    "upstream_path": ".pr/experimental-features-reactions/flag-off.png",
+    "upstream_blob_sha1": "5b724f31249a245058dd4df90c7fb4a324da8fa9",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/experimental-features-reactions/picker.png",
+    "bytes": 84975,
+    "git_blob_sha1": "8bcc312ee8a79a9d5b52e74e149cab0d87dad57f",
+    "upstream_path": ".pr/experimental-features-reactions/picker.png",
+    "upstream_blob_sha1": "8bcc312ee8a79a9d5b52e74e149cab0d87dad57f",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/flag-off-conversation.png",
+    "bytes": 125926,
+    "git_blob_sha1": "6b36a57d0ba8b6cae8e0cb3a9905c6ba7fed9bfd",
+    "upstream_path": ".pr/message-edits/flag-off-conversation.png",
+    "upstream_blob_sha1": "6b36a57d0ba8b6cae8e0cb3a9905c6ba7fed9bfd",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/flag-off-settings.png",
+    "bytes": 167237,
+    "git_blob_sha1": "683cba2382d7345dea04aaf83a262215965bb61a",
+    "upstream_path": ".pr/message-edits/flag-off-settings.png",
+    "upstream_blob_sha1": "683cba2382d7345dea04aaf83a262215965bb61a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/flag-on-settings.png",
+    "bytes": 168530,
+    "git_blob_sha1": "38eb5e3806984b5ffaecbd781cc2b46213f02a57",
+    "upstream_path": ".pr/message-edits/flag-on-settings.png",
+    "upstream_blob_sha1": "38eb5e3806984b5ffaecbd781cc2b46213f02a57",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/on-after-reload.png",
+    "bytes": 120424,
+    "git_blob_sha1": "c919f57a5f0e8ca166878a2eff6fc2b9012ff07b",
+    "upstream_path": ".pr/message-edits/on-after-reload.png",
+    "upstream_blob_sha1": "c919f57a5f0e8ca166878a2eff6fc2b9012ff07b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/on-became-wrong.png",
+    "bytes": 120444,
+    "git_blob_sha1": "0acc97f2147cc6c82c1f2134321ca944ad98f6a2",
+    "upstream_path": ".pr/message-edits/on-became-wrong.png",
+    "upstream_blob_sha1": "0acc97f2147cc6c82c1f2134321ca944ad98f6a2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/on-edited.png",
+    "bytes": 104321,
+    "git_blob_sha1": "e8ee1202635f3928f3d69cbbd10b1e09507cde2e",
+    "upstream_path": ".pr/message-edits/on-edited.png",
+    "upstream_blob_sha1": "e8ee1202635f3928f3d69cbbd10b1e09507cde2e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/message-edits/on-question.png",
+    "bytes": 92426,
+    "git_blob_sha1": "5070df398d2493dfb68d59d1555dc2e007b675cd",
+    "upstream_path": ".pr/message-edits/on-question.png",
+    "upstream_blob_sha1": "5070df398d2493dfb68d59d1555dc2e007b675cd",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".pr/settings-nav-order/settings-nav-paper.png",
+    "bytes": 333140,
+    "git_blob_sha1": "38bf98436afb046074d1654286d09e89942887b4",
+    "upstream_path": ".pr/settings-nav-order/settings-nav-paper.png",
+    "upstream_blob_sha1": "38bf98436afb046074d1654286d09e89942887b4",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": ".screenshots/progress-event-fix.png",
+    "bytes": 41287,
+    "git_blob_sha1": "77e2e06f6787e4da075d79cdf23b733dcd8a39d8",
+    "upstream_path": ".screenshots/progress-event-fix.png",
+    "upstream_blob_sha1": "77e2e06f6787e4da075d79cdf23b733dcd8a39d8",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/pr-screenshots/agent-server-liveness-before-after.jpg",
+    "bytes": 292121,
+    "git_blob_sha1": "c89d71bc511019f7ff30e6e1d4a176554ed6cfed",
+    "upstream_path": "docs/pr-screenshots/agent-server-liveness-before-after.jpg",
+    "upstream_blob_sha1": "c89d71bc511019f7ff30e6e1d4a176554ed6cfed",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/pr-screenshots/dockerfile-language-after.jpg",
+    "bytes": 53797,
+    "git_blob_sha1": "503defaaec8da63ff5754e730be0604c8ab6b5a6",
+    "upstream_path": "docs/pr-screenshots/dockerfile-language-after.jpg",
+    "upstream_blob_sha1": "503defaaec8da63ff5754e730be0604c8ab6b5a6",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/pr-screenshots/dockerfile-language-before.jpg",
+    "bytes": 53895,
+    "git_blob_sha1": "3d5d7c59173854dcd607eda4a0d8a360cbec0998",
+    "upstream_path": "docs/pr-screenshots/dockerfile-language-before.jpg",
+    "upstream_blob_sha1": "3d5d7c59173854dcd607eda4a0d8a360cbec0998",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-light-plus-desktop-new-agent.png",
+    "bytes": 22037,
+    "git_blob_sha1": "386541021acd25da8ca2fb53f3cd798ea7be6842",
+    "upstream_path": "docs/verification/pr-18520/fixture-light-plus-desktop-new-agent.png",
+    "upstream_blob_sha1": "386541021acd25da8ca2fb53f3cd798ea7be6842",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-light-plus-phone-session.png",
+    "bytes": 15622,
+    "git_blob_sha1": "86eca67b1602c177e0c5511ba708132723b5a107",
+    "upstream_path": "docs/verification/pr-18520/fixture-light-plus-phone-session.png",
+    "upstream_blob_sha1": "86eca67b1602c177e0c5511ba708132723b5a107",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-openhands-deepsea-desktop-new-agent.png",
+    "bytes": 23877,
+    "git_blob_sha1": "0130d983a296fa09f5038895e37897d01571bece",
+    "upstream_path": "docs/verification/pr-18520/fixture-openhands-deepsea-desktop-new-agent.png",
+    "upstream_blob_sha1": "0130d983a296fa09f5038895e37897d01571bece",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-openhands-deepsea-phone-refresh.png",
+    "bytes": 16668,
+    "git_blob_sha1": "de71ea97e476c314dcfee3a67da7284a042e2c15",
+    "upstream_path": "docs/verification/pr-18520/fixture-openhands-deepsea-phone-refresh.png",
+    "upstream_blob_sha1": "de71ea97e476c314dcfee3a67da7284a042e2c15",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-openhands-neo-desktop-refresh.png",
+    "bytes": 22594,
+    "git_blob_sha1": "0b06d4770623599dd7343b14c50ff1cd7950fb2a",
+    "upstream_path": "docs/verification/pr-18520/fixture-openhands-neo-desktop-refresh.png",
+    "upstream_blob_sha1": "0b06d4770623599dd7343b14c50ff1cd7950fb2a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-openhands-neo-phone-agent-open.png",
+    "bytes": 16139,
+    "git_blob_sha1": "693c269a473357ca78a3d85f0353d857fe7ef652",
+    "upstream_path": "docs/verification/pr-18520/fixture-openhands-neo-phone-agent-open.png",
+    "upstream_blob_sha1": "693c269a473357ca78a3d85f0353d857fe7ef652",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-openhands-neutral-desktop-agent-open.png",
+    "bytes": 24259,
+    "git_blob_sha1": "31d8dd679f740a6b28aca075033871c7c31d3f55",
+    "upstream_path": "docs/verification/pr-18520/fixture-openhands-neutral-desktop-agent-open.png",
+    "upstream_blob_sha1": "31d8dd679f740a6b28aca075033871c7c31d3f55",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-openhands-neutral-phone-session.png",
+    "bytes": 16312,
+    "git_blob_sha1": "4929b68c6bcefab6e5a71a801638c31ae84a4a1e",
+    "upstream_path": "docs/verification/pr-18520/fixture-openhands-neutral-phone-session.png",
+    "upstream_blob_sha1": "4929b68c6bcefab6e5a71a801638c31ae84a4a1e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-solarized-light-desktop-agent-open.png",
+    "bytes": 23017,
+    "git_blob_sha1": "d94f184a554e34108afb34c802a730e1580bb99c",
+    "upstream_path": "docs/verification/pr-18520/fixture-solarized-light-desktop-agent-open.png",
+    "upstream_blob_sha1": "d94f184a554e34108afb34c802a730e1580bb99c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/fixture-solarized-light-phone-new-agent.png",
+    "bytes": 14881,
+    "git_blob_sha1": "be0390fac7cb50985d66bf04dd08d2f6f529ee0c",
+    "upstream_path": "docs/verification/pr-18520/fixture-solarized-light-phone-new-agent.png",
+    "upstream_blob_sha1": "be0390fac7cb50985d66bf04dd08d2f6f529ee0c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/live-neutral-desktop-new-agent.png",
+    "bytes": 20130,
+    "git_blob_sha1": "800a2d84b99748932bd2ce85f510ef9c24909f9a",
+    "upstream_path": "docs/verification/pr-18520/live-neutral-desktop-new-agent.png",
+    "upstream_blob_sha1": "800a2d84b99748932bd2ce85f510ef9c24909f9a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "docs/verification/pr-18520/live-neutral-phone-refresh.png",
+    "bytes": 13427,
+    "git_blob_sha1": "9827959b23b1e799aeec2f2c4bb0055bf974a52d",
+    "upstream_path": "docs/verification/pr-18520/live-neutral-phone-refresh.png",
+    "upstream_blob_sha1": "9827959b23b1e799aeec2f2c4bb0055bf974a52d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "electron/build-resources/icon.icns",
+    "bytes": 112968,
+    "git_blob_sha1": "15bf1af745bb298d475978c7475eeeb860d78a07",
+    "upstream_path": "electron/build-resources/icon.icns",
+    "upstream_blob_sha1": "15bf1af745bb298d475978c7475eeeb860d78a07",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "electron/build-resources/icon.ico",
+    "bytes": 30338,
+    "git_blob_sha1": "dcbe4a88564fd91a2fbe6514c4c3550a2f0568a4",
+    "upstream_path": "electron/build-resources/icon.ico",
+    "upstream_blob_sha1": "dcbe4a88564fd91a2fbe6514c4c3550a2f0568a4",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "electron/build-resources/icon.png",
+    "bytes": 59806,
+    "git_blob_sha1": "366c63c9dccee7dcb4d7393c5fcd306a84eefbcc",
+    "upstream_path": "electron/build-resources/icon.png",
+    "upstream_blob_sha1": "366c63c9dccee7dcb4d7393c5fcd306a84eefbcc",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/android-chrome-192x192.png",
+    "bytes": 12234,
+    "git_blob_sha1": "31d5801adb225f16de2d46faeb9f1915796473b3",
+    "upstream_path": "public/apple-touch-icon.png",
+    "upstream_blob_sha1": "31d5801adb225f16de2d46faeb9f1915796473b3",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/android-chrome-512x512.png",
+    "bytes": 37506,
+    "git_blob_sha1": "57e1544c5fb75622676059acd8765599b2ee21db",
+    "upstream_path": "public/android-chrome-512x512.png",
+    "upstream_blob_sha1": "57e1544c5fb75622676059acd8765599b2ee21db",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/apple-touch-icon.png",
+    "bytes": 12234,
+    "git_blob_sha1": "31d5801adb225f16de2d46faeb9f1915796473b3",
+    "upstream_path": "public/apple-touch-icon.png",
+    "upstream_blob_sha1": "31d5801adb225f16de2d46faeb9f1915796473b3",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/favicon-16x16.png",
+    "bytes": 679,
+    "git_blob_sha1": "d94186c1cc098f0ae0f7565d65b72c3fbf9b8d9b",
+    "upstream_path": "public/favicon-16x16.png",
+    "upstream_blob_sha1": "d94186c1cc098f0ae0f7565d65b72c3fbf9b8d9b",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/favicon-32x32.png",
+    "bytes": 1814,
+    "git_blob_sha1": "a7d3fe1281fd6e00e273cae782da5eeaad180071",
+    "upstream_path": "public/favicon-32x32.png",
+    "upstream_blob_sha1": "a7d3fe1281fd6e00e273cae782da5eeaad180071",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/favicon.ico",
+    "bytes": 5739,
+    "git_blob_sha1": "f560354d7bff596fa93ae0d1d9f0b8988080fee4",
+    "upstream_path": "public/favicon.ico",
+    "upstream_blob_sha1": "f560354d7bff596fa93ae0d1d9f0b8988080fee4",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/favicon.svg",
+    "bytes": 7502,
+    "git_blob_sha1": "4877e59fda7fb61e334a528414dbec8bc675985a",
+    "upstream_path": "public/favicon.svg",
+    "upstream_blob_sha1": "4877e59fda7fb61e334a528414dbec8bc675985a",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "public/mstile-150x150.png",
+    "bytes": 2796,
+    "git_blob_sha1": "bdf3ed471b3abd51648295cda04c82ddd3187d06",
+    "upstream_path": "public/mstile-150x150.png",
+    "upstream_blob_sha1": "bdf3ed471b3abd51648295cda04c82ddd3187d06",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "public/safari-pinned-tab.svg",
+    "bytes": 8911,
+    "git_blob_sha1": "daa0090f0fd5dc794c01a835f54036881a54af83",
+    "upstream_path": "public/safari-pinned-tab.svg",
+    "upstream_blob_sha1": "daa0090f0fd5dc794c01a835f54036881a54af83",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/assets/branding/azure-devops-logo.svg",
+    "bytes": 248,
+    "git_blob_sha1": "01ff9f8a90ecc69ff184a96921a82ff0f0a7653d",
+    "upstream_path": "src/assets/branding/azure-devops-logo.svg",
+    "upstream_blob_sha1": "01ff9f8a90ecc69ff184a96921a82ff0f0a7653d",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "src/assets/branding/digitalocean-logo.svg",
+    "bytes": 475,
+    "git_blob_sha1": "545d861baad9c9876ff2241580123f0e14f7afd3",
+    "upstream_path": "src/assets/branding/digitalocean-logo.svg",
+    "upstream_blob_sha1": "545d861baad9c9876ff2241580123f0e14f7afd3",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "src/assets/branding/openhands-logo-white.svg",
+    "bytes": 8911,
+    "git_blob_sha1": "dcb9f0ae6829c9da0b2d1c660e8e1bffb73be71d",
+    "upstream_path": "src/assets/branding/openhands-logo-white.svg",
+    "upstream_blob_sha1": "dcb9f0ae6829c9da0b2d1c660e8e1bffb73be71d",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "src/assets/branding/openhands-logo.svg",
+    "bytes": 10655,
+    "git_blob_sha1": "f6938f73a6e532985aa68dc3bdbefca3f98b24ae",
+    "upstream_path": "src/assets/branding/openhands-logo.svg",
+    "upstream_blob_sha1": "f6938f73a6e532985aa68dc3bdbefca3f98b24ae",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "src/assets/notification.mp3",
+    "bytes": 11663,
+    "git_blob_sha1": "7937b7c56671f5c5d166dfea8cd1875c8857da35",
+    "upstream_path": "src/assets/notification.mp3",
+    "upstream_blob_sha1": "7937b7c56671f5c5d166dfea8cd1875c8857da35",
+    "source_verified": true,
+    "classification": "upstream-identical audio; no standalone author/license source located: follow-up required"
+  },
+  {
+    "path": "src/icons/activity.svg",
+    "bytes": 336,
+    "git_blob_sha1": "161729d381ca8b21df730df0726e5509bd7f36e0",
+    "upstream_path": "src/icons/activity.svg",
+    "upstream_blob_sha1": "161729d381ca8b21df730df0726e5509bd7f36e0",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/angle-down-solid.svg",
+    "bytes": 400,
+    "git_blob_sha1": "5fb0103c43d9deff0c1307810d8871d59e0ea9c5",
+    "upstream_path": "src/icons/angle-down-solid.svg",
+    "upstream_blob_sha1": "5fb0103c43d9deff0c1307810d8871d59e0ea9c5",
+    "source_verified": true,
+    "classification": "Font Awesome Free icon artwork: CC BY 4.0; attribution in THIRD_PARTY_NOTICES.md"
+  },
+  {
+    "path": "src/icons/angle-up-solid.svg",
+    "bytes": 400,
+    "git_blob_sha1": "070408c9ddba7fd31f44a79641ab3b0bb567adae",
+    "upstream_path": "src/icons/angle-up-solid.svg",
+    "upstream_blob_sha1": "070408c9ddba7fd31f44a79641ab3b0bb567adae",
+    "source_verified": true,
+    "classification": "Font Awesome Free icon artwork: CC BY 4.0; attribution in THIRD_PARTY_NOTICES.md"
+  },
+  {
+    "path": "src/icons/arrow-down-curve.svg",
+    "bytes": 666,
+    "git_blob_sha1": "fa8f2e0a68bef4b66224b50050f608015c633231",
+    "upstream_path": "src/icons/arrow-down-curve.svg",
+    "upstream_blob_sha1": "fa8f2e0a68bef4b66224b50050f608015c633231",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/arrow-send.svg",
+    "bytes": 342,
+    "git_blob_sha1": "461c2ca70626be6a5b353f1ce0e7f50d6faaa162",
+    "upstream_path": "src/icons/arrow-send.svg",
+    "upstream_blob_sha1": "461c2ca70626be6a5b353f1ce0e7f50d6faaa162",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/automations.svg",
+    "bytes": 2541,
+    "git_blob_sha1": "62c57aa7ccef09c10c9b62ed31e01714c5289b16",
+    "upstream_path": "src/icons/automations.svg",
+    "upstream_blob_sha1": "62c57aa7ccef09c10c9b62ed31e01714c5289b16",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/bell.svg",
+    "bytes": 396,
+    "git_blob_sha1": "b5d7f207d86c4e93499c067eee5b867b39be67c2",
+    "upstream_path": "src/icons/bell.svg",
+    "upstream_blob_sha1": "b5d7f207d86c4e93499c067eee5b867b39be67c2",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/block-drawer-left.svg",
+    "bytes": 476,
+    "git_blob_sha1": "6de386826e5a9cef88603bc5f64029d103faa229",
+    "upstream_path": "src/icons/block-drawer-left.svg",
+    "upstream_blob_sha1": "6de386826e5a9cef88603bc5f64029d103faa229",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/calendar.svg",
+    "bytes": 407,
+    "git_blob_sha1": "dd391d7531d87e226a720637084e51e3e9d5fb38",
+    "upstream_path": "src/icons/calendar.svg",
+    "upstream_blob_sha1": "dd391d7531d87e226a720637084e51e3e9d5fb38",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/carret-right-fill.svg",
+    "bytes": 331,
+    "git_blob_sha1": "d7563ea172b274b4678dcf181ace47f4be4d6201",
+    "upstream_path": "src/icons/carret-right-fill.svg",
+    "upstream_blob_sha1": "d7563ea172b274b4678dcf181ace47f4be4d6201",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/check-circle-solid.svg",
+    "bytes": 317,
+    "git_blob_sha1": "a07362b4ab3ffedd69b7e4addb70e0d3aff1c6b9",
+    "upstream_path": "src/icons/check-circle-solid.svg",
+    "upstream_blob_sha1": "a07362b4ab3ffedd69b7e4addb70e0d3aff1c6b9",
+    "source_verified": true,
+    "classification": "Font Awesome Free icon artwork: CC BY 4.0; attribution in THIRD_PARTY_NOTICES.md"
+  },
+  {
+    "path": "src/icons/check-circle.svg",
+    "bytes": 244,
+    "git_blob_sha1": "6eff56672c6585eb85e747f250e3d61d46327732",
+    "upstream_path": "src/icons/check-circle.svg",
+    "upstream_blob_sha1": "6eff56672c6585eb85e747f250e3d61d46327732",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/checkmark.svg",
+    "bytes": 1182,
+    "git_blob_sha1": "f0d12825851c33022e67e23c5e561d320670fc9d",
+    "upstream_path": "src/icons/checkmark.svg",
+    "upstream_blob_sha1": "f0d12825851c33022e67e23c5e561d320670fc9d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/chevron-down-small.svg",
+    "bytes": 289,
+    "git_blob_sha1": "9d473af09fb3dd47abe8c8bbe5b126e36a264e00",
+    "upstream_path": "src/icons/chevron-down-small.svg",
+    "upstream_blob_sha1": "9d473af09fb3dd47abe8c8bbe5b126e36a264e00",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/chevron-down.svg",
+    "bytes": 208,
+    "git_blob_sha1": "908fcc2d131d11e4eb62dc86d490e08ba6009738",
+    "upstream_path": "src/icons/chevron-down.svg",
+    "upstream_blob_sha1": "908fcc2d131d11e4eb62dc86d490e08ba6009738",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/chevron-left-small.svg",
+    "bytes": 290,
+    "git_blob_sha1": "f1de9057389f34b537ab646037e3df689d8c18f5",
+    "upstream_path": "src/icons/chevron-left-small.svg",
+    "upstream_blob_sha1": "f1de9057389f34b537ab646037e3df689d8c18f5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/circle-error.svg",
+    "bytes": 871,
+    "git_blob_sha1": "1d5c28176ee3a9a7511be7dcf77a6096c2133c04",
+    "upstream_path": "src/icons/circle-error.svg",
+    "upstream_blob_sha1": "1d5c28176ee3a9a7511be7dcf77a6096c2133c04",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/clock.svg",
+    "bytes": 225,
+    "git_blob_sha1": "6db21960c03a6be03569c2bfd33e471c8c892ae0",
+    "upstream_path": "src/icons/clock.svg",
+    "upstream_blob_sha1": "6db21960c03a6be03569c2bfd33e471c8c892ae0",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/close.svg",
+    "bytes": 334,
+    "git_blob_sha1": "3e32ba97d6c7189d3aa66572560e68b6f8e4cbaf",
+    "upstream_path": "src/icons/close.svg",
+    "upstream_blob_sha1": "3e32ba97d6c7189d3aa66572560e68b6f8e4cbaf",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/code-tag.svg",
+    "bytes": 385,
+    "git_blob_sha1": "690c0ad615d7a8ecba0fa087d9f832067c8ac5bf",
+    "upstream_path": "src/icons/code-tag.svg",
+    "upstream_blob_sha1": "690c0ad615d7a8ecba0fa087d9f832067c8ac5bf",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/code.svg",
+    "bytes": 392,
+    "git_blob_sha1": "c70db4913be4046c41b25293fcb5920734da4d93",
+    "upstream_path": "src/icons/code.svg",
+    "upstream_blob_sha1": "c70db4913be4046c41b25293fcb5920734da4d93",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/cog.svg",
+    "bytes": 1349,
+    "git_blob_sha1": "0a424e353e1ec933ff837896d7828c5c6fbadd7e",
+    "upstream_path": "src/icons/cog.svg",
+    "upstream_blob_sha1": "0a424e353e1ec933ff837896d7828c5c6fbadd7e",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/copy.svg",
+    "bytes": 495,
+    "git_blob_sha1": "9c3d31d89351b0ace8452b35ac487d1b2deed1bd",
+    "upstream_path": "src/icons/copy.svg",
+    "upstream_blob_sha1": "9c3d31d89351b0ace8452b35ac487d1b2deed1bd",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/debug-stackframe-dot.svg",
+    "bytes": 443,
+    "git_blob_sha1": "f7480e7156ca32111e1845bf9b9e7e3f03af3ea2",
+    "upstream_path": "src/icons/debug-stackframe-dot.svg",
+    "upstream_blob_sha1": "f7480e7156ca32111e1845bf9b9e7e3f03af3ea2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/docker.svg",
+    "bytes": 1566,
+    "git_blob_sha1": "d00756539eb4807759f3fd532ecbdf9f07e707ba",
+    "upstream_path": "src/icons/docker.svg",
+    "upstream_blob_sha1": "d00756539eb4807759f3fd532ecbdf9f07e707ba",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/document.svg",
+    "bytes": 642,
+    "git_blob_sha1": "96cb7a6a3818035c7f1e8e10abb0ca5fecb09305",
+    "upstream_path": "src/icons/document.svg",
+    "upstream_blob_sha1": "96cb7a6a3818035c7f1e8e10abb0ca5fecb09305",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/double-check.svg",
+    "bytes": 348,
+    "git_blob_sha1": "6205a25f890c2dbac26869c6245634dbc34f63c5",
+    "upstream_path": "src/icons/double-check.svg",
+    "upstream_blob_sha1": "6205a25f890c2dbac26869c6245634dbc34f63c5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/download.svg",
+    "bytes": 286,
+    "git_blob_sha1": "70698157de94a3506b92d05afac0ccb296fe226a",
+    "upstream_path": "src/icons/download.svg",
+    "upstream_blob_sha1": "70698157de94a3506b92d05afac0ccb296fe226a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/exclamation-circle.svg",
+    "bytes": 256,
+    "git_blob_sha1": "b20b01a3917d5193dba868b3f4808d1baa9af9a3",
+    "upstream_path": "src/icons/exclamation-circle.svg",
+    "upstream_blob_sha1": "b20b01a3917d5193dba868b3f4808d1baa9af9a3",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/external-link.svg",
+    "bytes": 562,
+    "git_blob_sha1": "b67e911517714be9b2375fd528e163400bacbadc",
+    "upstream_path": "src/icons/external-link.svg",
+    "upstream_blob_sha1": "b67e911517714be9b2375fd528e163400bacbadc",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/file.svg",
+    "bytes": 308,
+    "git_blob_sha1": "a2430bf157ca6353258730629f90e1d46f59bb36",
+    "upstream_path": "src/icons/file.svg",
+    "upstream_blob_sha1": "a2430bf157ca6353258730629f90e1d46f59bb36",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/fishing-hook.svg",
+    "bytes": 324,
+    "git_blob_sha1": "f0cb29135c68bb9eb61d5602386457a73d405e1a",
+    "upstream_path": "src/icons/fishing-hook.svg",
+    "upstream_blob_sha1": "f0cb29135c68bb9eb61d5602386457a73d405e1a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/folder.svg",
+    "bytes": 2740,
+    "git_blob_sha1": "4b533347d0d6c48cec36b7152fa7b519b2975cf6",
+    "upstream_path": "src/icons/folder.svg",
+    "upstream_blob_sha1": "4b533347d0d6c48cec36b7152fa7b519b2975cf6",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/git-branch.svg",
+    "bytes": 363,
+    "git_blob_sha1": "1f7fc2fc7e179df6805faad81a64ed1e7d202cb0",
+    "upstream_path": "src/icons/git-branch.svg",
+    "upstream_blob_sha1": "1f7fc2fc7e179df6805faad81a64ed1e7d202cb0",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/globe.svg",
+    "bytes": 2055,
+    "git_blob_sha1": "0284351300f98c4565ec40bab959d7e179c5a2e7",
+    "upstream_path": "src/icons/globe.svg",
+    "upstream_blob_sha1": "0284351300f98c4565ec40bab959d7e179c5a2e7",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/image.svg",
+    "bytes": 708,
+    "git_blob_sha1": "31c200cf07c65ca7126a808e582ef971c0d29038",
+    "upstream_path": "src/icons/image.svg",
+    "upstream_blob_sha1": "31c200cf07c65ca7126a808e582ef971c0d29038",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/info-circle.svg",
+    "bytes": 758,
+    "git_blob_sha1": "f970e9f079e4795dd25b3a8e824394448f38071c",
+    "upstream_path": "src/icons/info-circle.svg",
+    "upstream_blob_sha1": "f970e9f079e4795dd25b3a8e824394448f38071c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/kebab-vertical.svg",
+    "bytes": 192,
+    "git_blob_sha1": "dc0958d997d2b88daca3a7745517fd2c46bd0c82",
+    "upstream_path": "src/icons/kebab-vertical.svg",
+    "upstream_blob_sha1": "dc0958d997d2b88daca3a7745517fd2c46bd0c82",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/key.svg",
+    "bytes": 2039,
+    "git_blob_sha1": "43187754af117a72efa8fa5ef12b45c0916c7eba",
+    "upstream_path": "src/icons/key.svg",
+    "upstream_blob_sha1": "43187754af117a72efa8fa5ef12b45c0916c7eba",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/lesson-plan.svg",
+    "bytes": 1484,
+    "git_blob_sha1": "bcae38c071ac3c216b87c74e5d40b8cb236d02a0",
+    "upstream_path": "src/icons/lesson-plan.svg",
+    "upstream_blob_sha1": "bcae38c071ac3c216b87c74e5d40b8cb236d02a0",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/lightbulb.svg",
+    "bytes": 1852,
+    "git_blob_sha1": "54d3e182f7e42052797ca57cb49dc46983171f32",
+    "upstream_path": "src/icons/lightbulb.svg",
+    "upstream_blob_sha1": "54d3e182f7e42052797ca57cb49dc46983171f32",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/link-external.svg",
+    "bytes": 338,
+    "git_blob_sha1": "6941629a8a85563cc54a1044857cbe05a916148d",
+    "upstream_path": "src/icons/link-external.svg",
+    "upstream_blob_sha1": "6941629a8a85563cc54a1044857cbe05a916148d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/loading-outer.svg",
+    "bytes": 269,
+    "git_blob_sha1": "4c2d56aff0749714e8daff66aba9736e175f168f",
+    "upstream_path": "src/icons/loading-outer.svg",
+    "upstream_blob_sha1": "4c2d56aff0749714e8daff66aba9736e175f168f",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/lock.svg",
+    "bytes": 472,
+    "git_blob_sha1": "4e1c35b55ae47f7aef903af196c8e9ae6eafbe47",
+    "upstream_path": "src/icons/lock.svg",
+    "upstream_blob_sha1": "4e1c35b55ae47f7aef903af196c8e9ae6eafbe47",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/memory_icon.svg",
+    "bytes": 903,
+    "git_blob_sha1": "5ff562a29448ff09886f6236d1081682e20cb6df",
+    "upstream_path": "src/icons/memory_icon.svg",
+    "upstream_blob_sha1": "5ff562a29448ff09886f6236d1081682e20cb6df",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/message-square-share.svg",
+    "bytes": 331,
+    "git_blob_sha1": "8ff454c22407c946dbf0f0c75311c12c90757140",
+    "upstream_path": "src/icons/message-square-share.svg",
+    "upstream_blob_sha1": "8ff454c22407c946dbf0f0c75311c12c90757140",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/modal-close.svg",
+    "bytes": 226,
+    "git_blob_sha1": "0430d644115f14a1ed6975d3a10d3413a666039b",
+    "upstream_path": "src/icons/modal-close.svg",
+    "upstream_blob_sha1": "0430d644115f14a1ed6975d3a10d3413a666039b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/npm.svg",
+    "bytes": 359,
+    "git_blob_sha1": "0545acf4d2bf2f8aa615c8f2a5d42cc0c6f19266",
+    "upstream_path": "src/icons/npm.svg",
+    "upstream_blob_sha1": "0545acf4d2bf2f8aa615c8f2a5d42cc0c6f19266",
+    "source_verified": true,
+    "classification": "brand/product identity: provenance established; no independent trademark grant inferred"
+  },
+  {
+    "path": "src/icons/pause.svg",
+    "bytes": 370,
+    "git_blob_sha1": "d9facf9504f33801fa506f3d7e5183e62c34873b",
+    "upstream_path": "src/icons/pause.svg",
+    "upstream_blob_sha1": "d9facf9504f33801fa506f3d7e5183e62c34873b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/pill-fill.svg",
+    "bytes": 552,
+    "git_blob_sha1": "ef3ec962ee8fbfa3aee63934e68aaf901e3cceb3",
+    "upstream_path": "src/icons/pill-fill.svg",
+    "upstream_blob_sha1": "ef3ec962ee8fbfa3aee63934e68aaf901e3cceb3",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/pill.svg",
+    "bytes": 817,
+    "git_blob_sha1": "50dfba747bf78e31893882c004d099c952ade0b4",
+    "upstream_path": "src/icons/pill.svg",
+    "upstream_blob_sha1": "50dfba747bf78e31893882c004d099c952ade0b4",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/play-circle.svg",
+    "bytes": 1017,
+    "git_blob_sha1": "7150676a16ae6b62b7f88f1b4378571a9250522d",
+    "upstream_path": "src/icons/play-circle.svg",
+    "upstream_blob_sha1": "7150676a16ae6b62b7f88f1b4378571a9250522d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/play-solid.svg",
+    "bytes": 313,
+    "git_blob_sha1": "9fbc31a9788835d1a64ea321bdd2afe7ca9a7e43",
+    "upstream_path": "src/icons/play-solid.svg",
+    "upstream_blob_sha1": "9fbc31a9788835d1a64ea321bdd2afe7ca9a7e43",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/play.svg",
+    "bytes": 251,
+    "git_blob_sha1": "1bad9d88ae3b57466f8a5743e2d2a261b971b2e8",
+    "upstream_path": "src/icons/play.svg",
+    "upstream_blob_sha1": "1bad9d88ae3b57466f8a5743e2d2a261b971b2e8",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/plus.svg",
+    "bytes": 1351,
+    "git_blob_sha1": "a3c0dffd5841b7a237aeb68f4dc9482b229c3ac9",
+    "upstream_path": "src/icons/plus.svg",
+    "upstream_blob_sha1": "a3c0dffd5841b7a237aeb68f4dc9482b229c3ac9",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/power.svg",
+    "bytes": 218,
+    "git_blob_sha1": "f8f8b8d561bcc13bd90ca9ae8d0a7273c0d261b5",
+    "upstream_path": "src/icons/power.svg",
+    "upstream_blob_sha1": "f8f8b8d561bcc13bd90ca9ae8d0a7273c0d261b5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/pr-status.svg",
+    "bytes": 1779,
+    "git_blob_sha1": "b9a9711a6385fbd42b01ccbea963548f63ce1f0a",
+    "upstream_path": "src/icons/pr-status.svg",
+    "upstream_blob_sha1": "b9a9711a6385fbd42b01ccbea963548f63ce1f0a",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/profile.svg",
+    "bytes": 1187,
+    "git_blob_sha1": "a3ed9941d6850a5a2ae9086223f21b28733476ec",
+    "upstream_path": "src/icons/profile.svg",
+    "upstream_blob_sha1": "a3ed9941d6850a5a2ae9086223f21b28733476ec",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/puzzle.svg",
+    "bytes": 1256,
+    "git_blob_sha1": "2e7b29504a992563c7817366e33c54b4f2c8dd12",
+    "upstream_path": "src/icons/puzzle.svg",
+    "upstream_blob_sha1": "2e7b29504a992563c7817366e33c54b4f2c8dd12",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/repo-forked.svg",
+    "bytes": 2976,
+    "git_blob_sha1": "e55d9f7165b1feaa948973040d70519b4a132681",
+    "upstream_path": "src/icons/repo-forked.svg",
+    "upstream_blob_sha1": "e55d9f7165b1feaa948973040d70519b4a132681",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/repo.svg",
+    "bytes": 1080,
+    "git_blob_sha1": "232302b4fb41260a8f6f2260f50b04404c1fbd3c",
+    "upstream_path": "src/icons/repo.svg",
+    "upstream_blob_sha1": "232302b4fb41260a8f6f2260f50b04404c1fbd3c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/robot.svg",
+    "bytes": 3232,
+    "git_blob_sha1": "19b2253013f2c28b9fb6aec491b3630a3c235ae0",
+    "upstream_path": "src/icons/robot.svg",
+    "upstream_blob_sha1": "19b2253013f2c28b9fb6aec491b3630a3c235ae0",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/search.svg",
+    "bytes": 232,
+    "git_blob_sha1": "9a476e804bf18e8fc18ad5702ab61b0339f5c5c8",
+    "upstream_path": "src/icons/search.svg",
+    "upstream_blob_sha1": "9a476e804bf18e8fc18ad5702ab61b0339f5c5c8",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/send.svg",
+    "bytes": 811,
+    "git_blob_sha1": "7850ef44b01daede64833c9bd05dc0b58785e401",
+    "upstream_path": "src/icons/send.svg",
+    "upstream_blob_sha1": "7850ef44b01daede64833c9bd05dc0b58785e401",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/server-process.svg",
+    "bytes": 2667,
+    "git_blob_sha1": "f9b7afbe224027f0e95249da59adf1aa45e1595f",
+    "upstream_path": "src/icons/server-process.svg",
+    "upstream_blob_sha1": "f9b7afbe224027f0e95249da59adf1aa45e1595f",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/server.svg",
+    "bytes": 3477,
+    "git_blob_sha1": "ae5961a4c3591572d25b486ddfe92ed262ece252",
+    "upstream_path": "src/icons/server.svg",
+    "upstream_blob_sha1": "ae5961a4c3591572d25b486ddfe92ed262ece252",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/settings-gear.svg",
+    "bytes": 2058,
+    "git_blob_sha1": "f30d545dd1685fef4aafa191488134ccff057870",
+    "upstream_path": "src/icons/settings-gear.svg",
+    "upstream_blob_sha1": "f30d545dd1685fef4aafa191488134ccff057870",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/settings.svg",
+    "bytes": 3520,
+    "git_blob_sha1": "ef366cac9e2e619d4b6ccd82e5ea42a0915d62be",
+    "upstream_path": "src/icons/settings.svg",
+    "upstream_blob_sha1": "ef366cac9e2e619d4b6ccd82e5ea42a0915d62be",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/skills.svg",
+    "bytes": 582,
+    "git_blob_sha1": "7942464212d2078fc7dc827e228cc91db189c1a0",
+    "upstream_path": "src/icons/skills.svg",
+    "upstream_blob_sha1": "7942464212d2078fc7dc827e228cc91db189c1a0",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/slack.svg",
+    "bytes": 1152,
+    "git_blob_sha1": "aef7dfeeaead6423fd7304865b0362e3fb2e56c6",
+    "upstream_path": "src/icons/slack.svg",
+    "upstream_blob_sha1": "aef7dfeeaead6423fd7304865b0362e3fb2e56c6",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/sparkle.svg",
+    "bytes": 568,
+    "git_blob_sha1": "73e65f2bda4f109c63aa3aac07caba874bc005a7",
+    "upstream_path": "src/icons/sparkle.svg",
+    "upstream_blob_sha1": "73e65f2bda4f109c63aa3aac07caba874bc005a7",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/stop-circle.svg",
+    "bytes": 371,
+    "git_blob_sha1": "6645c26ee940e661c1f480780f48ac6607c96a69",
+    "upstream_path": "src/icons/stop-circle.svg",
+    "upstream_blob_sha1": "6645c26ee940e661c1f480780f48ac6607c96a69",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/success.svg",
+    "bytes": 1216,
+    "git_blob_sha1": "ff27cfcfcf614d8bb13663fb68c4bf4de93f9054",
+    "upstream_path": "src/icons/success.svg",
+    "upstream_blob_sha1": "ff27cfcfcf614d8bb13663fb68c4bf4de93f9054",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/tachometer-fast.svg",
+    "bytes": 2248,
+    "git_blob_sha1": "fc1422550c4c1d15a66e528b0ba60fc8134183b1",
+    "upstream_path": "src/icons/tachometer-fast.svg",
+    "upstream_blob_sha1": "fc1422550c4c1d15a66e528b0ba60fc8134183b1",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/terminal.svg",
+    "bytes": 376,
+    "git_blob_sha1": "b17ba769113789e010c9bc451a1d8d61e5b2234e",
+    "upstream_path": "src/icons/terminal.svg",
+    "upstream_blob_sha1": "b17ba769113789e010c9bc451a1d8d61e5b2234e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/three-dots-vertical.svg",
+    "bytes": 603,
+    "git_blob_sha1": "e73d6c64082c7b90b7ebd098aec10182b2e4316b",
+    "upstream_path": "src/icons/three-dots-vertical.svg",
+    "upstream_blob_sha1": "e73d6c64082c7b90b7ebd098aec10182b2e4316b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/tools.svg",
+    "bytes": 2938,
+    "git_blob_sha1": "9104c82bf6c6502b7f3d88743527815d753420a5",
+    "upstream_path": "src/icons/u-tools.svg",
+    "upstream_blob_sha1": "9104c82bf6c6502b7f3d88743527815d753420a5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/trash.svg",
+    "bytes": 306,
+    "git_blob_sha1": "786b6e331a058203f371fedabfe2e99174268d49",
+    "upstream_path": "src/icons/trash.svg",
+    "upstream_blob_sha1": "786b6e331a058203f371fedabfe2e99174268d49",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/u-arrow-down.svg",
+    "bytes": 290,
+    "git_blob_sha1": "74d77aac9bb396c31df661033b987b0eb255d53d",
+    "upstream_path": "src/icons/u-arrow-down.svg",
+    "upstream_blob_sha1": "74d77aac9bb396c31df661033b987b0eb255d53d",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-arrow-up.svg",
+    "bytes": 287,
+    "git_blob_sha1": "63481958e4314d5db9b1d18dc808494c2de27b3c",
+    "upstream_path": "src/icons/u-arrow-up.svg",
+    "upstream_blob_sha1": "63481958e4314d5db9b1d18dc808494c2de27b3c",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-check-circle-half.svg",
+    "bytes": 4080,
+    "git_blob_sha1": "ed80d0eb7e02dc9194fe3a0f8bfcbfeb1317b11b",
+    "upstream_path": "src/icons/u-check-circle-half.svg",
+    "upstream_blob_sha1": "ed80d0eb7e02dc9194fe3a0f8bfcbfeb1317b11b",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-check-circle.svg",
+    "bytes": 1951,
+    "git_blob_sha1": "e98e0c8f37140b911d04e146da82a812c353b88e",
+    "upstream_path": "src/icons/u-check-circle.svg",
+    "upstream_blob_sha1": "e98e0c8f37140b911d04e146da82a812c353b88e",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-circle.svg",
+    "bytes": 1114,
+    "git_blob_sha1": "c562817d9b3e7ed2dcea4764662ce6dc8f6052ab",
+    "upstream_path": "src/icons/u-circle.svg",
+    "upstream_blob_sha1": "c562817d9b3e7ed2dcea4764662ce6dc8f6052ab",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-circuit.svg",
+    "bytes": 4422,
+    "git_blob_sha1": "6b1441342795e0f2e7829fe655d52e8cd10cac21",
+    "upstream_path": "src/icons/u-circuit.svg",
+    "upstream_blob_sha1": "6b1441342795e0f2e7829fe655d52e8cd10cac21",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-clock-three.svg",
+    "bytes": 1506,
+    "git_blob_sha1": "a966e3b79a0bb8aea3b21dcbf4b168ceab0813cd",
+    "upstream_path": "src/icons/u-clock-three.svg",
+    "upstream_blob_sha1": "a966e3b79a0bb8aea3b21dcbf4b168ceab0813cd",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-close.svg",
+    "bytes": 356,
+    "git_blob_sha1": "f0a017c13b592775c3f14be8acfa332dbbb0edef",
+    "upstream_path": "src/icons/u-close.svg",
+    "upstream_blob_sha1": "f0a017c13b592775c3f14be8acfa332dbbb0edef",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-code-branch.svg",
+    "bytes": 3060,
+    "git_blob_sha1": "042277d9cfb44d40a7a32f2b731a5d55747b92d2",
+    "upstream_path": "src/icons/u-code-branch.svg",
+    "upstream_blob_sha1": "042277d9cfb44d40a7a32f2b731a5d55747b92d2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-delete.svg",
+    "bytes": 836,
+    "git_blob_sha1": "a33262c573ea0cd97e9e2484dde293a4dd9e7782",
+    "upstream_path": "src/icons/u-delete.svg",
+    "upstream_blob_sha1": "a33262c573ea0cd97e9e2484dde293a4dd9e7782",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-download.svg",
+    "bytes": 690,
+    "git_blob_sha1": "575f4e0a8b6914e3bf461d89f88800e81d564256",
+    "upstream_path": "src/icons/u-download.svg",
+    "upstream_blob_sha1": "575f4e0a8b6914e3bf461d89f88800e81d564256",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-edit.svg",
+    "bytes": 528,
+    "git_blob_sha1": "9e2c2c9505e6573dd7cd8215b8267ac383db4680",
+    "upstream_path": "src/icons/u-edit.svg",
+    "upstream_blob_sha1": "9e2c2c9505e6573dd7cd8215b8267ac383db4680",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-plus.svg",
+    "bytes": 578,
+    "git_blob_sha1": "5fca2644365af4441c612542e45d2d3b53981410",
+    "upstream_path": "src/icons/u-plus.svg",
+    "upstream_blob_sha1": "5fca2644365af4441c612542e45d2d3b53981410",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-pr.svg",
+    "bytes": 1749,
+    "git_blob_sha1": "e1fe070782b026b874d5b9b51489f796e09ad930",
+    "upstream_path": "src/icons/u-pr.svg",
+    "upstream_blob_sha1": "e1fe070782b026b874d5b9b51489f796e09ad930",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-puzzle-piece.svg",
+    "bytes": 2642,
+    "git_blob_sha1": "fb06a27303d2fa8a8b498bf54cd91c42d0da61a2",
+    "upstream_path": "src/icons/u-puzzle-piece.svg",
+    "upstream_blob_sha1": "fb06a27303d2fa8a8b498bf54cd91c42d0da61a2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-refresh.svg",
+    "bytes": 762,
+    "git_blob_sha1": "9e3a2051d2628738b0c559acfe61b17e546a8be5",
+    "upstream_path": "src/icons/u-refresh.svg",
+    "upstream_blob_sha1": "9e3a2051d2628738b0c559acfe61b17e546a8be5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-robot.svg",
+    "bytes": 2833,
+    "git_blob_sha1": "6ad5fcc71abeb25378d4796c5d7e139b2a49f5a4",
+    "upstream_path": "src/icons/u-robot.svg",
+    "upstream_blob_sha1": "6ad5fcc71abeb25378d4796c5d7e139b2a49f5a4",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-tools.svg",
+    "bytes": 2938,
+    "git_blob_sha1": "9104c82bf6c6502b7f3d88743527815d753420a5",
+    "upstream_path": "src/icons/u-tools.svg",
+    "upstream_blob_sha1": "9104c82bf6c6502b7f3d88743527815d753420a5",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-warning.svg",
+    "bytes": 692,
+    "git_blob_sha1": "10148311412e6167ac80810ee7bb3965efee4774",
+    "upstream_path": "src/icons/u-warning.svg",
+    "upstream_blob_sha1": "10148311412e6167ac80810ee7bb3965efee4774",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/u-water.svg",
+    "bytes": 4942,
+    "git_blob_sha1": "e2a3a9b9d65c11e972df0c7a4af3fd188c57a3fd",
+    "upstream_path": "src/icons/u-water.svg",
+    "upstream_blob_sha1": "e2a3a9b9d65c11e972df0c7a4af3fd188c57a3fd",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/user.svg",
+    "bytes": 584,
+    "git_blob_sha1": "7c1fff4533300fc72647188aa06a1d7abe6e34c2",
+    "upstream_path": "src/icons/user.svg",
+    "upstream_blob_sha1": "7c1fff4533300fc72647188aa06a1d7abe6e34c2",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/vscode.svg",
+    "bytes": 606,
+    "git_blob_sha1": "cb5ac0ec7df67368ec4b0a85dcd076e28ad20cac",
+    "upstream_path": "src/icons/vscode.svg",
+    "upstream_blob_sha1": "cb5ac0ec7df67368ec4b0a85dcd076e28ad20cac",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/warning.svg",
+    "bytes": 568,
+    "git_blob_sha1": "dc404bc1c7acf3a9fa27947cf3ed0bed287db752",
+    "upstream_path": "src/icons/warning.svg",
+    "upstream_blob_sha1": "dc404bc1c7acf3a9fa27947cf3ed0bed287db752",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/icons/x-circle-solid.svg",
+    "bytes": 404,
+    "git_blob_sha1": "f673bbf0b1e56eb3cbe4165bf6af0c8232ccc2b6",
+    "upstream_path": "src/icons/x-circle-solid.svg",
+    "upstream_blob_sha1": "f673bbf0b1e56eb3cbe4165bf6af0c8232ccc2b6",
+    "source_verified": true,
+    "classification": "Font Awesome Free icon artwork: CC BY 4.0; attribution in THIRD_PARTY_NOTICES.md"
+  },
+  {
+    "path": "src/icons/x-circle.svg",
+    "bytes": 251,
+    "git_blob_sha1": "6ddf2d1a6b4d74d7b24327cb0e878030fa639e7d",
+    "upstream_path": "src/icons/x-circle.svg",
+    "upstream_blob_sha1": "6ddf2d1a6b4d74d7b24327cb0e878030fa639e7d",
+    "source_verified": true,
+    "classification": "Heroicons geometry match: MIT; copyright notice added/consolidated"
+  },
+  {
+    "path": "src/icons/x-mark.svg",
+    "bytes": 202,
+    "git_blob_sha1": "bec56202175bc4dd7e358ca25d6e8e5429aad481",
+    "upstream_path": "src/icons/x-mark.svg",
+    "upstream_blob_sha1": "bec56202175bc4dd7e358ca25d6e8e5429aad481",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  },
+  {
+    "path": "src/themes/color-theme/definitions/paper/newsreader-roman.woff2",
+    "bytes": 214880,
+    "git_blob_sha1": "a505dbbcd93a7462b5b73c0ea55c90fb83897988",
+    "upstream_path": "src/themes/color-theme/definitions/paper/newsreader-roman.woff2",
+    "upstream_blob_sha1": "a505dbbcd93a7462b5b73c0ea55c90fb83897988",
+    "source_verified": true,
+    "classification": "Newsreader: SIL OFL 1.1; dedicated license preserved"
+  },
+  {
+    "path": "test-evidence/agent-server-conversation-service-120-tests-passed.png",
+    "bytes": 17349,
+    "git_blob_sha1": "e26a960ddb2a5fa10fbdfbf3ab4b7312aa342556",
+    "upstream_path": "test-evidence/agent-server-conversation-service-120-tests-passed.png",
+    "upstream_blob_sha1": "e26a960ddb2a5fa10fbdfbf3ab4b7312aa342556",
+    "source_verified": true,
+    "classification": "upstream-associated asset; root MIT notice retained; not an independent rights-chain certification"
+  }
+]

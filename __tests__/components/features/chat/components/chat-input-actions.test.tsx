@@ -17,6 +17,10 @@ import {
 import type { Backend } from "#/api/backend-registry/types";
 import type { CloudIntegrationsConfig } from "#/api/cloud/settings-service.api";
 import { I18nKey } from "#/i18n/declaration";
+import { ExecutionStatus } from "#/types/agent-server/core/base/common";
+import { useConversationStateStore } from "#/stores/conversation-state-store";
+import { interruptConversation } from "#/hooks/mutation/conversation-mutation-utils";
+import { ComposerDockedProvider } from "#/context/composer-docked-context";
 
 const useActiveConversationMock = vi.fn<
   () => {
@@ -106,6 +110,7 @@ vi.mock("#/api/cloud/settings-service.api", async () => ({
 
 vi.mock("#/hooks/mutation/conversation-mutation-utils", () => ({
   pauseConversation: vi.fn(),
+  interruptConversation: vi.fn(),
   resumeConversation: vi.fn(),
   askAgent: vi.fn(),
   updateConversationExecutionStatusInCache: vi.fn(),
@@ -125,6 +130,8 @@ const cloudBackend: Backend = {
 
 describe("ChatInputActions", () => {
   afterEach(() => {
+    useConversationStateStore.setState({ executionStatusByConversation: {} });
+    vi.mocked(interruptConversation).mockReset();
     window.localStorage.clear();
     __resetActiveStoreForTests();
     useActiveConversationMock.mockReset();
@@ -299,6 +306,77 @@ describe("ChatInputActions", () => {
       }),
     ).toHaveAttribute("data-testid", "submit-button");
   });
+
+  it.each([
+    { cloud: false, minimal: false },
+    { cloud: true, minimal: false },
+    { cloud: false, minimal: true },
+  ])(
+    "replaces Send with Stop while running: %j",
+    async ({ cloud, minimal }) => {
+      if (cloud) {
+        setRegisteredBackends([cloudBackend]);
+        setActiveSelection({ backendId: cloudBackend.id });
+      }
+      const conversationId = "running-conversation";
+      const store = useConversationStateStore.getState();
+      store.setExecutionStatus(conversationId, ExecutionStatus.RUNNING);
+      let completeStop!: () => void;
+      vi.mocked(interruptConversation).mockImplementation(
+        () =>
+          new Promise<Awaited<ReturnType<typeof interruptConversation>>>(
+            (resolve) => {
+              completeStop = () => resolve({ success: true });
+            },
+          ),
+      );
+      const handleSubmit = vi.fn();
+      renderWithProviders(
+        <ActiveBackendProvider>
+          <ComposerDockedProvider enabled={minimal} minimal={minimal}>
+            <ChatInputActions
+              disabled
+              canSubmit={false}
+              hasStartedConversation
+              handleSubmit={handleSubmit}
+            />
+          </ComposerDockedProvider>
+        </ActiveBackendProvider>,
+        { navigation: { conversationId } },
+      );
+
+      const stop = screen.getByRole("button", { name: I18nKey.BUTTON$STOP });
+      expect(stop).toBeEnabled();
+      expect(
+        screen.queryByRole("button", {
+          name: I18nKey.CHAT_INTERFACE$TOOLTIP_SEND_MESSAGE,
+        }),
+      ).not.toBeInTheDocument();
+      fireEvent.click(stop);
+      await waitFor(() =>
+        expect(interruptConversation).toHaveBeenCalledWith(conversationId),
+      );
+      expect(handleSubmit).not.toHaveBeenCalled();
+      expect(stop).toBeDisabled();
+      fireEvent.click(stop);
+      expect(interruptConversation).toHaveBeenCalledTimes(1);
+
+      await act(async () => {
+        completeStop();
+      });
+      act(() =>
+        store.setExecutionStatus(conversationId, ExecutionStatus.FINISHED),
+      );
+      expect(
+        screen.queryByRole("button", { name: I18nKey.BUTTON$STOP }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", {
+          name: I18nKey.CHAT_INTERFACE$TOOLTIP_SEND_MESSAGE,
+        }),
+      ).toBeDisabled();
+    },
+  );
 
   it("hides the Change Agent button on a local backend", () => {
     renderWithProviders(<ChatInputActions disabled={false} />);

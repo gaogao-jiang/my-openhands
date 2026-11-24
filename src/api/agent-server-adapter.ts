@@ -92,6 +92,23 @@ import {
   PLANNING_SYSTEM_PROMPT_FILENAME,
 } from "#/utils/plan-file";
 
+const JORA_DELEGATION_SYSTEM_SUFFIX = `
+You are Jora, the main agent for this conversation.
+
+Delegation rules:
+- Handle simple questions directly without creating a child conversation.
+- Delegate implementation work to the developer specialist.
+- Delegate code review, regression and security checks to the reviewer specialist.
+- Delegate README, API documentation and change-note work to the documenter specialist.
+- Delegate only a self-contained task with its relevant context, files, constraints and completion criteria.
+- Do not delegate the same task twice.
+- Do not claim delegated work is complete until a real child result is available.
+- Clearly distinguish completed, partially completed, awaiting user decision and unverified work.
+- If a child fails, is cancelled or times out, report that state and its reason.
+- Use the ${LAUNCH_CHILD_CONVERSATION_TOOL_NAME} client tool with subagent_type set to developer, reviewer or documenter when specialist delegation is appropriate.
+- The child cannot see this conversation's history. Include all necessary context in the task brief.
+`.trim();
+
 export interface DirectConversationInfo {
   id: string;
   title?: string | null;
@@ -1103,6 +1120,8 @@ export interface StartConversationOptions {
   llmProfileOverride?: string;
   /** The profile carries a Model Router, so router-at-start can apply. */
   profileHasRouter?: boolean;
+  /** Append the Jora main-agent delegation rules for the default profile. */
+  isJoraMainAgent?: boolean;
   /**
    * A home-page model pick was made before the first message, so the
    * route-at-start suffix is suppressed for this single launch. Threaded in
@@ -1171,6 +1190,7 @@ export function buildStartConversationRequest(
           .filter(Boolean)
           .join("\n\n")
       : null,
+    options.isJoraMainAgent ? JORA_DELEGATION_SYSTEM_SUFFIX : null,
   ]
     .filter((suffix): suffix is string => Boolean(suffix))
     .join("\n\n");
@@ -1642,6 +1662,7 @@ export async function buildStartConversationRequestWithEncryptedSettings(options
   agentProfileKind?: AgentKind;
   llmProfileOverride?: string;
   profileHasRouter?: boolean;
+  isJoraMainAgent?: boolean;
   suppressRouterAtStart?: boolean;
   acpServer?: string;
   titleLlmProfile?: string;

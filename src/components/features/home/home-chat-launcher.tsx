@@ -16,6 +16,11 @@ import { useLlmConfigured } from "#/hooks/use-llm-configured";
 import { HOME_PROMPT_DRAFT_KEY } from "#/hooks/chat/use-draft-persistence";
 import { useChatAttachmentUpload } from "#/hooks/chat/use-chat-attachment-upload";
 import { useConversationStore } from "#/stores/conversation-store";
+import { useOptimisticUserMessageStore } from "#/stores/optimistic-user-message-store";
+import {
+  agentProfileSelectionKey,
+  useAgentProfileSelectionStore,
+} from "#/stores/agent-profile-selection-store";
 import { useModelStore } from "#/stores/model-store";
 import {
   clearPendingHomeModelPick,
@@ -42,6 +47,7 @@ import {
   writeStoredLocalWorkspaceMode,
 } from "#/utils/workspace-mode";
 import { useSettings } from "#/hooks/query/use-settings";
+import { useChatInputProfileState } from "#/hooks/use-chat-input-profile-state";
 import { WorkspaceModeSelector } from "#/components/features/chat/workspace-mode-selector";
 import type { PluginSpec } from "#/api/conversation-service/agent-server-conversation-service.types";
 import { markAutomationSetupHandoff } from "#/api/automation-setup-handoff-store";
@@ -60,6 +66,11 @@ import { HomeGitControlBarPreview } from "./home-git-control-bar-preview";
 export function HomeChatLauncher() {
   const { t } = useTranslation("openhands");
   const { backend, orgId } = useActiveBackend();
+  const { currentProfileId: selectedAgentProfileId } =
+    useChatInputProfileState();
+  const clearAgentProfileSelection = useAgentProfileSelectionStore(
+    (state) => state.clearSelection,
+  );
   const { navigate, currentPath } = useNavigation();
   const ownerKey = JSON.stringify([backend.id, orgId, currentPath]);
   const currentOwner = useRef(ownerKey);
@@ -114,8 +125,9 @@ export function HomeChatLauncher() {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      clearAgentProfileSelection(agentProfileSelectionKey(backend.id, orgId));
     };
-  }, []);
+  }, [backend.id, clearAgentProfileSelection, orgId]);
 
   // The launcher reports a failed create itself (see handleSubmit), so the
   // global mutation error toast is turned off to keep it to one toast.
@@ -221,6 +233,9 @@ export function HomeChatLauncher() {
       automationSetup: isAutomateMode,
       entryPoint: "home_chat_launcher",
       ...(suppressRouterAtStart ? { suppressRouterAtStart: true } : {}),
+      ...(selectedAgentProfileId
+        ? { agentProfileId: selectedAgentProfileId }
+        : {}),
     };
     // An isolated backend owns its workspace, so a host selection left over
     // from a non-isolated session must not be forwarded: the server rejects it
@@ -275,6 +290,7 @@ export function HomeChatLauncher() {
 
     void (async () => {
       let isCreated = false;
+      let isHandingOff = false;
       let createdTarget: string | null = null;
       try {
         const data = await createConversation(variables);
@@ -290,6 +306,7 @@ export function HomeChatLauncher() {
         }
         const targetConversationId = data.conversation_id;
         createdTarget = targetConversationId;
+        clearAgentProfileSelection(agentProfileSelectionKey(backend.id, orgId));
         const isTaskConversation = targetConversationId.startsWith("task-");
 
         if (hasAttachments) {
@@ -335,16 +352,21 @@ export function HomeChatLauncher() {
             if (!ownsLaunch()) return;
             openAutomationSetupMode(targetConversationId);
             navigate(`/conversations/${targetConversationId}`);
+            isHandingOff = true;
             return;
           } else {
             try {
-              await sendMessageWithAttachments({
+              const sent = await sendMessageWithAttachments({
                 conversationId: targetConversationId,
                 content: trimmed,
                 images: attachmentSnapshot.images,
                 files: attachmentSnapshot.files,
                 imagesMarkedUploadAsFile,
                 t,
+              });
+              useOptimisticUserMessageStore.getState().enqueuePendingMessage({
+                conversationId: targetConversationId,
+                ...sent,
               });
               if (ownsLaunch()) clearAllFiles();
             } catch (error) {
@@ -361,6 +383,11 @@ export function HomeChatLauncher() {
             images: [],
             imagesMarkedUploadAsFile: [],
           });
+        } else if (isLocal && !hasAttachments && trimmed) {
+          useOptimisticUserMessageStore.getState().enqueuePendingMessage({
+            conversationId: targetConversationId,
+            text: trimmed,
+          });
         }
 
         if (clientLaunchId) {
@@ -373,6 +400,7 @@ export function HomeChatLauncher() {
         if (!ownsLaunch()) return;
         openAutomationSetupMode(targetConversationId);
         navigate(`/conversations/${targetConversationId}`);
+        isHandingOff = true;
       } catch (error) {
         // Prefer the server's own message; without one, keep the launcher's
         // existing wording (the error's message).
@@ -404,7 +432,9 @@ export function HomeChatLauncher() {
         }
       } finally {
         launchInFlight.current = false;
-        if (isLocal && isMountedRef.current) setLocalLaunch(null);
+        // Keep the submitted message and composer in place until routing commits.
+        if (isLocal && !isHandingOff && isMountedRef.current)
+          setLocalLaunch(null);
       }
     })();
   };

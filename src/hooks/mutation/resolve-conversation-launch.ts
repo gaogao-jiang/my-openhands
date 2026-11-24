@@ -39,6 +39,8 @@ export interface ConversationLaunch {
   profileHasRouter?: boolean;
   /** Local only: the launched ACP profile's server, for the conversation tag. */
   acpServer?: string;
+  /** Local only: the default profile is the Jora main agent. */
+  isJoraMainAgent?: boolean;
 }
 
 export interface ResolveConversationLaunchOptions {
@@ -50,6 +52,8 @@ export interface ResolveConversationLaunchOptions {
   agentProfileId?: string;
   /** The LLM profile to run, such as a parent conversation's current model. */
   llmProfile?: string | null;
+  /** Whether this launch is the Jora main conversation, not a generic child. */
+  isJoraMainAgent?: boolean;
 }
 
 /** Decide which agent profile and LLM a new conversation launches with. */
@@ -153,6 +157,10 @@ export async function resolveConversationLaunch(
     profileHasRouter:
       stored?.agent_kind === "openhands" && profileHasRouter(stored),
     acpServer: stored?.agent_kind === "acp" ? stored.acp_server : undefined,
+    isJoraMainAgent:
+      options.isJoraMainAgent ??
+      (profile?.agent_kind === "openhands" &&
+        profile.name === WELL_KNOWN_DEFAULT_AGENT_PROFILE_NAME),
   };
 }
 
@@ -279,6 +287,7 @@ function launchProfileOptions(
       ? { agentLlmProfileOverride: launch.llmProfileOverride }
       : {}),
     ...(launch.profileHasRouter ? { profileHasRouter: true } : {}),
+    ...(launch.isJoraMainAgent ? { isJoraMainAgent: true } : {}),
     ...(launch.acpServer ? { acpServer: launch.acpServer } : {}),
   };
 }

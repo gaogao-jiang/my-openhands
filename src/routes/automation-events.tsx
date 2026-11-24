@@ -11,6 +11,7 @@ import { getErrorStatus } from "#/hooks/query/use-settings";
 import { useAutomationPermissions } from "#/hooks/use-automation-permissions";
 import { I18nKey } from "#/i18n/declaration";
 import { getEventsPageSpec } from "#/manifests/automation-interface";
+import { localizeManifestPageCopy } from "#/manifests/automation-localization";
 import { getApiErrorMessage } from "#/utils/api-error-message";
 import { copyToClipboard } from "#/utils/copy-to-clipboard";
 
@@ -358,9 +359,11 @@ function EventsContent({
 
 export default function AutomationEvents() {
   const { backend, orgId } = useActiveBackend();
+  const { i18n } = useTranslation("openhands");
   const spec = getEventsPageSpec();
   const nav = useAutomationSubPageNav();
   if (!spec || !nav) return null;
+  const copy = localizeManifestPageCopy("events", spec, i18n.language);
   return (
     <ManifestSubpageLayout
       heading={nav.heading}
@@ -370,8 +373,8 @@ export default function AutomationEvents() {
       <EventsContent
         key={`${backend.id}:${orgId}:${backend.connectionRevision ?? 0}`}
         scope={[backend.id, orgId, backend.connectionRevision ?? 0]}
-        title={spec.title}
-        description={spec.description}
+        title={copy.title}
+        description={copy.description}
       />
     </ManifestSubpageLayout>
   );

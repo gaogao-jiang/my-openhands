@@ -145,7 +145,7 @@ export function ConversationName() {
 
   if (!conversation) {
     return (
-      <div className="flex items-center gap-2 h-5.5 text-base font-normal text-left pl-0 lg:pl-1 min-w-0">
+      <div className="flex items-center gap-2 h-5.5 text-sm font-normal text-left pl-0 lg:pl-1 min-w-0">
         <div className="text-contrast leading-5 truncate" title={displayTitle}>
           <ConversationTitleText title={displayTitle} pending={titlePending} />
         </div>
@@ -157,7 +157,7 @@ export function ConversationName() {
   return (
     <>
       <div
-        className="flex items-center gap-2 h-5.5 text-base font-normal text-left pl-0 lg:pl-1 min-w-0"
+        className="flex items-center gap-2 h-5.5 text-sm font-normal text-left pl-0 lg:pl-1 min-w-0"
         data-testid="conversation-name"
       >
         {titleMode === "edit" ? (
@@ -169,7 +169,7 @@ export function ConversationName() {
             onKeyUp={handleKeyUp}
             type="text"
             defaultValue={displayTitle}
-            className="text-contrast leading-5 bg-transparent border-none outline-none text-base font-normal w-fit max-w-fit field-sizing-content"
+            className="w-fit max-w-fit field-sizing-content appearance-none border-0 !bg-transparent leading-5 text-sm font-normal !text-contrast caret-contrast shadow-none outline-none placeholder:text-muted focus:!bg-transparent focus:!text-contrast focus:shadow-none focus:outline-none focus:ring-0"
           />
         ) : (
           <div

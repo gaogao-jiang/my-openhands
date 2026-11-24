@@ -26,7 +26,7 @@ export function ContextMenuListItem({
       disabled={isDisabled}
       className={cn(
         dropdownMenuRowForegroundClassName,
-        "text-nowrap",
+        "min-w-0 text-left",
         className,
       )}
     >

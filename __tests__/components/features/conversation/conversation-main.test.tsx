@@ -126,11 +126,25 @@ vi.mock(
 vi.mock(
   "#/components/features/conversation/conversation-name-with-status",
   () => ({
-    ConversationNameWithStatus: () => (
-      <div data-testid="conversation-name-with-status" />
+    ConversationNameWithStatus: ({
+      showRightPanelToggle,
+    }: {
+      showRightPanelToggle?: boolean;
+    }) => (
+      <div data-testid="conversation-name-with-status">
+        {showRightPanelToggle && (
+          <button data-testid="header-panel-toggle" type="button" />
+        )}
+      </div>
     ),
   }),
 );
+
+vi.mock("#/components/features/conversation/right-panel-toggle", () => ({
+  RightPanelToggle: () => (
+    <button type="button" data-testid="drawer-panel-toggle" />
+  ),
+}));
 
 vi.mock(
   "#/components/features/conversation/conversation-tabs/conversation-tabs",
@@ -218,6 +232,25 @@ describe("ConversationMain - Layout Transition Stability", () => {
     mockNavigate.mockClear();
     mockSetHasRightPanelToggled.mockClear();
     mockSetIsRightPanelShown.mockClear();
+  });
+
+  it("moves the panel toggle to the far end of the drawer header when open", () => {
+    const { rerender } = renderConversationMain();
+    expect(screen.getByTestId("header-panel-toggle")).toBeInTheDocument();
+    expect(screen.queryByTestId("drawer-panel-toggle")).not.toBeInTheDocument();
+
+    mockIsRightPanelShown = true;
+    rerender(conversationMainTree());
+    expect(screen.queryByTestId("header-panel-toggle")).not.toBeInTheDocument();
+    const drawerHeader = screen.getByTestId("tabs-pane-header");
+    expect(drawerHeader.lastElementChild).toBe(
+      screen.getByTestId("drawer-panel-toggle"),
+    );
+
+    mockIsRightPanelShown = false;
+    rerender(conversationMainTree());
+    expect(screen.getByTestId("header-panel-toggle")).toBeInTheDocument();
+    expect(screen.queryByTestId("drawer-panel-toggle")).not.toBeInTheDocument();
   });
 
   it("defers closed tabs until opened and preserves their state when closed again", async () => {

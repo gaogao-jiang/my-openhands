@@ -135,9 +135,7 @@ describe("Messages: opened steps and groups survive live updates", () => {
     const a2 = action("a2", "pwd");
     const { rerender } = renderChat([observation(a1)], [a1, observation(a1)]);
 
-    expect(screen.getByTestId("event-group-toggle")).toHaveTextContent(
-      "Inspecting the workspace",
-    );
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
     await user.click(screen.getByTestId("event-group-toggle"));
     expect(document.body.textContent).toContain("output of ls");
 
@@ -253,6 +251,31 @@ describe("Messages: reasoning in a finished conversation", () => {
     await user.click(within(group).getByTestId("collapsible-thinking-toggle"));
     expect(
       within(group).getByText("Need the working directory"),
+    ).toBeInTheDocument();
+  });
+
+  it("collapses tool narration by default and reveals it on demand", async () => {
+    const user = userEvent.setup();
+    const a1 = {
+      ...action("a1", "pwd"),
+      thought: [
+        { type: "text" as const, text: "I will inspect the workspace." },
+      ],
+    };
+    const o1 = observation(a1);
+
+    renderChat([o1], [a1, o1]);
+
+    const toggles = screen.getAllByTestId("event-group-toggle");
+    expect(toggles).toHaveLength(1);
+    expect(
+      screen.queryByText("I will inspect the workspace."),
+    ).not.toBeInTheDocument();
+
+    await user.click(toggles[0]);
+
+    expect(
+      screen.getByText("I will inspect the workspace."),
     ).toBeInTheDocument();
   });
 });
@@ -515,7 +538,7 @@ it("keeps rejection visible when the single command is collapsed", () => {
   );
 });
 
-it("keeps the command collapsed alongside reasoning, while retaining its descriptive group title", async () => {
+it("keeps the command collapsed alongside reasoning, while retaining its duration summary", async () => {
   agent.state = AgentState.AWAITING_USER_INPUT;
   const a1 = {
     ...action("reasoned", "ls"),
@@ -525,7 +548,7 @@ it("keeps the command collapsed alongside reasoning, while retaining its descrip
   const done = observation(a1);
   renderChat([done], [a1, done]);
   const heading = screen.getByTestId("event-group-toggle");
-  expect(heading).toHaveTextContent("Inspecting the workspace");
+  expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
   await userEvent.click(heading);
   expect(screen.getByTestId("collapsible-thinking")).toBeVisible();
   expect(document.body.textContent).not.toContain("output of ls");

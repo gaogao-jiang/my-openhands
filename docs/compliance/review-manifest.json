@@ -1,0 +1,19 @@
+{
+  "review_date": "2026-11-23",
+  "scope": "personal use and public source repository; not a legal opinion or a released-binary certification",
+  "repository": "my-openhands",
+  "reviewed_commit": "322a5555100309a72453c22a5bf72314f6eede18",
+  "compared_upstream": "OpenHands/OpenHands@428b3dc",
+  "upstream_tree": "428b3dc2a0e8d3d0f689a909e2607e33d973da76",
+  "lock_entries": 1444,
+  "external_unique_package_versions": 1371,
+  "registry_missing_license_resolved_by_actual_license": [
+    "khroma@2.1.0"
+  ],
+  "unresolved_dependency_declarations": 0,
+  "asset_files": 221,
+  "upstream_identical_assets": 221,
+  "text_files_scanned": 2841,
+  "third_party_binary_files": [],
+  "method": "Git blob equality for all media files; every committed npm lock entry reviewed; exact-version npm metadata compared; selected license texts/artifacts and brand usage inspected. No dependency versions were changed."
+}

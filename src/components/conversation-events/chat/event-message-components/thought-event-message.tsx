@@ -38,6 +38,7 @@ export function ThoughtEventMessage({
       isFromPlanningAgent={isFromPlanningAgent}
       timestamp={event.timestamp}
       feedbackKey={feedbackKey}
+      isFinalReply={false}
     />
   );
 }

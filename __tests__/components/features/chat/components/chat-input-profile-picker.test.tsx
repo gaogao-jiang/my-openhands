@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderWithProviders } from "test-utils";
 import { setStoredConversationMetadata } from "#/api/conversation-metadata-store";
+import { useAgentProfileSelectionStore } from "#/stores/agent-profile-selection-store";
 
 const useAgentProfilesMock = vi.fn();
 const useActiveConversationMock = vi.fn();
@@ -47,6 +48,7 @@ describe("ChatInputProfileMenuContent", () => {
     useActiveConversationMock.mockReset();
     activateProfileMutate.mockReset();
     createConversationMutate.mockReset();
+    useAgentProfileSelectionStore.setState({ selections: {} });
     // selectProfile chains .then off mutateAsync — keep a resolved default.
     createConversationMutate.mockResolvedValue({ conversation_id: "conv-x" });
     onClose.mockReset();
@@ -72,13 +74,16 @@ describe("ChatInputProfileMenuContent", () => {
       { navigation },
     );
 
-  it("activates the picked profile on the home page", () => {
+  it("stores the picked profile for this launch without activating the default", () => {
     renderMenu();
     fireEvent.click(
       screen.getByTestId("chat-input-agent-profile-option-Codex"),
     );
 
-    expect(activateProfileMutate).toHaveBeenCalledWith("id-codex");
+    expect(
+      Object.values(useAgentProfileSelectionStore.getState().selections),
+    ).toContain("id-codex");
+    expect(activateProfileMutate).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -223,6 +228,7 @@ describe("ChatInputAgentProfilePicker", () => {
     useActiveConversationMock.mockReset();
     useActiveConversationMock.mockReturnValue({ data: undefined });
     activateProfileMutate.mockReset();
+    useAgentProfileSelectionStore.setState({ selections: {} });
   });
 
   it("names the active profile and switches it from its menu", async () => {
@@ -241,7 +247,34 @@ describe("ChatInputAgentProfilePicker", () => {
       await screen.findByTestId("chat-input-agent-profile-option-Codex"),
     );
 
-    expect(activateProfileMutate).toHaveBeenCalledWith("id-codex");
+    expect(
+      Object.values(useAgentProfileSelectionStore.getState().selections),
+    ).toContain("id-codex");
+    expect(activateProfileMutate).not.toHaveBeenCalled();
+  });
+
+  it("offers Jora experts by display name and selects their stored UUID", async () => {
+    useAgentProfilesMock.mockReturnValue({
+      data: {
+        profiles: [
+          { id: "main-uuid", name: "default", agent_kind: "openhands" },
+          { id: "review-uuid", name: "Jora-Reviewer", agent_kind: "openhands" },
+        ],
+        active_agent_profile_id: "main-uuid",
+      },
+      isLoading: false,
+    });
+    renderWithProviders(<ChatInputAgentProfilePicker />, {
+      navigation: { conversationId: null },
+    });
+    const pill = screen.getByTestId("chat-input-agent-profile");
+    expect(pill).toHaveAccessibleName(expect.stringContaining("Jora"));
+    fireEvent.click(pill);
+    fireEvent.click(await screen.findByTitle("Jora Reviewer"));
+    expect(
+      Object.values(useAgentProfileSelectionStore.getState().selections),
+    ).toContain("review-uuid");
+    expect(activateProfileMutate).not.toHaveBeenCalled();
   });
 
   it("shows a placeholder pill without an active profile", async () => {
@@ -260,7 +293,10 @@ describe("ChatInputAgentProfilePicker", () => {
       await screen.findByTestId("chat-input-agent-profile-option-Codex"),
     );
 
-    expect(activateProfileMutate).toHaveBeenCalledWith("id-codex");
+    expect(
+      Object.values(useAgentProfileSelectionStore.getState().selections),
+    ).toContain("id-codex");
+    expect(activateProfileMutate).not.toHaveBeenCalled();
   });
 
   it("stays hidden when the backend has no profiles", () => {

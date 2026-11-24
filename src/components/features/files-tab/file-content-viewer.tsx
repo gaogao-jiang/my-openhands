@@ -13,6 +13,7 @@ import { COLOR_THEMES } from "#/themes/color-themes";
 import { cn } from "#/utils/utils";
 import { HighlightedSourceView } from "./highlighted-source-view";
 import type { ViewMode } from "./view-mode";
+import { DocxFilePreview } from "./docx-file-preview";
 
 interface FileContentViewerProps {
   path: string;
@@ -107,7 +108,7 @@ export function FileContentViewer({ path, viewMode }: FileContentViewerProps) {
     );
   }
 
-  const { kind, text, staticUrl, mimeType } = query.data;
+  const { kind, text, staticUrl, mimeType, bytes } = query.data;
   const bustedStaticUrl = withWorkspaceCacheBuster(staticUrl, mutationCounter);
 
   // ----- Plain mode: raw source bytes, syntax-highlighted when we can
@@ -160,6 +161,14 @@ export function FileContentViewer({ path, viewMode }: FileContentViewerProps) {
         data-testid="file-content-viewer-iframe"
         className="h-full w-full bg-white"
       />
+    );
+  }
+
+  if (kind === "document" && path.toLowerCase().endsWith(".docx")) {
+    return bytes ? (
+      <DocxFilePreview bytes={bytes} path={path} />
+    ) : (
+      <UnpreviewableFallback path={path} />
     );
   }
 

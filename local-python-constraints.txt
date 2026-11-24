@@ -1,0 +1,3 @@
+# Local compatibility workaround for OpenHands SDK 1.63.0.
+# LiteLLM 1.109.3 removes an import required by this SDK.
+litellm==1.108.3

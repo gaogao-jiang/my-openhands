@@ -9,6 +9,7 @@ import { useActivateAgentProfile } from "#/hooks/mutation/use-activate-agent-pro
 import { useCanManageOrgProfiles } from "#/hooks/use-can-manage-org-profiles";
 import { displaySuccessToast } from "#/utils/custom-toast-handlers";
 import { I18nKey } from "#/i18n/declaration";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 
 interface AgentProfilesManagerProps {
   onAddProfile?: () => void;
@@ -37,7 +38,9 @@ export function AgentProfilesManager({
     try {
       await activateProfile.mutateAsync(profile.id);
       displaySuccessToast(
-        t(I18nKey.SETTINGS$PROFILE_ACTIVATED, { name: profile.name }),
+        t(I18nKey.SETTINGS$PROFILE_ACTIVATED, {
+          name: getAgentProfileDisplayName(profile),
+        }),
       );
     } catch (error) {
       // The global mutation error toast reports the failure; just log here.
@@ -50,7 +53,7 @@ export function AgentProfilesManager({
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-medium text-contrast">
-            {t(I18nKey.SETTINGS$AVAILABLE_PROFILES)}
+            {t(I18nKey.CHAT$MANAGE_AGENTS)}
           </h2>
           {onAddProfile && canManage ? (
             <BrandButton

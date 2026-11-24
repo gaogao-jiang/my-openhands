@@ -296,6 +296,7 @@ export default defineConfig(({ mode }) => {
         // Pre-bundle ALL dependencies to prevent runtime optimization and page reloads
         // These are discovered during initial app load:
         "posthog-js",
+        "fflate",
         "@tanstack/react-query",
         "react-hot-toast",
         "i18next",
@@ -501,7 +502,7 @@ export default defineConfig(({ mode }) => {
           : {}),
       },
       watch: {
-        ignored: ["**/node_modules/**", "**/.git/**"],
+        ignored: ["**/node_modules/**", "**/.git/**", "**/build/**"],
       },
     },
     ssr: {

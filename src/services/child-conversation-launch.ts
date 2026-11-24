@@ -26,11 +26,15 @@ import {
   CHILD_CONVERSATION_ISOLATIONS,
   CHILD_CONVERSATION_RESULT_PREFIX,
   CHILD_CONVERSATION_TARGETS,
+  JORA_SUBAGENT_PROFILE_NAMES,
+  JORA_SUBAGENT_TYPES,
   LAUNCH_CHILD_CONVERSATION_TOOL_NAME,
   MIN_AGENT_SERVER_VERSION_FOR_PARENT_LINK,
   type ChildConversationIsolation,
   type ChildConversationTarget,
+  type JoraSubagentType,
 } from "#/constants/child-conversation";
+import AgentProfilesService from "#/api/agent-profiles-service/agent-profiles-service.api";
 import type { LaunchChildConversationAction } from "#/types/agent-server/core";
 import { buildAgentCanvasUrl } from "#/utils/base-path";
 import { claimClientToolCall } from "#/utils/claim-client-tool-call";
@@ -71,6 +75,9 @@ interface LaunchSuccess {
   backend?: string;
   /** Whether the parent/child link was persisted server-side. */
   parent_link: boolean;
+  /** Local delegated child identity, when a Jora specialist was requested. */
+  agent_profile_id?: string;
+  agent_profile_revision?: number;
   /** Present when `parent_link` is false, explaining why. */
   parent_link_note?: string;
 }
@@ -90,6 +97,7 @@ interface ValidatedParams {
   repository: string | null;
   branch: string | null;
   isolation: ChildConversationIsolation;
+  subagentType: JoraSubagentType | null;
 }
 
 const failure = (error: string, guidance: string): LaunchFailure => ({
@@ -149,6 +157,9 @@ function validateLaunchParams(
   const isolation = blankToNull(
     action.isolation,
   ) as ChildConversationIsolation | null;
+  const subagentType = blankToNull(
+    action.subagent_type,
+  ) as JoraSubagentType | null;
 
   if (target === "local" && (repository || branch)) {
     return {
@@ -190,6 +201,16 @@ function validateLaunchParams(
     };
   }
 
+  if (subagentType && !JORA_SUBAGENT_TYPES.includes(subagentType)) {
+    return {
+      ok: false,
+      failure: failure(
+        `Unknown subagent_type ${JSON.stringify(action.subagent_type)}.`,
+        `\`subagent_type\` must be exactly ${quoted(JORA_SUBAGENT_TYPES)}. Omit it for a generic child conversation.`,
+      ),
+    };
+  }
+
   return {
     ok: true,
     params: {
@@ -199,6 +220,7 @@ function validateLaunchParams(
       repository,
       branch,
       isolation: isolation ?? "worktree",
+      subagentType,
     },
   };
 }
@@ -245,7 +267,10 @@ const SHARED_FALLBACK_CONSEQUENCE =
   "The child was launched in this conversation's directory instead, so it can see work in progress here and the two agents may conflict over the same files.";
 
 /** The parent's Agent Profile and current LLM, so the child stays in its scope. */
-async function parentProfileLaunch(parentConversationId: string) {
+async function parentProfileLaunch(
+  parentConversationId: string,
+  agentProfileId?: string,
+) {
   const [parent] =
     await AgentServerConversationService.batchGetAppConversations([
       parentConversationId,
@@ -256,10 +281,32 @@ async function parentProfileLaunch(parentConversationId: string) {
     backendId: backend.id,
     orgId,
     isCloud: false,
-    agentProfileId: parent?.launched_agent_profile?.agent_profile_id,
+    isJoraMainAgent: false,
+    agentProfileId:
+      agentProfileId ?? parent?.launched_agent_profile?.agent_profile_id,
     llmProfile:
       parent?.agent_kind === "openhands" ? parent.active_profile : null,
   };
+}
+
+async function resolveSubagentProfile(
+  subagentType: JoraSubagentType | null,
+): Promise<
+  { id: string; revision: number } | { error: string; guidance: string } | null
+> {
+  if (!subagentType) return null;
+  const profileName = JORA_SUBAGENT_PROFILE_NAMES[subagentType];
+  const response = await AgentProfilesService.listProfiles();
+  const profile = response.profiles.find(
+    (candidate) => candidate.name === profileName && candidate.id,
+  );
+  if (!profile?.id) {
+    return {
+      error: `The ${subagentType} specialist profile is not available.`,
+      guidance: `No profile named ${profileName} was found on this backend. Do not claim that the specialist ran. Ask the user to provision the Jora specialist profiles or retry without subagent_type.`,
+    };
+  }
+  return { id: profile.id, revision: profile.revision ?? 0 };
 }
 
 async function launchLocalChild(
@@ -274,7 +321,14 @@ async function launchLocalChild(
       parentConversationId,
     );
   const parentMetadata = getStoredConversationMetadata(parentConversationId);
-  const profileLaunch = await parentProfileLaunch(parentConversationId);
+  const delegatedProfile = await resolveSubagentProfile(params.subagentType);
+  if (delegatedProfile && "error" in delegatedProfile) {
+    return failure(delegatedProfile.error, delegatedProfile.guidance);
+  }
+  const profileLaunch = await parentProfileLaunch(
+    parentConversationId,
+    delegatedProfile?.id,
+  );
 
   const createChild = (isolation: ChildConversationIsolation) =>
     launchConversation(profileLaunch, {
@@ -340,6 +394,12 @@ async function launchLocalChild(
     ...(isolationNote ? { isolation_note: isolationNote } : {}),
     parent_link: !parentLinkNote,
     ...(parentLinkNote ? { parent_link_note: parentLinkNote } : {}),
+    ...(delegatedProfile
+      ? {
+          agent_profile_id: delegatedProfile.id,
+          agent_profile_revision: delegatedProfile.revision,
+        }
+      : {}),
   };
 }
 
@@ -381,6 +441,12 @@ async function launchCloudChild(
   params: ValidatedParams,
   parentConversationId: string,
 ): Promise<LaunchChildConversationResult> {
+  if (params.subagentType) {
+    return failure(
+      "Specialist subagents are not available for a Cloud child launched from this local parent.",
+      "The current Cloud child contract cannot resolve the local Jora specialist Profile identity. Omit subagent_type or use a Local child until the Cloud Agent Server contract supports profile-scoped delegation.",
+    );
+  }
   const backend = pickCloudBackendForLaunch();
   if (!backend) {
     return failure(

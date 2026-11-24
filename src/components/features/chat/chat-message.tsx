@@ -1,10 +1,9 @@
 import React from "react";
-import { LoaderCircle } from "lucide-react";
+import { Check, LoaderCircle, Pencil } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { cn } from "#/utils/utils";
-import { CopyToClipboardButton } from "#/components/shared/buttons/copy-to-clipboard-button";
-import type { SourceType } from "#/types/agent-server/core/base/common";
 import { StyledTooltip } from "#/components/shared/buttons/styled-tooltip";
+import type { SourceType } from "#/types/agent-server/core/base/common";
 import { I18nKey } from "#/i18n/declaration";
 import { TextShimmer } from "#/components/shared/text-shimmer";
 import { MessageTimestamp } from "./message-timestamp";
@@ -20,6 +19,8 @@ import {
 import { copyToClipboard } from "#/utils/copy-to-clipboard";
 import { displayErrorToast } from "#/utils/custom-toast-handlers";
 import { AssistantMessageToolbar } from "./assistant-message-toolbar";
+import { RoundedCopyIcon } from "./rounded-copy-icon";
+import { MESSAGE_TOOLTIP_CLASS } from "./message-tooltip-style";
 
 export type ChatMessagePendingStatus = "sending" | "error";
 
@@ -43,6 +44,10 @@ interface ChatMessageProps {
   isStreaming?: boolean;
   feedbackKey?: string;
   showActions?: boolean;
+  /** Only completed final replies show the assistant footer. */
+  isFinalReply?: boolean;
+  onEdit?: (message: string) => Promise<void>;
+  editDisabled?: boolean;
 }
 
 export function ChatMessage({
@@ -61,12 +66,41 @@ export function ChatMessage({
   isStreaming = false,
   feedbackKey,
   showActions = false,
+  isFinalReply = true,
+  onEdit,
+  editDisabled = false,
 }: React.PropsWithChildren<ChatMessageProps>) {
   const { t } = useTranslation("openhands");
   const [isHovering, setIsHovering] = React.useState(false);
   const [isFocused, setIsFocused] = React.useState(false);
   const [isActionsMenuOpen, setIsActionsMenuOpen] = React.useState(false);
   const [isCopy, setIsCopy] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [editText, setEditText] = React.useState(message);
+  const [isSavingEdit, setIsSavingEdit] = React.useState(false);
+  const focusEditor = React.useCallback((node: HTMLTextAreaElement | null) => {
+    node?.focus();
+  }, []);
+  const editInFlight = React.useRef(false);
+  const saveEdit = async () => {
+    if (!onEdit || !editText.trim() || editDisabled || editInFlight.current)
+      return;
+    if (editText === message) {
+      setIsEditing(false);
+      return;
+    }
+    editInFlight.current = true;
+    setIsSavingEdit(true);
+    try {
+      await onEdit(editText);
+      setIsEditing(false);
+    } catch {
+      // Keep the draft open for retry; the mutation reports the error.
+    } finally {
+      editInFlight.current = false;
+      setIsSavingEdit(false);
+    }
+  };
   // A long user prompt's "view more" expansion survives a virtualized row
   // unmounting and remounting, like the other row controls.
   const truncationKey = useEventExpansionKey("truncation");
@@ -178,10 +212,59 @@ export function ChatMessage({
       >
         {message}
       </MarkdownRenderer>
+      {isStreaming && (
+        <span
+          aria-hidden="true"
+          data-testid="streaming-cursor"
+          className="ml-0.5 inline-block h-4 w-1 animate-pulse rounded-sm bg-muted align-text-bottom"
+        />
+      )}
     </div>
   );
 
-  const renderedMessageContent = messageContent;
+  const renderedMessageContent =
+    isEditing && type === "user" ? (
+      <div
+        className="flex min-w-64 max-w-full flex-col gap-2"
+        data-testid="user-message-editor"
+      >
+        <textarea
+          ref={focusEditor}
+          aria-label={t(I18nKey.BUTTON$EDIT)}
+          value={editText}
+          disabled={isSavingEdit}
+          onChange={(event) => setEditText(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && !isSavingEdit) setIsEditing(false);
+          }}
+          rows={4}
+          className="w-full resize-y rounded-md border border-border bg-transparent p-2 text-sm text-foreground focus-visible:outline-2 focus-visible:outline-focus"
+        />
+        <p className="text-xs text-muted">
+          {t(I18nKey.CHAT_INTERFACE$EDIT_REGENERATE_NOTICE)}
+        </p>
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            disabled={isSavingEdit}
+            onClick={() => setIsEditing(false)}
+            className="cursor-pointer rounded-md px-2 py-1 text-sm text-muted"
+          >
+            {t(I18nKey.BUTTON$CANCEL)}
+          </button>
+          <button
+            type="button"
+            disabled={isSavingEdit || editDisabled || !editText.trim()}
+            onClick={saveEdit}
+            className="cursor-pointer rounded-md border border-border-subtle bg-tertiary px-2 py-1 text-sm text-foreground hover:bg-interactive-hover disabled:opacity-40"
+          >
+            {t(I18nKey.CHAT_INTERFACE$EDIT_SEND)}
+          </button>
+        </div>
+      </div>
+    ) : (
+      messageContent
+    );
 
   const messageBubble = (
     <article
@@ -202,7 +285,7 @@ export function ChatMessage({
         "rounded-xl relative w-fit max-w-full flex flex-col",
         hasBubbleChildren && "gap-2",
         type === "user" &&
-          "mt-6 bg-tertiary scroll-fade-tertiary self-end px-4 py-2.5",
+          "mt-6 mb-7 bg-tertiary scroll-fade-tertiary self-end px-4 py-2.5",
         type === "agent" && "mt-6 w-full max-w-full bg-transparent",
         isFromPlanningAgent &&
           type === "agent" &&
@@ -210,82 +293,108 @@ export function ChatMessage({
         pendingStatus === "error" && "border border-status-error/40",
       )}
     >
-      <div
-        className={cn(
-          type === "agent"
-            ? "order-last flex min-h-7 w-full items-center justify-start gap-1.5"
-            : "absolute -top-2.5 -right-2.5 z-10 flex items-center gap-1",
-          type !== "agent" &&
-            (!isHovering || pendingStatus === "sending") &&
-            "invisible",
-        )}
-      >
-        {type === "agent" ? (
-          <AssistantMessageToolbar
-            message={message}
-            feedbackKey={feedbackKey}
-            isCopy={isCopy}
-            onCopy={handleCopyToClipboard}
-            isStreaming={isStreaming}
-            actions={actions}
-            onMenuOpenChange={setIsActionsMenuOpen}
-            className={cn(
-              "transition-opacity duration-150",
-              !(showActions || isHovering || isFocused || isActionsMenuOpen) &&
-                "pointer-events-none opacity-0",
-            )}
-          />
-        ) : (
-          <div
-            className="flex items-center gap-1"
-            onClick={(event) => event.stopPropagation()}
-          >
-            {actions?.map((action, index) =>
-              action.tooltip ? (
+      {(type !== "agent" || (isFinalReply && !isStreaming)) && (
+        <div
+          data-testid={type === "user" ? "user-message-actions" : undefined}
+          onClick={(event) => event.stopPropagation()}
+          className={cn(
+            type === "agent"
+              ? "order-last flex min-h-7 w-full items-center justify-start gap-1.5"
+              : "absolute top-full right-0 z-10 flex w-max min-h-7 items-center gap-2 pt-1 text-muted",
+            type !== "agent" &&
+              (pendingStatus === "sending" ||
+                isEditing ||
+                !(isHovering || isFocused)) &&
+              "pointer-events-none opacity-0",
+          )}
+        >
+          {type === "agent" ? (
+            <AssistantMessageToolbar
+              message={message}
+              feedbackKey={feedbackKey}
+              isCopy={isCopy}
+              onCopy={handleCopyToClipboard}
+              isStreaming={isStreaming}
+              isFinalReply={isFinalReply && !isStreaming}
+              actions={actions}
+              onMenuOpenChange={setIsActionsMenuOpen}
+              className={cn(
+                "transition-opacity duration-150",
+                !(
+                  (isFinalReply && !isStreaming && showActions) ||
+                  isHovering ||
+                  isFocused ||
+                  isActionsMenuOpen
+                ) && "pointer-events-none opacity-0",
+              )}
+            />
+          ) : (
+            <>
+              {timestamp && !isPendingUserMessage && (
+                <MessageTimestamp
+                  timestamp={timestamp}
+                  active={isHovering || isFocused}
+                  align="right"
+                  className="static pt-0"
+                />
+              )}
+              <StyledTooltip
+                tooltipClassName={MESSAGE_TOOLTIP_CLASS}
+                content={t(
+                  isCopy ? I18nKey.BUTTON$COPIED : I18nKey.BUTTON$COPY,
+                )}
+                placement="top"
+              >
+                <button
+                  type="button"
+                  data-testid="copy-to-clipboard"
+                  aria-label={t(
+                    isCopy ? I18nKey.BUTTON$COPIED : I18nKey.BUTTON$COPY,
+                  )}
+                  disabled={isCopy}
+                  onClick={handleCopyToClipboard}
+                  className="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 text-muted hover:text-contrast focus-visible:outline-2 focus-visible:outline-focus disabled:cursor-default"
+                >
+                  {isCopy ? (
+                    <Check size={14} strokeWidth={1.5} aria-hidden />
+                  ) : (
+                    <RoundedCopyIcon size={14} strokeWidth={1.6} aria-hidden />
+                  )}
+                </button>
+              </StyledTooltip>
+              {type === "user" && onEdit && !isPendingUserMessage && (
                 <StyledTooltip
-                  key={index}
-                  content={action.tooltip}
+                  content={t(I18nKey.BUTTON$EDIT)}
                   placement="top"
+                  tooltipClassName={MESSAGE_TOOLTIP_CLASS}
                 >
                   <button
                     type="button"
-                    onClick={action.onClick}
-                    className="button-base p-1 cursor-pointer"
-                    aria-label={action.tooltip}
+                    data-testid="edit-user-message"
+                    aria-label={t(I18nKey.BUTTON$EDIT)}
+                    disabled={editDisabled}
+                    onClick={() => {
+                      setEditText(message);
+                      setIsEditing(true);
+                    }}
+                    className="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent p-0 text-muted hover:text-contrast focus-visible:outline-2 focus-visible:outline-focus disabled:cursor-default disabled:opacity-40"
                   >
-                    {action.icon}
+                    <Pencil size={13} strokeWidth={1.5} aria-hidden />
                   </button>
                 </StyledTooltip>
-              ) : (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={action.onClick}
-                  className="button-base p-1 cursor-pointer"
-                  aria-label={`Action ${index + 1}`}
-                >
-                  {action.icon}
-                </button>
-              ),
-            )}
-
-            <CopyToClipboardButton
-              isHidden={!isHovering}
-              isDisabled={isCopy}
-              onClick={handleCopyToClipboard}
-              mode={isCopy ? "copied" : "copy"}
+              )}
+            </>
+          )}
+          {type === "agent" && timestamp && !isPendingUserMessage && (
+            <MessageTimestamp
+              timestamp={timestamp}
+              active={isHovering}
+              align="left"
+              className="static pt-0 text-left text-muted"
             />
-          </div>
-        )}
-        {type === "agent" && timestamp && !isPendingUserMessage && (
-          <MessageTimestamp
-            timestamp={timestamp}
-            active={isHovering}
-            align="left"
-            className="static pt-0 text-left text-muted"
-          />
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {renderedMessageContent}
 
@@ -312,7 +421,7 @@ export function ChatMessage({
         </button>
       ) : null}
 
-      {isCollapsed ? (
+      {isCollapsed && !isEditing ? (
         <button
           type="button"
           data-testid="chat-message-expand"
@@ -324,13 +433,6 @@ export function ChatMessage({
       ) : null}
 
       {children}
-      {type === "user" && timestamp && !isPendingUserMessage && (
-        <MessageTimestamp
-          timestamp={timestamp}
-          active={isHovering}
-          align="right"
-        />
-      )}
     </article>
   );
 

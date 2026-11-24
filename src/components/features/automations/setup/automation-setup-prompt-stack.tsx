@@ -300,7 +300,7 @@ export function SetupAgentProfilePill({
     <ProfilePill
       testId="automation-setup-agent-profile"
       label={label}
-      tooltip={t(I18nKey.CHAT$AGENT_PROFILE_PLACEHOLDER)}
+      tooltip={t(I18nKey.CHAT$SELECT_AGENT)}
       canOpen={!isLoading && profiles.length > 0}
     >
       {(close) => (
@@ -384,7 +384,7 @@ export function SetupProfilePickers({
     >
       <div className="flex min-w-0 flex-col gap-1.5">
         <span className="text-xs text-muted">
-          {t(I18nKey.CHAT$AGENT_PROFILE_PLACEHOLDER)}
+          {t(I18nKey.CHAT$SELECT_AGENT)}
         </span>
         <SetupAgentProfilePill
           value={agentProfileId}

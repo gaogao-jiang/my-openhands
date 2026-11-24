@@ -25,8 +25,10 @@ const IMAGE_EXTENSIONS = new Set([
 ]);
 
 const PDF_EXTENSIONS = new Set(["pdf"]);
+const DOCUMENT_EXTENSIONS = new Set(["docx"]);
 
-export type WorkspaceFileKind = "text" | "image" | "pdf" | "binary";
+export type WorkspaceFileKind =
+  "text" | "image" | "pdf" | "document" | "binary";
 
 export interface WorkspaceFileContent {
   path: string;
@@ -44,6 +46,8 @@ export interface WorkspaceFileContent {
   staticUrl: string;
   /** MIME type guessed from the file extension. */
   mimeType: string;
+  /** Original bytes for formats that need a client-side renderer. */
+  bytes?: Uint8Array;
 }
 
 function getExtension(path: string): string {
@@ -88,6 +92,8 @@ function guessMimeType(path: string): string {
       return "image/avif";
     case "pdf":
       return "application/pdf";
+    case "docx":
+      return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     default:
       return "text/plain";
   }
@@ -97,6 +103,7 @@ function classifyKind(path: string): WorkspaceFileKind {
   const ext = getExtension(path);
   if (IMAGE_EXTENSIONS.has(ext)) return "image";
   if (PDF_EXTENSIONS.has(ext)) return "pdf";
+  if (DOCUMENT_EXTENSIONS.has(ext)) return "document";
   // Everything else is treated as text and decoded; if decoding produces
   // null bytes we fall back to "binary" downstream.
   return "text";
@@ -230,12 +237,21 @@ export function useWorkspaceFileContent(relativePath: string | null) {
             mimeType,
           };
         }
+        const buf = new TextEncoder().encode(content);
+        if (kind === "document") {
+          return {
+            path: relativePath,
+            kind: "binary",
+            text: null,
+            staticUrl: `data:application/octet-stream;base64,${arrayBufferToBase64(buf.buffer)}`,
+            mimeType,
+          };
+        }
         // Image / PDF via cloud API: the endpoint returns text, so binary
         // bytes are decoded as UTF-8 server-side and can't round-trip
         // faithfully. Best-effort base64 of the returned string — a proper
         // binary path needs a cloud download endpoint (the old byte-accurate
         // downloadFile route went through the removed /api/cloud-proxy).
-        const buf = new TextEncoder().encode(content);
         return {
           path: relativePath,
           kind,
@@ -258,7 +274,7 @@ export function useWorkspaceFileContent(relativePath: string | null) {
       // `useWorkspaceSession` so the request authenticates without us
       // having to set any headers (which a top-level <iframe src> can't
       // do anyway).
-      if (kind !== "text") {
+      if (kind === "image" || kind === "pdf") {
         return {
           path: relativePath,
           kind,
@@ -287,6 +303,16 @@ export function useWorkspaceFileContent(relativePath: string | null) {
       }
 
       const buffer = await response.arrayBuffer();
+      if (kind === "document") {
+        return {
+          path: relativePath,
+          kind,
+          text: null,
+          bytes: new Uint8Array(buffer),
+          staticUrl,
+          mimeType,
+        };
+      }
       if (isLikelyBinary(buffer)) {
         return {
           path: relativePath,

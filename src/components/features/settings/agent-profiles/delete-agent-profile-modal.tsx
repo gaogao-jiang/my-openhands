@@ -10,6 +10,7 @@ import {
   displaySuccessToast,
 } from "#/utils/custom-toast-handlers";
 import { I18nKey } from "#/i18n/declaration";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 
 interface DeleteAgentProfileModalProps {
   profile: AgentProfileSummary | null;
@@ -30,7 +31,9 @@ export function DeleteAgentProfileModal({
     try {
       await deleteProfile.mutateAsync(profile.name);
       displaySuccessToast(
-        t(I18nKey.SETTINGS$PROFILE_DELETED, { name: profile.name }),
+        t(I18nKey.SETTINGS$PROFILE_DELETED, {
+          name: getAgentProfileDisplayName(profile),
+        }),
       );
       onClose();
     } catch (error) {
@@ -87,7 +90,7 @@ export function DeleteAgentProfileModal({
     >
       <p className="text-sm break-words">
         {t(I18nKey.SETTINGS$PROFILE_DELETE_CONFIRMATION, {
-          name: profile.name,
+          name: getAgentProfileDisplayName(profile),
         })}
       </p>
     </ApiKeyModalBase>

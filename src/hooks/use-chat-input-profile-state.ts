@@ -1,7 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 import { useIsMutating } from "@tanstack/react-query";
 import type { AgentProfileSummary } from "#/api/agent-profiles-service/agent-profiles-service.api";
 import { getStoredConversationMetadata } from "#/api/conversation-metadata-store";
+import { useActiveBackend } from "#/contexts/active-backend-context";
 import { useNavigation } from "#/context/navigation-context";
 import { useAgentProfiles } from "#/hooks/query/use-agent-profiles";
 import { useActiveConversation } from "#/hooks/query/use-active-conversation";
@@ -11,9 +13,9 @@ import {
   type CreateConversationVariables,
 } from "#/hooks/mutation/use-create-conversation";
 import {
-  useActivateAgentProfile,
-  ACTIVATE_AGENT_PROFILE_MUTATION_KEY,
-} from "#/hooks/mutation/use-activate-agent-profile";
+  agentProfileSelectionKey,
+  useAgentProfileSelectionStore,
+} from "#/stores/agent-profile-selection-store";
 
 export interface ChatInputProfileState {
   profiles: AgentProfileSummary[];
@@ -26,39 +28,61 @@ export interface ChatInputProfileState {
 }
 
 export function useChatInputProfileState(): ChatInputProfileState {
+  const { backend, orgId } = useActiveBackend();
   const { conversationId, navigate } = useNavigation();
   const { data: conversation, isLoading: isLoadingConversation } =
     useActiveConversation();
   const { data: agentProfiles, isLoading: isLoadingProfiles } =
     useAgentProfiles();
   const createConversation = useCreateConversation();
-  const activateProfile = useActivateAgentProfile();
-  const activatingProfiles = useIsMutating({
-    mutationKey: ACTIVATE_AGENT_PROFILE_MUTATION_KEY,
-  });
+  const setDraftProfile = useAgentProfileSelectionStore(
+    (state) => state.setSelection,
+  );
+  const selectedDraftProfileId = useAgentProfileSelectionStore(
+    (state) =>
+      state.selections[agentProfileSelectionKey(backend.id, orgId)] ?? null,
+  );
+  const profileScope = agentProfileSelectionKey(backend.id, orgId);
   const creatingConversations = useIsMutating({
     mutationKey: CREATE_CONVERSATION_MUTATION_KEY,
   });
   const isTaskRoute = conversationId?.startsWith("task-") ?? false;
-  const isSwitching =
-    isTaskRoute || activatingProfiles > 0 || creatingConversations > 0;
+  const isSwitching = isTaskRoute || creatingConversations > 0;
 
   const profiles = agentProfiles?.profiles ?? [];
   const isInConversation = Boolean(conversationId);
+  const defaultProfileId = agentProfiles?.active_agent_profile_id ?? null;
+  const draftProfileId =
+    selectedDraftProfileId &&
+    profiles.some((profile) => profile.id === selectedDraftProfileId)
+      ? selectedDraftProfileId
+      : null;
+  useEffect(() => {
+    if (
+      !isInConversation &&
+      selectedDraftProfileId &&
+      !profiles.some((profile) => profile.id === selectedDraftProfileId)
+    ) {
+      useAgentProfileSelectionStore.getState().clearSelection(profileScope);
+    }
+  }, [isInConversation, profileScope, profiles, selectedDraftProfileId]);
   const currentProfileId = isInConversation
     ? (conversation?.launched_agent_profile?.agent_profile_id ??
-      agentProfiles?.active_agent_profile_id ??
+      defaultProfileId ??
       null)
-    : (agentProfiles?.active_agent_profile_id ?? null);
-  const currentProfileName =
-    profiles.find((p) => p.id != null && p.id === currentProfileId)?.name ??
-    null;
+    : (draftProfileId ?? defaultProfileId);
+  const currentProfile = profiles.find(
+    (p) => p.id != null && p.id === currentProfileId,
+  );
+  const currentProfileName = currentProfile
+    ? getAgentProfileDisplayName(currentProfile)
+    : null;
 
   const selectProfile = useCallback(
     (profile: AgentProfileSummary) => {
       if (isTaskRoute || !profile.id || profile.id === currentProfileId) return;
       if (!isInConversation) {
-        activateProfile.mutate(profile.id);
+        setDraftProfile(profileScope, profile.id);
         return;
       }
 
@@ -98,7 +122,6 @@ export function useChatInputProfileState(): ChatInputProfileState {
         .catch(() => {});
     },
     [
-      activateProfile,
       conversation,
       conversationId,
       createConversation,
@@ -106,6 +129,8 @@ export function useChatInputProfileState(): ChatInputProfileState {
       isInConversation,
       isTaskRoute,
       navigate,
+      profileScope,
+      setDraftProfile,
     ],
   );
 

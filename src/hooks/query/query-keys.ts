@@ -32,6 +32,14 @@ export const ACP_MODEL_DISCOVERY_QUERY_KEYS = {
 
 export const AGENT_PROFILES_QUERY_KEYS = {
   all: ["agent-profiles"] as const,
+  presets: (
+    backendId: string,
+    revision: number | undefined,
+    llmName: string | undefined,
+    model: string | null | undefined,
+    orgId: string | null | undefined,
+  ) =>
+    ["jora-agent-presets", backendId, revision, llmName, model, orgId] as const,
   // Nested under `all` so profile mutations invalidate cached details too.
   detail: (backendId: string, orgId: string | null | undefined, name: string) =>
     ["agent-profiles", backendId, orgId, "detail", name] as const,

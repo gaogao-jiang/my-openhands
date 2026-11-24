@@ -94,9 +94,8 @@ export function parseWorkspaceFileList(stdout: string, maxFiles: number) {
 
 // A Windows-hosted local backend runs commands through cmd.exe, where `find`
 // is the text-search tool and `head` and `/dev/null` do not exist, so the POSIX
-// pipeline exits non-zero and the Files tab shows its empty state. `dir /s`
-// prints absolute backslash paths; findstr drops excluded directories and the
-// caller makes the rest relative with `parseWindowsWorkspaceFileList`.
+// pipeline exits non-zero and the Files tab shows its empty state. PowerShell
+// emits UTF-8 paths, which the caller converts to relative paths.
 // The agent-server reports its own working directory, so its shape tells us
 // which shell runs the command. The browser's OS says nothing about that: a
 // Windows browser can talk to a Linux agent-server in Docker Desktop, and a
@@ -105,29 +104,42 @@ export function isWindowsWorkingDir(workingDir: string | undefined): boolean {
   return !!workingDir && /^(?:[A-Za-z]:[\\/]|[A-Za-z]:$|\\\\)/.test(workingDir);
 }
 
-const isCmdSafePattern = (pattern: string) => !/["%^&|<>!*?]/.test(pattern);
-
 export function buildWindowsWorkspaceFileListCommand(
   options: WorkspaceFileDiscovery,
-  workingDir: string,
+  _workingDir: string,
 ): string {
-  const root = workingDir.replace(/[\\/]+$/, "").toLowerCase();
-  const excludes = options.excludedPatterns
-    .map((pattern) => pattern.replace(/^\.\//, "").replaceAll("/", "\\"))
-    .filter(
-      (pattern) =>
-        isCmdSafePattern(pattern) &&
-        // A pattern that already appears in the workspace root path would drop
-        // every file; the parser filters those on the relative path instead.
-        !`\\${root.replaceAll("/", "\\")}\\`.includes(
-          `\\${pattern.toLowerCase()}\\`,
-        ),
-    )
-    .map((pattern) => `/c:"\\${pattern}\\"`);
-  const filter = excludes.length
-    ? ` | findstr /v /i ${excludes.join(" ")}`
-    : "";
-  return `dir /b /s /a:-d 2>nul${filter} | sort`;
+  // EncodedCommand avoids cmd quoting and preserves Unicode exclusion patterns.
+  // Enumerate directories ourselves so excluded trees are never traversed.
+  const patterns = options.excludedPatterns.map(
+    (pattern) => `'${pattern.replace(/^\.\//, "").replaceAll("'", "''")}'`,
+  );
+  const script = `[Console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+$patterns = @(${patterns.join(",")})
+$root = (Get-Location).Path.TrimEnd([char]92)
+$dirs = New-Object 'System.Collections.Generic.Stack[string]'
+$dirs.Push($root)
+while ($dirs.Count -gt 0) {
+  $dir = $dirs.Pop()
+  foreach ($item in (Get-ChildItem -LiteralPath $dir -Force -ErrorAction SilentlyContinue)) {
+    if ($item.PSIsContainer) {
+      if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { continue }
+      $relative = $item.FullName.Substring($root.Length).TrimStart([char]92).Replace([char]92, [char]47)
+      $skip = $false
+      foreach ($pattern in $patterns) {
+        if (($pattern.Contains('/') -and $relative -like $pattern) -or (!$pattern.Contains('/') -and $item.Name -like $pattern)) { $skip = $true; break }
+      }
+      if (!$skip) { $dirs.Push($item.FullName) }
+    } elseif (${options.includeSymlinks ? "$true" : "(($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -eq 0)"}) {
+      [Console]::WriteLine($item.FullName)
+    }
+  }
+}`;
+  let bytes = "";
+  for (let i = 0; i < script.length; i += 1) {
+    const code = script.charCodeAt(i);
+    bytes += String.fromCharCode(code & 255, code >> 8);
+  }
+  return `powershell -NoProfile -NonInteractive -EncodedCommand ${btoa(bytes)}`;
 }
 
 export function parseWindowsWorkspaceFileList(
@@ -153,5 +165,5 @@ export function parseWindowsWorkspaceFileList(
       const dirs = line.toLowerCase().split("/").slice(0, -1);
       return !dirs.some((dir) => excluded.includes(dir));
     });
-  return parseWorkspaceFileList(relative.join("\n"), options.maxFiles);
+  return parseWorkspaceFileList(relative.sort().join("\n"), options.maxFiles);
 }

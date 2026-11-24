@@ -57,9 +57,10 @@ describe("ChatAddFileButton", () => {
       I18nKey.CHAT_INTERFACE$PLUS_MENU,
     );
     expect(button).toHaveAttribute("aria-haspopup", "menu");
+    expect(button).toHaveClass("p-0");
   });
 
-  it("opens the tools menu and invokes handleFileIconClick from the footer item", async () => {
+  it("opens the tools menu and invokes handleFileIconClick from the file action", async () => {
     const user = userEvent.setup();
     const handleFileIconClick = vi.fn();
 
@@ -72,24 +73,34 @@ describe("ChatAddFileButton", () => {
     expect(handleFileIconClick).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["chat-plus-button", "macros-button"])(
-    "closes the tools menu with Escape from %s and returns focus to the + button",
-    async (focusedTestId) => {
-      const user = userEvent.setup();
-      render(<ChatAddFileButton handleFileIconClick={vi.fn()} />);
-      const trigger = screen.getByTestId("chat-plus-button");
+  it("puts the file and image action first in the tools menu", async () => {
+    const user = userEvent.setup();
 
-      await user.click(trigger);
-      screen.getByTestId(focusedTestId).focus();
-      await user.keyboard("{Escape}");
+    render(<ChatAddFileButton handleFileIconClick={vi.fn()} />);
 
-      expect(
-        screen.queryByTestId("tools-context-menu"),
-      ).not.toBeInTheDocument();
-      expect(trigger).toHaveAttribute("aria-expanded", "false");
-      expect(trigger).toHaveFocus();
-    },
-  );
+    await user.click(screen.getByTestId("chat-plus-button"));
+
+    const menu = screen.getByTestId("tools-context-menu");
+    expect(menu.firstElementChild).toHaveAttribute(
+      "data-testid",
+      "add-files-and-images-button",
+    );
+  });
+
+  it("closes the tools menu with Escape and returns focus to the + button", async () => {
+    const focusedTestId = "add-files-and-images-button";
+    const user = userEvent.setup();
+    render(<ChatAddFileButton handleFileIconClick={vi.fn()} />);
+    const trigger = screen.getByTestId("chat-plus-button");
+
+    await user.click(trigger);
+    screen.getByTestId(focusedTestId).focus();
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByTestId("tools-context-menu")).not.toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    expect(trigger).toHaveFocus();
+  });
 
   it("leaves the tools menu open while a layer opened over it takes Escape", async () => {
     const user = userEvent.setup();

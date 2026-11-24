@@ -1,4 +1,5 @@
 import React from "react";
+import { createHotStableContext } from "./stable-hot-context";
 import { clearCachedAgentServerInfo } from "#/api/agent-server-compatibility";
 import {
   getActiveSelection,
@@ -39,8 +40,15 @@ interface ActiveBackendContextValue {
   removeBackend: (id: string) => void;
 }
 
+// A Vite update can replace this module while the entry-point provider is
+// still mounted. Reuse its context object so the existing provider and newly
+// loaded consumers continue to share the same identity. Production and SSR do
+// not share a global context across application roots.
 const ActiveBackendContext =
-  React.createContext<ActiveBackendContextValue | null>(null);
+  createHotStableContext<ActiveBackendContextValue | null>(
+    null,
+    import.meta.hot?.data,
+  );
 
 function applyTelemetrySelectionBoundary(
   previous: ResolvedActiveBackend,

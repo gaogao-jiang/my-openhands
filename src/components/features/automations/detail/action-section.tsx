@@ -7,6 +7,7 @@ import SparkleIcon from "#/icons/sparkle.svg?react";
 import PuzzleIcon from "#/icons/puzzle.svg?react";
 import UserIcon from "#/icons/user.svg?react";
 import { useAgentProfiles } from "#/hooks/query/use-agent-profiles";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 import { useLlmProfiles } from "#/hooks/query/use-llm-profiles";
 import { automationRepositoryLabel } from "#/utils/automation-repo-sources";
 import { SectionCard } from "./section-card";
@@ -26,7 +27,7 @@ function AgentProfileFields({ id }: { id: string }) {
   const { data: llmProfiles } = useLlmProfiles();
   const profile = data?.profiles?.find((candidate) => candidate.id === id);
   let name: string;
-  if (profile) name = profile.name;
+  if (profile) name = getAgentProfileDisplayName(profile);
   else if (isLoading) name = "…";
   else name = t(I18nKey.AUTOMATIONS$UNAVAILABLE_AGENT_PROFILE, { id });
   // An ACP agent runs its own model; an agent profile without its own LLM
@@ -42,7 +43,7 @@ function AgentProfileFields({ id }: { id: string }) {
     <>
       <ConfigField
         icon={<UserIcon className="size-3.5" />}
-        label={t(I18nKey.CHAT$AGENT_PROFILE_PLACEHOLDER)}
+        label={t(I18nKey.CHAT$SELECT_AGENT)}
       >
         <span data-testid="automation-agent-profile-name">{name}</span>
       </ConfigField>

@@ -23,6 +23,7 @@ import {
 } from "./event-content-helpers/should-render-event";
 import {
   getReasoningContent,
+  getActionThoughtText,
   splitInlineThink,
   buildActionById,
   getThoughtSourceAction,
@@ -203,10 +204,9 @@ export const isToolRowItem = (item: RenderedItem): boolean => {
  *
  * Whenever a groupable event carries an agent thought (either an
  * `ActionEvent.thought` or the corresponding action of an
- * `ObservationEvent`), the thought is hoisted out as its own `thought`
- * `RenderedItem`, the current run is flushed, and a new run is started with
- * the event itself. This keeps reasoning text in the main message stream
- * instead of buried inside a collapsed action group.
+ * `ObservationEvent`), the thought stays as reasoning inside the same
+ * activity group. This keeps a long run of work compact by default while
+ * preserving the narration in the expanded details.
  *
  * `allEvents` should be the full event history so observations can find
  * their matching action; if omitted, it defaults to `events`.
@@ -340,28 +340,30 @@ export const groupEvents = (
       isObservationEvent(event) || isUserRejectObservation(event)
         ? actionById.get(event.action_id ?? "")
         : undefined;
-    // Narration: the agent's thought on a tool call is hoisted into the main
-    // stream, and its reasoning goes to the step's group.
-    const keepNarration = () => {
-      // Hoist the thought before attaching the action's reasoning, so the
-      // reasoning lands in the step's own group rather than a "Thinking"-only
-      // group that shares the step's key and open state.
+    // Narration: keep tool thoughts inside the activity group so a continuous
+    // run of work does not become a list of internal log rows.
+    const keepNarration = (embedInRun = false) => {
       const thoughtAction = getThoughtSourceAction(
         event,
         allEvents,
         actionById,
       );
       if (thoughtAction && !emittedThoughtActionIds.has(thoughtAction.id)) {
-        flushRun();
+        if (!embedInRun) {
+          flushRun();
+          items.push({ kind: "thought", action: thoughtAction, index });
+        }
         emittedThoughtActionIds.add(thoughtAction.id);
-        items.push({ kind: "thought", action: thoughtAction, index });
       }
       const reasoningAction = isActionEvent(event)
         ? event
         : correspondingAction;
-      const reasoning = reasoningAction
-        ? getReasoningContent(reasoningAction)
-        : "";
+      const reasoning = [
+        embedInRun && thoughtAction ? getActionThoughtText(thoughtAction) : "",
+        reasoningAction ? getReasoningContent(reasoningAction) : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
       if (reasoning && reasoningAction) {
         const current = startRun(index);
         if (!runReasoningIds.has(reasoningAction.id)) {
@@ -382,7 +384,7 @@ export const groupEvents = (
       return;
     }
     if (isGroupableEvent(event, correspondingAction)) {
-      keepNarration();
+      keepNarration(true);
       if (!run) run = { events: [], startIndex: index };
       run.events.push(event);
     } else {

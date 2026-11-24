@@ -43,7 +43,7 @@ export function ConversationCardTitle({
         }}
         type="text"
         defaultValue={title}
-        className="text-sm leading-6 font-semibold bg-transparent w-full"
+        className="w-full appearance-none border-0 !bg-transparent text-sm leading-6 font-semibold !text-contrast caret-contrast shadow-none outline-none placeholder:text-muted focus:!bg-transparent focus:!text-contrast focus:shadow-none focus:outline-none focus:ring-0"
       />
     );
   }

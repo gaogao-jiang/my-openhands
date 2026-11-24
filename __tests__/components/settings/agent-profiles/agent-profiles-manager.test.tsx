@@ -11,7 +11,7 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string, params?: Record<string, string>) => {
       const translations: Record<string, string> = {
-        SETTINGS$AVAILABLE_PROFILES: "Available Profiles",
+        CHAT$MANAGE_AGENTS: "Manage agents",
         SETTINGS$ADD_AGENT_PROFILE: "Add agent profile",
         SETTINGS$PROFILES_LOAD_ERROR: "Failed to load profiles",
         SETTINGS$PROFILES_EMPTY: "No profiles saved yet",
@@ -110,7 +110,7 @@ describe("AgentProfilesManager", () => {
 
     renderManager();
 
-    expect(screen.getByText("Available Profiles")).toBeInTheDocument();
+    expect(screen.getByText("Manage agents")).toBeInTheDocument();
     await screen.findByText("my-openhands");
     expect(screen.getByText("my-claude")).toBeInTheDocument();
     // OpenHands profiles show their referenced LLM profile; ACP shows the kind.
@@ -128,6 +128,24 @@ describe("AgentProfilesManager", () => {
 
     const badge = await screen.findByTestId("agent-profile-active-badge");
     expect(badge).toHaveTextContent("Active");
+  });
+
+  it("displays Jora while activating the unchanged default UUID", async () => {
+    vi.mocked(AgentProfilesService.listProfiles).mockResolvedValue({
+      profiles: [{ ...mockProfiles[0], id: "id-default", name: "default" }],
+      active_agent_profile_id: "another-profile",
+    });
+    vi.mocked(AgentProfilesService.activateProfile).mockResolvedValue(
+      {} as never,
+    );
+    renderManager();
+    expect(await screen.findByTitle("Jora")).toHaveTextContent("Jora");
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId("agent-profile-menu-trigger"));
+    await user.click(screen.getByTestId("agent-profile-set-active"));
+    expect(AgentProfilesService.activateProfile).toHaveBeenCalledWith(
+      "id-default",
+    );
   });
 
   it("keeps the default profile from being deleted", async () => {

@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyledTooltip } from "#/components/shared/buttons/styled-tooltip";
 import { cn } from "#/utils/utils";
+import { MESSAGE_TOOLTIP_CLASS } from "./message-tooltip-style";
 import {
   formatClockTime,
   formatEventTimestamp,
@@ -46,6 +47,7 @@ export function MessageTimestamp({
       <StyledTooltip
         content={<time dateTime={timestamp}>{exact}</time>}
         placement="top"
+        tooltipClassName={MESSAGE_TOOLTIP_CLASS}
       >
         <button
           type="button"

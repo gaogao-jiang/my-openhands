@@ -764,6 +764,14 @@ describe("ConversationCard", () => {
     ).toBeTruthy();
   });
 
+  const cloudBackend: Backend = {
+    id: "prod",
+    name: "Production",
+    host: "https://app.all-hands.dev",
+    apiKey: "bearer-token",
+    kind: "cloud",
+  };
+
   const statusTable: [ExecutionStatus, boolean][] = [
     [ExecutionStatus.RUNNING, true],
     [ExecutionStatus.IDLE, true],
@@ -777,13 +785,17 @@ describe("ConversationCard", () => {
   it.each(statusTable)(
     "should toggle stop button visibility correctly for execution status",
     (executionStatus, shouldShow) => {
+      setRegisteredBackends([cloudBackend]);
+      setActiveSelection({ backendId: cloudBackend.id });
       renderWithProviders(
-        <ConversationCardActions
-          contextMenuOpen={true}
-          onContextMenuToggle={vi.fn()}
-          onStop={vi.fn()}
-          executionStatus={executionStatus}
-        />,
+        <ActiveBackendProvider>
+          <ConversationCardActions
+            contextMenuOpen={true}
+            onContextMenuToggle={vi.fn()}
+            onStop={vi.fn()}
+            executionStatus={executionStatus}
+          />
+        </ActiveBackendProvider>,
       );
 
       const stopButton = screen.queryByTestId("stop-button");
@@ -793,37 +805,40 @@ describe("ConversationCard", () => {
       } else {
         expect(stopButton).not.toBeInTheDocument();
       }
+      __resetActiveStoreForTests();
     },
   );
 
   it("keeps Stop for a running cloud sandbox after the agent is interrupted", () => {
+    setRegisteredBackends([cloudBackend]);
+    setActiveSelection({ backendId: cloudBackend.id });
     renderWithProviders(
-      <ConversationCardActions
-        contextMenuOpen={true}
-        onContextMenuToggle={vi.fn()}
-        onStop={vi.fn()}
-        executionStatus={ExecutionStatus.PAUSED}
-        sandboxStatus="RUNNING"
-      />,
+      <ActiveBackendProvider>
+        <ConversationCardActions
+          contextMenuOpen={true}
+          onContextMenuToggle={vi.fn()}
+          onStop={vi.fn()}
+          executionStatus={ExecutionStatus.PAUSED}
+          sandboxStatus="RUNNING"
+        />
+      </ActiveBackendProvider>,
     );
 
     expect(screen.getByTestId("stop-button")).toBeInTheDocument();
+    __resetActiveStoreForTests();
   });
 
   describe("stop button label by active backend", () => {
-    const cloudBackend: Backend = {
-      id: "prod",
-      name: "Production",
-      host: "https://app.all-hands.dev",
-      apiKey: "bearer-token",
-      kind: "cloud",
-    };
-
     afterEach(() => {
       __resetActiveStoreForTests();
     });
 
-    it("uses COMMON$STOP_CONVERSATION on a local backend", () => {
+    it.each([
+      ExecutionStatus.RUNNING,
+      ExecutionStatus.IDLE,
+      ExecutionStatus.FINISHED,
+      ExecutionStatus.PAUSED,
+    ])("hides stop on a local backend in %s", (executionStatus) => {
       // Default active backend (no provider, no registered backends) is the
       // bundled local backend.
       renderWithProviders(
@@ -831,13 +846,11 @@ describe("ConversationCard", () => {
           contextMenuOpen={true}
           onContextMenuToggle={vi.fn()}
           onStop={vi.fn()}
-          executionStatus={ExecutionStatus.RUNNING}
+          executionStatus={executionStatus}
         />,
       );
 
-      expect(screen.getByTestId("stop-button")).toHaveTextContent(
-        "COMMON$STOP_CONVERSATION",
-      );
+      expect(screen.queryByTestId("stop-button")).not.toBeInTheDocument();
     });
 
     it("uses COMMON$STOP_SANDBOX on a cloud backend", () => {

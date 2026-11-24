@@ -8,10 +8,8 @@ export function UploadedFiles() {
     files,
     loadingFiles,
     loadingImages,
-    imagesMarkedUploadAsFile,
     removeFile,
     removeImage,
-    toggleImageUploadAsFile,
   } = useConversationStore();
 
   const handleRemoveFile = (index: number) => {
@@ -66,9 +64,6 @@ export function UploadedFiles() {
             image={image}
             onRemove={() => handleRemoveImage(index)}
             isLoading={loadingImages.includes(image.name)}
-            showUploadAsFileToggle
-            uploadAsFileActive={imagesMarkedUploadAsFile.includes(image.name)}
-            onToggleUploadAsFile={() => toggleImageUploadAsFile(image.name)}
           />
         ))}
 
@@ -82,9 +77,6 @@ export function UploadedFiles() {
               image={tempImage}
               onRemove={() => {}} // No remove action during loading
               isLoading
-              showUploadAsFileToggle
-              uploadAsFileActive={imagesMarkedUploadAsFile.includes(imageName)}
-              onToggleUploadAsFile={() => toggleImageUploadAsFile(imageName)}
             />
           );
         })}

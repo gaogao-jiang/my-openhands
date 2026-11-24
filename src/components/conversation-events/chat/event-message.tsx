@@ -49,6 +49,7 @@ import { useStreamedText } from "#/hooks/use-streamed-text";
 
 interface EventMessageProps {
   showActions?: boolean;
+  isFinalReply?: boolean;
   event: OpenHandsEvent & { isFromPlanningAgent?: boolean };
   /**
    * The action paired with an observation. null means the caller performed
@@ -155,6 +156,7 @@ function EventMessageComponent({
   isLastMessage,
   isInLast10Actions,
   showActions = isLastMessage,
+  isFinalReply = false,
   planPreviewEventIds,
   showPlanPreview,
   suppressThought = false,
@@ -244,6 +246,7 @@ function EventMessageComponent({
             isFromPlanningAgent={isFromPlanningAgent}
             timestamp={event.timestamp}
             isStreaming
+            isFinalReply={false}
             showActions={showActions}
           />
         )}
@@ -408,6 +411,7 @@ function EventMessageComponent({
       <UserAssistantEventMessage
         event={messageEvent}
         suppressReasoning={suppressReasoning}
+        isFinalReply={isFinalReply}
         showActions={showActions}
         {...commonProps}
         isLastMessage={isLastMessage}

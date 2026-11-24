@@ -1,0 +1,12 @@
+<svg width="624" height="600" viewBox="200 180 624 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Jora logo mark</title>
+  <desc>Friendly line-art cat paw mark for the Jora agent.</desc>
+
+  <g stroke="currentColor" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <ellipse cx="274" cy="381" rx="48" ry="89" transform="rotate(-28 274 381)"/>
+    <ellipse cx="426" cy="274" rx="49" ry="91" transform="rotate(-7 426 274)"/>
+    <ellipse cx="598" cy="274" rx="49" ry="91" transform="rotate(7 598 274)"/>
+    <ellipse cx="750" cy="381" rx="48" ry="89" transform="rotate(28 750 381)"/>
+    <path d="M512 431C469 431 441 455 414 491C391 521 367 543 348 568C322 602 323 644 346 672C370 701 411 709 445 693C469 682 486 662 503 655C509 652 515 652 521 655C538 662 555 682 579 693C613 709 654 701 678 672C701 644 702 602 676 568C657 543 633 521 610 491C583 455 555 431 512 431Z"/>
+  </g>
+</svg>

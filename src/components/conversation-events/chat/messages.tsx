@@ -24,6 +24,7 @@ import {
   isMessageEvent,
 } from "#/types/agent-server/type-guards";
 import { isCorrectiveNudge } from "./event-content-helpers/should-render-event";
+import { getFinalReplyIds } from "./event-content-helpers/get-final-reply-ids";
 import { EventMessage } from "./event-message";
 import { usePlanPreviewEvents } from "./hooks/use-plan-preview-events";
 import {
@@ -314,7 +315,11 @@ export const Messages: React.FC<MessagesProps> = React.memo(
     // One activity group lasts until visible agent text or an actionable event.
     const { t } = useTranslation("openhands");
     const { curAgentState } = useAgentState();
-    const { isPlanningAgentRunning } = usePlanningAgentState();
+    const {
+      isPlanningAgentRunning,
+      curPlanningAgentState,
+      localPlanningConversationId,
+    } = usePlanningAgentState();
     const isAgentRunning =
       curAgentState === AgentState.RUNNING || isPlanningAgentRunning;
     // Fold consecutive action/observation events into collapsible groups so a
@@ -327,6 +332,18 @@ export const Messages: React.FC<MessagesProps> = React.memo(
       () => groupEvents(messages, 1, allEvents, 1, visibleSessions, actionById),
       [messages, allEvents, visibleSessions, actionById],
     );
+    const embeddedThoughtIds = React.useMemo(() => {
+      const ids = new Set<string>();
+      plainItems.forEach((item, index) => {
+        if (
+          item.kind === "thought" &&
+          plainItems[index + 1]?.kind === "group"
+        ) {
+          ids.add(item.action.id);
+        }
+      });
+      return ids;
+    }, [plainItems]);
 
     // `null` (not `undefined`) means the caller has a scroll container but the
     // element is not mounted yet: virtualize the shell rather than rendering
@@ -417,6 +434,22 @@ export const Messages: React.FC<MessagesProps> = React.memo(
       }
       return -1;
     }, [messages]);
+    const finalReplyIds = React.useMemo(
+      () =>
+        getFinalReplyIds(
+          allEvents,
+          curAgentState,
+          localPlanningConversationId
+            ? curPlanningAgentState
+            : AgentState.LOADING,
+        ),
+      [
+        allEvents,
+        curAgentState,
+        curPlanningAgentState,
+        localPlanningConversationId,
+      ],
+    );
     const decisionClosures = React.useMemo(
       () => indexDecisionClosures(allEvents),
       [allEvents],
@@ -509,6 +542,7 @@ export const Messages: React.FC<MessagesProps> = React.memo(
               }
               isLastMessage={messages.length - 1 === index}
               showActions={latestAssistantMessageIndex === index}
+              isFinalReply={!!event.id && finalReplyIds.has(event.id)}
               isInLast10Actions={messages.length - 1 - index < 10}
               showPlanPreview={
                 event.id ? planPreviewEventIds.has(event.id) : false
@@ -540,9 +574,26 @@ export const Messages: React.FC<MessagesProps> = React.memo(
       }
 
       if (item.kind === "thought") {
+        if (embeddedThoughtIds.has(item.action.id)) {
+          return (
+            <React.Fragment key={`thought-${item.action.id}`}>
+              {maybeRenderModelMessages(item.action.id)}
+            </React.Fragment>
+          );
+        }
+        const thoughtKey = `thought:${item.action.id}`;
+        const thoughtOpen = openRows.get(thoughtKey) ?? false;
         return (
           <React.Fragment key={`thought-${item.action.id}`}>
-            <ThoughtEventMessage event={item.action} />
+            <EventGroup
+              events={[]}
+              hasReasoning
+              isLive={isAgentRunning && renderedItemKey(item) === tailItemKey}
+              open={thoughtOpen}
+              onOpenChange={(open) => setRowOpen(thoughtKey, open)}
+            >
+              <ThoughtEventMessage event={item.action} />
+            </EventGroup>
             {maybeRenderModelMessages(item.action.id)}
           </React.Fragment>
         );
@@ -596,7 +647,7 @@ export const Messages: React.FC<MessagesProps> = React.memo(
                 node: renderEventMessage(
                   event,
                   eventIndexes.get(event)!,
-                  true,
+                  false,
                   event === singleTool && showSingleToolDetails,
                 ),
               })),

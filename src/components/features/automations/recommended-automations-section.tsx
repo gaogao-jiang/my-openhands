@@ -38,6 +38,7 @@ import {
 } from "#/utils/automation-catalog";
 import { getAutomationsByPopularity } from "#/utils/recommended-automation-rail";
 import { cn } from "#/utils/utils";
+import { getAutomationDisplay } from "#/manifests/automation-localization";
 import {
   extensionModuleCardInteractiveClassName,
   extensionModuleCardGridClassName,
@@ -302,6 +303,7 @@ interface AutomationCardGridProps {
   getNativeIntegration: GetNativeIntegration;
   onSelect: (automation: RecommendedAutomation) => void;
   translate: TFunction;
+  language: string;
 }
 
 function AutomationCardGrid({
@@ -310,6 +312,7 @@ function AutomationCardGrid({
   getNativeIntegration,
   onSelect,
   translate,
+  language,
 }: AutomationCardGridProps) {
   return (
     <div className={cn("mt-3", extensionModuleCardGridClassName)}>
@@ -350,7 +353,7 @@ function AutomationCardGrid({
                 <header className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate text-sm font-semibold text-contrast">
-                      {automation.name}
+                      {getAutomationDisplay(automation, language).name}
                     </h3>
                     <p className="mt-0.5 truncate text-xs text-tertiary-alt">
                       {automation.category}
@@ -381,7 +384,7 @@ function AutomationCardGrid({
                   </div>
                 </header>
                 <p className="line-clamp-2 text-xs leading-relaxed text-tertiary-light">
-                  {automation.description}
+                  {getAutomationDisplay(automation, language).description}
                 </p>
 
                 <SkillCardPillRow
@@ -417,8 +420,7 @@ export function RecommendedAutomationsSection({
   onSelect,
   scrollableGrid = false,
 }: RecommendedAutomationsSectionProps) {
-  const { t } = useTranslation("openhands");
-
+  const { t, i18n } = useTranslation("openhands");
   // Only the deployment's hide list, the filters and the query narrow the
   // grid. An automation that declares no integration needs nothing connected,
   // and one naming an integration this host cannot resolve is shown with that
@@ -507,6 +509,7 @@ export function RecommendedAutomationsSection({
               getNativeIntegration={getNativeIntegration}
               onSelect={onSelect}
               translate={t}
+              language={i18n.language}
             />
           </>
         )}
@@ -534,6 +537,7 @@ export function RecommendedAutomationsSection({
               getNativeIntegration={getNativeIntegration}
               onSelect={onSelect}
               translate={t}
+              language={i18n.language}
             />
           </section>
         )}

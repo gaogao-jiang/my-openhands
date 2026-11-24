@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 import { I18nKey } from "#/i18n/declaration";
 import { useAgentProfiles } from "#/hooks/query/use-agent-profiles";
 import { SettingsDropdownInput } from "#/components/features/settings/settings-dropdown-input";
@@ -18,14 +19,16 @@ export function AutomationAgentProfileSelector({ value, onChange }: Props) {
     : undefined;
   const defaultLabel = t(I18nKey.SETTINGS$PROFILE_DEFAULT);
   const label =
-    selected?.name ??
+    (selected ? getAgentProfileDisplayName(selected) : undefined) ??
     (value
       ? t(I18nKey.AUTOMATIONS$UNAVAILABLE_AGENT_PROFILE, { id: value })
       : defaultLabel);
   const items = [
     { key: "__default__", label: defaultLabel },
     ...profiles.flatMap((profile) =>
-      profile.id ? [{ key: profile.id, label: profile.name }] : [],
+      profile.id
+        ? [{ key: profile.id, label: getAgentProfileDisplayName(profile) }]
+        : [],
     ),
     ...(value && !selected ? [{ key: value, label }] : []),
   ];
@@ -33,7 +36,7 @@ export function AutomationAgentProfileSelector({ value, onChange }: Props) {
     <SettingsDropdownInput
       testId="automation-agent-profile"
       name="agent_profile_id"
-      label={t(I18nKey.CHAT$AGENT_PROFILE_PLACEHOLDER)}
+      label={t(I18nKey.CHAT$SELECT_AGENT)}
       items={items}
       selectedKey={value ?? "__default__"}
       isClearable

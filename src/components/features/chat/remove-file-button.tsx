@@ -5,11 +5,13 @@ interface RemoveFileButtonProps {
   onClick: () => void;
   /** Names the attachment this icon-only button removes. */
   ariaLabel: string;
+  className?: string;
 }
 
 export function RemoveFileButton({
   onClick,
   ariaLabel,
+  className,
 }: RemoveFileButtonProps) {
   const isMobile = isMobileDevice();
 
@@ -19,11 +21,12 @@ export function RemoveFileButton({
       onClick={onClick}
       aria-label={ariaLabel}
       className={cn(
-        "z-10 flex w-4 h-4 rounded-full items-center justify-center bg-surface hover:bg-interactive-hover dark:hover:bg-muted cursor-pointer absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+        "z-10 flex size-5 rounded-full items-center justify-center bg-contrast text-contrast-foreground hover:bg-contrast/80 cursor-pointer absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
         isMobile && "opacity-100",
+        className,
       )}
     >
-      <CloseIcon width={10} height={10} className="text-contrast" />
+      <CloseIcon width={12} height={12} className="text-contrast-foreground" />
     </button>
   );
 }

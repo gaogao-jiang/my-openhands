@@ -29,12 +29,17 @@ import {
 import ConversationService from "#/api/conversation-service/conversation-service.api";
 import { useIsMutating } from "@tanstack/react-query";
 import { useMessageFeedbackKey } from "#/hooks/use-message-feedback-key";
+import {
+  useEditUserMessage,
+  editUserMessageMutationKey,
+} from "#/hooks/mutation/use-edit-user-message";
 
 interface UserAssistantEventMessageProps {
   event: MessageEvent;
   suppressReasoning?: boolean;
   isLastMessage: boolean;
   showActions?: boolean;
+  isFinalReply?: boolean;
   isFromPlanningAgent: boolean;
 }
 
@@ -43,6 +48,7 @@ function UserAssistantEventMessageComponent({
   suppressReasoning = false,
   isLastMessage,
   showActions = isLastMessage,
+  isFinalReply = false,
   isFromPlanningAgent,
 }: UserAssistantEventMessageProps) {
   const { t } = useTranslation("openhands");
@@ -107,10 +113,28 @@ function UserAssistantEventMessageComponent({
     });
   }
 
-  // "Branch from here": a user message is "edit message" (excludes the message,
-  // restores its text to the composer); an assistant message branches
-  // inclusively. Local agent-server only, inside a conversation.
-  const canBranch = !isCloud && !!conversationId;
+  // "Branch from here" is available on assistant messages only. A user message
+  // is already the conversation input, so it should not show a branch action.
+  // Local agent-server only, inside a conversation.
+  const canBranch = !isCloud && !!conversationId && event.source === "agent";
+  const canEdit =
+    !isCloud &&
+    !!conversationId &&
+    event.source === "user" &&
+    imageUrls.length === 0 &&
+    message.length > 0;
+  const { mutateAsync: editUserMessage } = useEditUserMessage(
+    conversationId ?? "",
+  );
+  const isEditingMessage =
+    useIsMutating(
+      conversationId
+        ? { mutationKey: editUserMessageMutationKey(conversationId) }
+        : { predicate: () => false },
+    ) > 0;
+  const handleEdit = async (text: string) => {
+    await editUserMessage({ eventId: event.id, text });
+  };
   const handleBranch = () => {
     if (!conversationId || isForking || forkInFlightRef.current) return;
     forkInFlightRef.current = true;
@@ -123,14 +147,9 @@ function UserAssistantEventMessageComponent({
       source?.id === conversationId ? source.title : undefined;
     const branchTitle = sourceTitle ? `${sourceTitle} (branch)` : undefined;
 
-    // Only edit when there's text: an image-only message parses to "", so
-    // branch it inclusively rather than dropping the image.
-    const isEdit = event.source === "user" && message.length > 0;
-
     forkConversation(
       {
         eventId: event.id,
-        ...(isEdit ? { editText: message } : {}),
         ...(branchTitle ? { title: branchTitle } : {}),
       },
       {
@@ -148,7 +167,7 @@ function UserAssistantEventMessageComponent({
         {
           icon: (
             <Split
-              size={15}
+              size={13}
               strokeWidth={1.75}
               className="rotate-90"
               aria-hidden
@@ -173,9 +192,12 @@ function UserAssistantEventMessageComponent({
         message={message}
         isFromPlanningAgent={isFromPlanningAgent}
         actions={actions}
+        onEdit={canEdit ? handleEdit : undefined}
+        editDisabled={isEditingMessage || isForking}
         timestamp={event.timestamp}
         feedbackKey={feedbackKey}
         showActions={showActions}
+        isFinalReply={isFinalReply}
       >
         {imageUrls.length > 0 && (
           <ImageCarousel size="small" images={imageUrls} />

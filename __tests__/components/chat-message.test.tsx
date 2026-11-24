@@ -1,9 +1,9 @@
 import {
-  act,
   render,
   screen,
   waitFor,
   fireEvent,
+  within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
@@ -13,6 +13,72 @@ import { RowExpansionContext } from "#/components/features/chat/row-expansion-co
 import { useMessageExpansionStore } from "#/stores/message-expansion-store";
 
 describe("ChatMessage", () => {
+  it.each(["user", "agent"] as const)(
+    "uses themed tooltip colors for %s message actions",
+    async (type) => {
+      const user = userEvent.setup();
+      render(<ChatMessage type={type} message="Hello" showActions />);
+      await user.tab();
+      const tooltip = await screen.findByRole("tooltip");
+      expect(tooltip).toHaveClass("!bg-tertiary", "!text-foreground");
+      expect(tooltip).not.toHaveClass(
+        "!bg-contrast",
+        "!text-contrast-foreground",
+      );
+    },
+  );
+
+  it("uses the same copy icon for user and assistant messages", () => {
+    const { rerender } = render(<ChatMessage type="user" message="Hello" />);
+    const userIcon = screen
+      .getByTestId("copy-to-clipboard")
+      .querySelector("svg");
+    expect(userIcon).toBeInTheDocument();
+    const iconMarkup = userIcon!.outerHTML;
+
+    rerender(<ChatMessage type="agent" message="Hello" />);
+    expect(
+      screen.getByTestId("copy-to-clipboard").querySelector("svg")?.outerHTML,
+    ).toBe(iconMarkup);
+  });
+
+  it.each([
+    { isFinalReply: false, isStreaming: false },
+    { isFinalReply: true, isStreaming: true },
+  ])("omits the footer for unfinished replies: %j", async (state) => {
+    const user = userEvent.setup();
+    render(
+      <ChatMessage
+        type="agent"
+        message="Checking the presentation layout"
+        {...state}
+        timestamp="2026-11-23T05:56:00Z"
+        showActions
+        feedbackKey="progress"
+      />,
+    );
+    const message = screen.getByTestId("agent-message");
+    await user.hover(message);
+    await user.unhover(message);
+    await user.tab();
+    expect(message).toHaveTextContent("Checking the presentation layout");
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("message-timestamp")).not.toBeInTheDocument();
+    expect(within(message).queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("shows a streaming cursor only while an agent reply is being generated", () => {
+    const { rerender } = render(
+      <ChatMessage type="agent" message="正在生成" isStreaming />,
+    );
+    expect(screen.getByTestId("streaming-cursor")).toBeInTheDocument();
+
+    rerender(<ChatMessage type="agent" message="已完成" isStreaming={false} />);
+    expect(screen.queryByTestId("streaming-cursor")).not.toBeInTheDocument();
+  });
+
   it("keeps agent actions in a reserved footer instead of overlaying the answer", async () => {
     render(
       <ChatMessage
@@ -316,17 +382,114 @@ describe("ChatMessage", () => {
     expect(screen.getByText("'Hello, World!'")).toBeInTheDocument();
   });
 
-  it("should render the copy to clipboard button when the user hovers over the message", async () => {
+  it("places a muted time-copy-edit row below the user bubble", async () => {
     const user = userEvent.setup();
-    render(<ChatMessage type="user" message="Hello, World!" />);
-    const message = screen.getByText("Hello, World!");
+    const onEdit = vi.fn();
+    render(
+      <ChatMessage
+        type="user"
+        message="Hello, World!"
+        timestamp="2026-11-20T05:59:00Z"
+        onEdit={onEdit}
+      />,
+    );
+    const message = screen.getByTestId("user-message");
+    const toolbar = screen.getByTestId("user-message-actions");
+    const timestamp = screen.getByTestId("message-timestamp");
+    const copy = screen.getByTestId("copy-to-clipboard");
+    const edit = screen.getByTestId("edit-user-message");
 
-    expect(screen.getByTestId("copy-to-clipboard")).not.toBeVisible();
+    expect(toolbar).toHaveClass("absolute", "top-full", "right-0", "gap-2");
+    expect(toolbar).toHaveClass("opacity-0", "pointer-events-none");
+    expect(timestamp).toHaveClass("static", "opacity-0");
+    expect(copy).toBeVisible();
+    expect(edit).toBeVisible();
+    expect(copy).toHaveClass("bg-transparent", "border-0", "text-muted");
+    expect(edit).toHaveClass("bg-transparent", "border-0", "text-muted");
+    expect(
+      timestamp.compareDocumentPosition(copy) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      copy.compareDocumentPosition(edit) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
 
     await user.hover(message);
-
-    expect(screen.getByTestId("copy-to-clipboard")).toBeVisible();
+    expect(timestamp).toHaveClass("opacity-100");
+    expect(toolbar).not.toHaveClass("opacity-0");
+    await user.unhover(message);
+    expect(toolbar).toHaveClass("opacity-0", "pointer-events-none");
+    await user.hover(message);
+    await user.click(edit);
+    expect(onEdit).not.toHaveBeenCalled();
+    const input = screen.getByRole("textbox", { name: "BUTTON$EDIT" });
+    expect(input).toHaveValue("Hello, World!");
+    await user.clear(input);
+    await user.type(input, "Revised question");
+    await user.click(
+      screen.getByRole("button", {
+        name: "CHAT_INTERFACE$EDIT_SEND",
+      }),
+    );
+    expect(onEdit).toHaveBeenCalledWith("Revised question");
   });
+
+  it("cancels an inline edit without changing the question", async () => {
+    const user = userEvent.setup();
+    const onEdit = vi.fn();
+    render(<ChatMessage type="user" message="Original" onEdit={onEdit} />);
+    await user.hover(screen.getByTestId("user-message"));
+    await user.click(screen.getByTestId("edit-user-message"));
+    await user.type(screen.getByRole("textbox"), " changes");
+    await user.click(screen.getByRole("button", { name: "BUTTON$CANCEL" }));
+    expect(onEdit).not.toHaveBeenCalled();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(screen.getByText("Original")).toBeInTheDocument();
+  });
+
+  it("keeps failed edits open for retry", async () => {
+    const user = userEvent.setup();
+    const onEdit = vi.fn().mockRejectedValue(new Error("failed"));
+    render(<ChatMessage type="user" message="Original" onEdit={onEdit} />);
+    await user.hover(screen.getByTestId("user-message"));
+    await user.click(screen.getByTestId("edit-user-message"));
+    await user.clear(screen.getByRole("textbox"));
+    expect(
+      screen.getByRole("button", {
+        name: "CHAT_INTERFACE$EDIT_SEND",
+      }),
+    ).toBeDisabled();
+    await user.type(screen.getByRole("textbox"), "Revised");
+    await user.click(
+      screen.getByRole("button", {
+        name: "CHAT_INTERFACE$EDIT_SEND",
+      }),
+    );
+    expect(screen.getByRole("textbox")).toHaveValue("Revised");
+    expect(onEdit).toHaveBeenCalledOnce();
+  });
+
+  it("disables editing while an edit is in flight", () => {
+    render(
+      <ChatMessage type="user" message="Hello" onEdit={vi.fn()} editDisabled />,
+    );
+    expect(screen.getByTestId("edit-user-message")).toBeDisabled();
+  });
+
+  it.each(["sending", "error"] as const)(
+    "does not edit a %s user message",
+    (pendingStatus) => {
+      render(
+        <ChatMessage
+          type="user"
+          message="Hello"
+          onEdit={vi.fn()}
+          pendingStatus={pendingStatus}
+        />,
+      );
+      expect(screen.queryByTestId("edit-user-message")).not.toBeInTheDocument();
+    },
+  );
 
   it("should copy content to clipboard", async () => {
     const user = userEvent.setup();

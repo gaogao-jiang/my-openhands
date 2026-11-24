@@ -35,7 +35,7 @@ function Code({
         <code
           className={cn(
             className,
-            "bg-surface-raised text-foreground border border-surface-raised rounded px-code-inline-x py-code-inline-y",
+            "bg-surface-raised text-foreground border border-border-subtle rounded px-code-inline-x py-code-inline-y",
           )}
         >
           {children}
@@ -45,7 +45,7 @@ function Code({
 
     return (
       <CopyableContentWrapper text={codeString}>
-        <pre className="bg-surface-raised text-foreground border border-surface-raised rounded p-code-block overflow-auto">
+        <pre className="bg-surface-raised text-foreground border border-border-subtle rounded p-code-block overflow-auto">
           <code className={className}>{codeString}</code>
         </pre>
       </CopyableContentWrapper>
@@ -57,6 +57,11 @@ function Code({
       <SyntaxHighlighter
         className="rounded-lg"
         style={getSyntaxHighlighterTheme(colorTheme)}
+        customStyle={{
+          backgroundColor: "var(--oh-surface-raised)",
+          border: "1px solid var(--oh-border-subtle)",
+          color: "var(--oh-foreground)",
+        }}
         language={match?.[1]}
         PreTag="div"
       >

@@ -83,6 +83,10 @@ import {
   hasAutomationInterface,
 } from "#/manifests/automation-interface";
 import {
+  localizeInterfaceCopy,
+  localizeMetricText,
+} from "#/manifests/automation-localization";
+import {
   applyDashboardView,
   computeOverviewTile,
   matchesAutomationSearch,
@@ -316,8 +320,11 @@ function SavedDraftsGroup({
 }
 
 export default function AutomationsList() {
-  const { t } = useTranslation("openhands");
-  const interfaceCopy = getInterfaceCopy();
+  const { t, i18n } = useTranslation("openhands");
+  const interfaceCopy = localizeInterfaceCopy(
+    getInterfaceCopy(i18n.language),
+    i18n.language,
+  );
   // Admission is stable for the session; memo just keeps one identity.
   const dashboardSpec = useMemo(() => getDashboardSpec(), []);
   const subPageNav = useAutomationSubPageNav();
@@ -711,9 +718,22 @@ export default function AutomationsList() {
         value.isZero && tile.zeroDetail ? tile.zeroDetail : tile.detail;
       return {
         key: tile.metric,
-        label: tile.label,
+        label: localizeMetricText(
+          tile.metric,
+          "label",
+          tile.label,
+          i18n.language,
+        ),
         value: value.display,
-        detail: interpolateValues(template, value.placeholderValues),
+        detail: interpolateValues(
+          localizeMetricText(
+            tile.metric,
+            tile.zeroDetail && value.isZero ? "zeroDetail" : "detail",
+            template,
+            i18n.language,
+          ),
+          value.placeholderValues,
+        ),
         Icon: MANIFEST_ICON_BY_SLUG[tile.icon],
       };
     });

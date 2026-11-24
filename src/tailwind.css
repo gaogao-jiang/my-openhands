@@ -139,7 +139,8 @@
   );
 
   /* Existing inset highlights keep their pixel geometry and public colors. */
-  --shadow-badge-inset: inset 0 1px 0 color-mix(in srgb, var(--oh-contrast) 18%, transparent);
+  --shadow-badge-inset: inset 0 1px 0
+    color-mix(in srgb, var(--oh-contrast) 18%, transparent);
   --shadow-reorder-before: inset 0 2px 0 0 var(--oh-focus);
   --shadow-reorder-after: inset 0 -2px 0 0 var(--oh-focus);
 
@@ -270,21 +271,41 @@
     --cool-grey-800
   ); /* within-panel separators, list dividers */
   --oh-separator: rgba(113, 120, 136, 0.5);
-  --oh-divider: var(--oh-border-subtle);     /* rules between rows inside a card or panel */
+  --oh-divider: var(
+    --oh-border-subtle
+  ); /* rules between rows inside a card or panel */
   --oh-focus: #ffffff;
   --oh-status-success: #1fbd53;
   --oh-status-error: #ff684e;
   --oh-link: var(--cool-grey-100);
-  --oh-info: oklch(62.3% 0.214 259.815); /* informational blue: content links, update notices */
+  --oh-info: oklch(
+    62.3% 0.214 259.815
+  ); /* informational blue: content links, update notices */
   /* Status badge fills + inks. Dark palettes keep a translucent tint, so the ink
      is lightened until it clears 4.5:1 on the tint over every panel surface.
      Light palettes override the fill with an opaque tint (see light-plus.ts). */
-  --oh-success-soft: color-mix(in srgb, var(--oh-color-success) 10%, transparent);
-  --oh-success-soft-foreground: color-mix(in srgb, var(--oh-color-success) 55%, #ffffff);
+  --oh-success-soft: color-mix(
+    in srgb,
+    var(--oh-color-success) 10%,
+    transparent
+  );
+  --oh-success-soft-foreground: color-mix(
+    in srgb,
+    var(--oh-color-success) 55%,
+    #ffffff
+  );
   --oh-warning-soft: color-mix(in srgb, var(--oh-warning) 10%, transparent);
-  --oh-warning-soft-foreground: color-mix(in srgb, var(--oh-warning) 55%, #ffffff);
+  --oh-warning-soft-foreground: color-mix(
+    in srgb,
+    var(--oh-warning) 55%,
+    #ffffff
+  );
   --oh-danger-soft: color-mix(in srgb, var(--oh-color-danger) 10%, transparent);
-  --oh-danger-soft-foreground: color-mix(in srgb, var(--oh-color-danger) 55%, #ffffff);
+  --oh-danger-soft-foreground: color-mix(
+    in srgb,
+    var(--oh-color-danger) 55%,
+    #ffffff
+  );
   --oh-info-soft: color-mix(in srgb, var(--oh-info) 10%, transparent);
   --oh-info-soft-foreground: color-mix(in srgb, var(--oh-info) 55%, #ffffff);
   --oh-radius: 8px;

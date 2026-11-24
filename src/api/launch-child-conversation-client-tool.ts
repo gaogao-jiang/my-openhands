@@ -2,6 +2,7 @@ import {
   CHILD_CONVERSATION_ISOLATIONS,
   CHILD_CONVERSATION_RESULT_PREFIX,
   CHILD_CONVERSATION_TARGETS,
+  JORA_SUBAGENT_TYPES,
   LAUNCH_CHILD_CONVERSATION_TOOL_NAME,
 } from "#/constants/child-conversation";
 import type { ClientToolSpec } from "./canvas-ui-client-tool";
@@ -11,11 +12,19 @@ export {
   LAUNCH_CHILD_CONVERSATION_TOOL_NAME,
 } from "#/constants/child-conversation";
 
-const LAUNCH_CHILD_CONVERSATION_DESCRIPTION = `Start a NEW, independent conversation to work on a well-scoped task in parallel with this one, without the user having to run any CLI command. The new conversation is recorded as a child of this one.
+const LAUNCH_CHILD_CONVERSATION_DESCRIPTION = `Delegate a well-scoped task to a child conversation. The child is recorded as a child of this conversation.
 
-The child runs on its own. It does not block you, you do not see its output,
-and it cannot see this conversation's history — everything it needs must be in
-the task brief.
+When you are Jora, use subagent_type to delegate to a specialist:
+
+* developer — implement code changes and focused tests
+* reviewer — inspect code, risks, regressions and security issues
+* documenter — write or maintain project documentation
+
+Use a specialist only when the task benefits from a separate context. Simple
+questions should be handled directly. Do not delegate the same task twice.
+The child cannot see this conversation's history, so the task brief must include
+everything it needs. Do not claim the delegated task is complete until a real
+child result is available.
 
 Choosing target:
 
@@ -75,6 +84,12 @@ export const LAUNCH_CHILD_CONVERSATION_CLIENT_TOOL: ClientToolSpec = {
         type: "string",
         description:
           "Self-contained task brief, sent as the child's first message. The child cannot see this conversation, so state the goal, constraints, expected output and handoff criteria.",
+      },
+      subagent_type: {
+        type: "string",
+        enum: [...JORA_SUBAGENT_TYPES],
+        description:
+          "Optional Jora specialist role. Use developer, reviewer or documenter to launch the matching saved Agent Profile by stable server-side identity. Omit it for a generic child conversation.",
       },
       title: {
         type: "string",

@@ -17,34 +17,21 @@ vi.mock("lucide-react", () => ({
 }));
 
 vi.mock("#/components/features/chat/remove-file-button", () => ({
-  RemoveFileButton: ({ onClick }: { onClick: () => void }) => (
-    <button type="button" data-testid="remove-image" onClick={onClick}>
-      Remove image
-    </button>
+  RemoveFileButton: ({
+    onClick,
+    className,
+  }: {
+    onClick: () => void;
+    className?: string;
+  }) => (
+    <button
+      type="button"
+      data-testid="remove-image"
+      data-class-name={className}
+      onClick={onClick}
+    />
   ),
 }));
-
-vi.mock(
-  "#/components/features/chat/pasted-image-upload-as-file-button",
-  () => ({
-    PastedImageUploadAsFileButton: ({
-      active,
-      onToggle,
-    }: {
-      active: boolean;
-      onToggle: () => void;
-    }) => (
-      <button
-        type="button"
-        data-testid="upload-image-as-file"
-        aria-pressed={active}
-        onClick={onToggle}
-      >
-        Toggle upload as file
-      </button>
-    ),
-  }),
-);
 
 function createImage(name = "diagram.png"): File {
   return new File(["image bytes"], name, { type: "image/png" });
@@ -74,21 +61,18 @@ describe("uploaded image preview", () => {
     const image = createImage();
     const onRemove = vi.fn();
     const { unmount } = render(
-      <UploadedImage
-        image={image}
-        onRemove={onRemove}
-        onToggleUploadAsFile={vi.fn()}
-      />,
+      <UploadedImage image={image} onRemove={onRemove} />,
     );
 
     const preview = screen.getByRole("img", { name: "diagram.png" });
     expect(preview).toHaveAttribute("src", "blob:preview/diagram.png");
+    expect(preview.parentElement).toHaveClass("h-20", "w-20");
     expect(createObjectURL).toHaveBeenCalledWith(image);
     expect(screen.queryByTestId("image-loader")).not.toBeInTheDocument();
-    expect(
-      screen.queryByTestId("upload-image-as-file"),
-    ).not.toBeInTheDocument();
-
+    expect(screen.getByTestId("remove-image")).toHaveAttribute(
+      "data-class-name",
+      "-right-1 -top-1",
+    );
     await user.click(screen.getByTestId("remove-image"));
     expect(onRemove).toHaveBeenCalledOnce();
 
@@ -104,36 +88,13 @@ describe("uploaded image preview", () => {
     expect(initialMarkup).not.toContain("<img");
   });
 
-  it("starts the upload-as-file control inactive when it is enabled", () => {
-    installObjectUrlMocks();
-
-    render(
-      <UploadedImage
-        image={createImage()}
-        onRemove={vi.fn()}
-        showUploadAsFileToggle
-        onToggleUploadAsFile={vi.fn()}
-      />,
-    );
-
-    expect(screen.getByTestId("upload-image-as-file")).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
-  });
-
-  it("shows a loader and forwards an active upload-as-file toggle", async () => {
-    const user = userEvent.setup();
+  it("shows a loader without an upload-as-file control", () => {
     const { revokeObjectURL } = installObjectUrlMocks();
-    const onToggleUploadAsFile = vi.fn();
     const { unmount } = render(
       <UploadedImage
         image={createImage("large-image.png")}
         onRemove={vi.fn()}
         isLoading
-        showUploadAsFileToggle
-        uploadAsFileActive
-        onToggleUploadAsFile={onToggleUploadAsFile}
       />,
     );
 
@@ -143,11 +104,9 @@ describe("uploaded image preview", () => {
       "data-color",
       "var(--oh-contrast)",
     );
-    const toggle = screen.getByTestId("upload-image-as-file");
-    expect(toggle).toHaveAttribute("aria-pressed", "true");
-
-    await user.click(toggle);
-    expect(onToggleUploadAsFile).toHaveBeenCalledOnce();
+    expect(
+      screen.queryByTestId("upload-image-as-file"),
+    ).not.toBeInTheDocument();
 
     unmount();
     expect(revokeObjectURL).toHaveBeenCalledWith(
@@ -155,34 +114,20 @@ describe("uploaded image preview", () => {
     );
   });
 
-  it("refreshes the object URL for a new image and hides an unusable toggle", () => {
+  it("refreshes the object URL for a new image", () => {
     const { createObjectURL, revokeObjectURL } = installObjectUrlMocks();
     const firstImage = createImage("first.png");
     const secondImage = createImage("second.png");
     const onRemove = vi.fn();
     const { rerender, unmount } = render(
-      <UploadedImage
-        image={firstImage}
-        onRemove={onRemove}
-        showUploadAsFileToggle
-      />,
+      <UploadedImage image={firstImage} onRemove={onRemove} />,
     );
 
     expect(screen.getByRole("img", { name: "first.png" })).toHaveAttribute(
       "src",
       "blob:preview/first.png",
     );
-    expect(
-      screen.queryByTestId("upload-image-as-file"),
-    ).not.toBeInTheDocument();
-
-    rerender(
-      <UploadedImage
-        image={secondImage}
-        onRemove={onRemove}
-        showUploadAsFileToggle
-      />,
-    );
+    rerender(<UploadedImage image={secondImage} onRemove={onRemove} />);
 
     expect(screen.getByRole("img", { name: "second.png" })).toHaveAttribute(
       "src",

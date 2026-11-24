@@ -76,7 +76,7 @@ export function ChatAddFileButton({
         type="button"
         className={cn(
           chatInputIconButtonClassName,
-          "relative shrink-0 size-6",
+          "relative shrink-0 size-6 p-0",
           disabled ? "cursor-not-allowed text-text-subtle" : undefined,
           menuOpen && !disabled && "text-contrast bg-contrast/10",
         )}

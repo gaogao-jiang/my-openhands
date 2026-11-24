@@ -296,6 +296,42 @@ describe("handleLaunchChildConversationAction", () => {
       });
     });
 
+    it("resolves a Jora specialist to its stable profile UUID", async () => {
+      seedWorktreeCapableParent();
+      mockListAgentProfiles.mockResolvedValue({
+        profiles: [
+          {
+            id: "reviewer-uuid",
+            name: "Jora-Reviewer",
+            agent_kind: "openhands",
+            revision: 7,
+            llm_profile_ref: null,
+            mcp_server_refs: null,
+          },
+        ],
+        active_agent_profile_id: "reviewer-uuid",
+      });
+
+      await handleLaunchChildConversationAction(
+        action({ subagent_type: "reviewer" }),
+        PARENT_ID,
+        nextToolCallId(),
+      );
+
+      expect(mockCreateConversation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          agentProfileId: "reviewer-uuid",
+          parentConversationId: PARENT_ID,
+        }),
+      );
+      const result = reportedResult();
+      expect(result).toMatchObject({
+        status: "launched",
+        agent_profile_id: "reviewer-uuid",
+        agent_profile_revision: 7,
+      });
+    });
+
     it("launches the child from the parent's agent profile and current LLM", async () => {
       seedWorktreeCapableParent();
       mockBatchGetAppConversations.mockResolvedValue([

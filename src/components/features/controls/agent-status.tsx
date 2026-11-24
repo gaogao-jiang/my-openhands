@@ -35,6 +35,8 @@ export interface AgentStatusProps {
   isPausing?: boolean;
   /** Keep only the status control; the label stays for screen readers. */
   compact?: boolean;
+  /** The composer's primary button can own the running Stop control. */
+  showStopControl?: boolean;
 }
 
 export function AgentStatus({
@@ -44,6 +46,7 @@ export function AgentStatus({
   disabled = false,
   isPausing = false,
   compact = false,
+  showStopControl = true,
 }: AgentStatusProps) {
   const { t } = useTranslation("openhands");
   const progressInChat = useChatProgress();
@@ -120,6 +123,8 @@ export function AgentStatus({
     statusCode === I18nKey.CHAT_INTERFACE$AGENT_FINISHED_MESSAGE;
   const isReadyStatus = statusCode === I18nKey.AGENT_STATUS$WAITING_FOR_TASK;
   const isTransientCheckStatus = isDoneStatus || isReadyStatus;
+  const isDisconnectedStatus =
+    statusCode === I18nKey.CHAT_INTERFACE$DISCONNECTED;
   const [shouldRenderDoneStatus, setShouldRenderDoneStatus] = useState(true);
   const [shouldFadeDoneStatus, setShouldFadeDoneStatus] = useState(false);
 
@@ -160,7 +165,11 @@ export function AgentStatus({
     };
   }, [isTransientCheckStatus]);
 
-  if (isTransientCheckStatus && !shouldRenderDoneStatus) {
+  if (
+    (!showStopControl && (shouldShownAgentStop || isPausing)) ||
+    isDisconnectedStatus ||
+    (isTransientCheckStatus && !shouldRenderDoneStatus)
+  ) {
     return null;
   }
 

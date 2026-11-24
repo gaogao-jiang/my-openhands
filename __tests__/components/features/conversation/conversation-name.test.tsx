@@ -1,5 +1,5 @@
 import { useConversationLaunchStore } from "#/stores/conversation-launch-store";
-import { screen, within, waitFor } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   afterAll,
@@ -196,6 +196,12 @@ describe("ConversationName", () => {
     const inputElement = screen.getByTestId("conversation-name-input");
     expect(inputElement).toBeInTheDocument();
     expect(inputElement).toHaveValue("Test Conversation");
+    expect(inputElement).toHaveClass(
+      "appearance-none",
+      "!bg-transparent",
+      "!text-contrast",
+      "caret-contrast",
+    );
   });
 
   it("should update conversation title when input loses focus with valid value", async () => {

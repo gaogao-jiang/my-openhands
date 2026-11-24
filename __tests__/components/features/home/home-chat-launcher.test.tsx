@@ -1,4 +1,5 @@
 import { useConversationLaunchStore } from "#/stores/conversation-launch-store";
+import { useOptimisticUserMessageStore } from "#/stores/optimistic-user-message-store";
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { readFileSync } from "node:fs";
@@ -375,6 +376,7 @@ const cloudBackend = {
 describe("HomeChatLauncher", () => {
   beforeEach(() => {
     useConversationLaunchStore.setState({ launches: {} });
+    useOptimisticUserMessageStore.getState().clearPendingMessages();
     vi.restoreAllMocks();
     vi.clearAllMocks();
     mockImages = [];
@@ -579,6 +581,32 @@ describe("HomeChatLauncher", () => {
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenCalledWith("/conversations/conv-abc"),
     );
+  });
+
+  it("keeps startup visible until the destination mounts and carries the first message across navigation", async () => {
+    vi.spyOn(
+      AgentServerConversationService,
+      "createConversation",
+    ).mockResolvedValue(makeConversationResponse());
+    renderLauncher();
+
+    await userEvent.click(screen.getByTestId("stub-chat-submit"));
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith("/conversations/conv-abc"),
+    );
+
+    // The mocked router has requested navigation but the destination is not mounted yet.
+    expect(screen.getByTestId("startup-user-message")).toHaveTextContent(
+      "hello world",
+    );
+    expect(screen.getByTestId("stub-chat-submit")).toBeDisabled();
+    expect(useOptimisticUserMessageStore.getState().pendingMessages).toEqual([
+      expect.objectContaining({
+        conversationId: "conv-abc",
+        content: "hello world",
+        status: "sending",
+      }),
+    ]);
   });
 
   it("disables the chat input and won't create a conversation when no LLM is configured", async () => {
@@ -1158,6 +1186,12 @@ describe("HomeChatLauncher", () => {
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenCalledWith("/conversations/conv-abc"),
     );
+    expect(useOptimisticUserMessageStore.getState().pendingMessages).toEqual([
+      expect.objectContaining({
+        conversationId: "conv-abc",
+        imageUrls: ["data:image/png;base64,abc"],
+      }),
+    ]);
   });
 
   it("clears inline progress and preserves attachments when the first upload fails", async () => {

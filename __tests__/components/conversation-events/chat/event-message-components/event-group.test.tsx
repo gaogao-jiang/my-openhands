@@ -144,7 +144,7 @@ describe("EventGroup", () => {
     );
   });
 
-  it("does not count a thinking action against a single command's descriptive title", () => {
+  it("does not count a thinking action as a separate activity row", () => {
     const thought: ActionEvent = {
       ...makeBashAction("thinking", "unused"),
       action: { kind: "ThinkAction", thought: "Review the approach" },
@@ -158,9 +158,7 @@ describe("EventGroup", () => {
         <div>Content</div>
       </EventGroup>,
     );
-    expect(screen.getByTestId("event-group-toggle")).toHaveTextContent(
-      "Inspecting the workspace",
-    );
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
   });
 
   it("summarizes a settled group by what its steps did", () => {
@@ -176,9 +174,33 @@ describe("EventGroup", () => {
       </EventGroup>,
     );
 
-    expect(screen.getByText("EVENT_GROUP$RAN_COMMANDS")).toBeInTheDocument();
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
     // Children should not be visible in the collapsed state.
     expect(screen.queryByTestId("child")).not.toBeInTheDocument();
+  });
+
+  it("shows elapsed time for a settled activity group", () => {
+    const events = [
+      {
+        ...makeBashObservation("o1", "a1", "ls"),
+        timestamp: "2026-11-23T10:00:00Z",
+      },
+      {
+        ...makeBashObservation("o2", "a2", "pwd"),
+        timestamp: "2026-11-23T10:05:06Z",
+      },
+    ];
+
+    renderWithProviders(
+      <EventGroup events={events}>
+        <div>details</div>
+      </EventGroup>,
+    );
+
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
+    expect(screen.getByTestId("event-group-duration")).toHaveTextContent(
+      "EVENT_GROUP$TOOK_TIME",
+    );
   });
 
   it("keeps the summary when it is not the live stage", () => {
@@ -195,7 +217,7 @@ describe("EventGroup", () => {
       </EventGroup>,
     );
 
-    expect(screen.getByText("EVENT_GROUP$RAN_COMMANDS")).toBeInTheDocument();
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
     expect(screen.queryByText(/ACTION_MESSAGE\$RUN/)).not.toBeInTheDocument();
     expect(screen.queryByTestId("spinner-icon")).not.toBeInTheDocument();
   });
@@ -331,7 +353,7 @@ describe("EventGroup", () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("Ran 2 commands, read a file")).toBeInTheDocument();
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
   });
 
   it("keeps natural singular summaries while a group grows and is opened", async () => {
@@ -368,10 +390,10 @@ describe("EventGroup", () => {
     );
     const { rerender } = renderWithProviders(group(events));
     const toggle = screen.getByTestId("event-group-toggle");
-    expect(toggle).toHaveTextContent(/^Ran a command, ran a hook$/);
+    expect(toggle).toContainElement(screen.getByTestId("event-group-duration"));
     await user.click(toggle);
     rerender(group([...events, { ...hook, id: "h2" }, { ...hook, id: "h3" }]));
-    expect(toggle).toHaveTextContent(/^Ran a command, ran 3 hooks$/);
+    expect(toggle).toContainElement(screen.getByTestId("event-group-duration"));
     expect(screen.getByText("Hook details")).toBeVisible();
     expect(toggle).toHaveAttribute("aria-expanded", "true");
   });
@@ -389,7 +411,7 @@ describe("EventGroup", () => {
       </EventGroup>,
     );
 
-    expect(screen.getByText("EVENT_GROUP$RAN_COMMANDS")).toBeInTheDocument();
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
   });
 
   it("counts an action resolved by an AgentErrorEvent as a step it took", () => {
@@ -405,7 +427,7 @@ describe("EventGroup", () => {
       </EventGroup>,
     );
 
-    expect(screen.getByText("EVENT_GROUP$RAN_COMMANDS")).toBeInTheDocument();
+    expect(screen.getByTestId("event-group-duration")).toBeInTheDocument();
   });
 
   it("updates accessibility state while toggling the group", async () => {

@@ -417,8 +417,12 @@ describe("groupEvents", () => {
     const result = groupEvents([rejection], undefined, [action, rejection]);
 
     expect(result).toEqual([
-      { kind: "thought", action, index: 0 },
-      { kind: "single", event: rejection, index: 0 },
+      {
+        kind: "group",
+        events: [rejection],
+        startIndex: 0,
+        reasoning: [{ id: "a1", text: "Let me try", index: 0 }],
+      },
     ]);
   });
 
@@ -451,11 +455,9 @@ describe("groupEvents", () => {
     expect(grouped[0].kind).toBe("group");
   });
 
-  it("hoists an action's thought into a separate item and starts a new group", () => {
-    // First three actions have no thought, then a fourth action carries a
-    // thought, then two more actions follow. The thought should break the
-    // first group and open a new one starting with the thought-bearing
-    // action.
+  it("keeps an action's thought inside the continuous activity group", () => {
+    // A thought between tool calls should not create another visible row.
+    // It remains available as expanded reasoning on the combined group.
     const a1 = makeBashAction("a1");
     const a2 = makeBashAction("a2");
     const a3 = makeBashAction("a3");
@@ -489,20 +491,19 @@ describe("groupEvents", () => {
 
     const result = groupEvents(events, undefined, allEvents);
 
-    // group(o1..o3), thought(a4), group(o4..o6)
-    expect(result).toHaveLength(3);
+    // group(o1..o6), with a4's narration attached as reasoning
+    expect(result).toHaveLength(1);
     expect(result[0].kind).toBe("group");
-    expect(result[1].kind).toBe("thought");
-    expect(result[2].kind).toBe("group");
 
     if (result[0].kind === "group") {
-      expect(result[0].events).toHaveLength(3);
-    }
-    if (result[1].kind === "thought") {
-      expect(result[1].action.id).toBe("a4");
-    }
-    if (result[2].kind === "group") {
-      expect(result[2].events).toHaveLength(3);
+      expect(result[0].events).toHaveLength(6);
+      expect(result[0].reasoning).toEqual([
+        {
+          id: "a4",
+          text: "Let me check tests for the new conversation button:",
+          index: 3,
+        },
+      ]);
     }
   });
 
@@ -515,13 +516,8 @@ describe("groupEvents", () => {
 
     const result = groupEvents(events);
 
-    // a1 + a2 group together (>= min size of 2), then the thought is hoisted
-    // out before a3, leaving a3 as a single.
-    expect(result.map((item) => item.kind)).toEqual([
-      "group",
-      "thought",
-      "single",
-    ]);
+    // The whole continuous run is one collapsed activity group.
+    expect(result.map((item) => item.kind)).toEqual(["group"]);
   });
 
   it("does not emit the same thought twice when both action and observation are present", () => {
@@ -535,9 +531,12 @@ describe("groupEvents", () => {
       observation,
     ]);
 
-    expect(result.map((item) => item.kind)).toEqual(["thought", "group"]);
-    if (result[1].kind === "group") {
-      expect(result[1].events).toEqual([action, observation]);
+    expect(result.map((item) => item.kind)).toEqual(["group"]);
+    if (result[0].kind === "group") {
+      expect(result[0].events).toEqual([action, observation]);
+      expect(result[0].reasoning).toEqual([
+        { id: "a1", text: "thinking out loud", index: 0 },
+      ]);
     }
   });
 
@@ -552,16 +551,19 @@ describe("groupEvents", () => {
 
     const result = groupEvents([o0, o1], 1, [a0, o0, a1, o1], 1);
 
-    // Stranding the reasoning in its own group (or the previous one) gives it
-    // the same key and open state as the step it belongs to.
+    // The reasoning stays in the same compact activity group as its step.
     expect(result).toEqual([
-      { kind: "group", events: [o0], startIndex: 0 },
-      { kind: "thought", action: a1, index: 1 },
       {
         kind: "group",
-        events: [o1],
-        startIndex: 1,
-        reasoning: [{ id: "a1", text: "Weighing whether to run it", index: 1 }],
+        events: [o0, o1],
+        startIndex: 0,
+        reasoning: [
+          {
+            id: "a1",
+            text: "Next I'll run it\n\nWeighing whether to run it",
+            index: 1,
+          },
+        ],
       },
     ]);
   });

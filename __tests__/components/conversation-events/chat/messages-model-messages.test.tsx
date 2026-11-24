@@ -1,5 +1,11 @@
 import React from "react";
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -17,6 +23,9 @@ import {
 } from "#/types/agent-server/core";
 import { ExecuteBashAction } from "#/types/agent-server/core/base/action";
 import { StreamingDeltaEvent } from "#/types/agent-server/core/events/streaming-delta-event";
+import { ExecutionStatus } from "#/types/agent-server/core/base/common";
+import { useConversationStateStore } from "#/stores/conversation-state-store";
+import { useConversationStore } from "#/stores/conversation-store";
 
 const CONVERSATION_ID = "test-conversation-id";
 
@@ -93,6 +102,8 @@ const makeStreamingDelta = (content: string): StreamingDeltaEvent => ({
 
 describe("Messages model entries", () => {
   beforeEach(() => {
+    useConversationStateStore.setState({ executionStatusByConversation: {} });
+    useConversationStore.setState({ localPlanningConversationId: null });
     useModelStore.setState({ entriesByConversation: {} });
     // jsdom has no layout; give the scroll container a measurable viewport so
     // the virtualizer can compute a range.
@@ -110,10 +121,51 @@ describe("Messages model entries", () => {
   });
 
   afterEach(() => {
+    useConversationStore.setState({ localPlanningConversationId: null });
     vi.restoreAllMocks();
   });
 
-  it("keeps only the latest assistant reply's actions visible as replies stream, finish and are removed", async () => {
+  it("omits actions for progress attached to a tool", () => {
+    const tool = {
+      ...makeBashAction("check-fonts"),
+      thought: [{ type: "text" as const, text: "Checking presentation fonts" }],
+    };
+    renderWithProviders(<Messages messages={[tool]} allEvents={[tool]} />);
+    fireEvent.mouseEnter(screen.getByTestId("agent-message"));
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("hides a running planner's actions until the planner finishes", () => {
+    const event = createUserMessageEvent("planner-progress");
+    const reply = {
+      ...event,
+      source: "agent" as const,
+      isFromPlanningAgent: true,
+      llm_message: { ...event.llm_message, role: "assistant" as const },
+    };
+    useConversationStore.setState({ localPlanningConversationId: "planner" });
+    const store = useConversationStateStore.getState();
+    store.setExecutionStatus(CONVERSATION_ID, ExecutionStatus.FINISHED);
+    store.setExecutionStatus("planner", ExecutionStatus.RUNNING);
+    renderWithProviders(<Messages messages={[reply]} allEvents={[reply]} />);
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
+
+    act(() => store.setExecutionStatus("planner", ExecutionStatus.FINISHED));
+    const toolbar = screen.getByTestId("assistant-message-actions");
+    expect(toolbar).not.toHaveClass("opacity-0");
+    expect(
+      within(toolbar).getByRole("button", { name: "CHAT_INTERFACE$HELPFUL" }),
+    ).toBeEnabled();
+  });
+
+  it("omits progress footers through tools and streaming, reserving actions for the final result", async () => {
+    useConversationStateStore
+      .getState()
+      .setExecutionStatus(CONVERSATION_ID, ExecutionStatus.RUNNING);
     const reply = (id: string) => {
       const event = createUserMessageEvent(id);
       return {
@@ -124,27 +176,29 @@ describe("Messages model entries", () => {
     };
     const earlier = reply("earlier");
     const latest = reply("latest");
-    const trailingUser = createUserMessageEvent("trailing-user");
     const events = [
+      createUserMessageEvent("request"),
       earlier,
+      makeBashAction("tool-before-latest"),
       latest,
-      trailingUser,
       makeBashAction("tool-after-reply"),
     ];
     const view = renderWithProviders(
       <Messages messages={events} allEvents={events} />,
     );
-    const copies = () =>
-      screen
-        .getAllByTestId("agent-message")
-        .map((row) => within(row).getByTestId("assistant-message-actions"));
-    expect(copies()[0]).toHaveClass("opacity-0", "pointer-events-none");
-    expect(copies()[1]).not.toHaveClass("opacity-0");
+    fireEvent.mouseEnter(screen.getAllByTestId("agent-message")[1]);
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
+    fireEvent.mouseLeave(screen.getAllByTestId("agent-message")[1]);
     const streaming = [...events, makeStreamingDelta("New streamed reply")];
     view.rerender(<Messages messages={streaming} allEvents={streaming} />);
-    await waitFor(() => expect(copies()).toHaveLength(3));
-    expect(copies()[1]).toHaveClass("opacity-0", "pointer-events-none");
-    expect(copies()[2]).not.toHaveClass("opacity-0");
+    await waitFor(() =>
+      expect(screen.getAllByTestId("agent-message")).toHaveLength(3),
+    );
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
     const finished: OpenHandsEvent[] = [
       ...events,
       {
@@ -153,10 +207,57 @@ describe("Messages model entries", () => {
       },
     ];
     view.rerender(<Messages messages={finished} allEvents={finished} />);
-    expect(copies()[1]).toHaveClass("opacity-0", "pointer-events-none");
-    expect(copies()[2]).not.toHaveClass("opacity-0");
+    const toolbar = screen.getByTestId("assistant-message-actions");
+    expect(toolbar).not.toHaveClass("opacity-0");
+    expect(
+      within(toolbar).getByRole("button", {
+        name: "CHAT_INTERFACE$HELPFUL",
+      }),
+    ).toBeEnabled();
     view.rerender(<Messages messages={events} allEvents={events} />);
-    expect(copies()[1]).not.toHaveClass("opacity-0");
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("promotes a text-only ACP answer when its turn finishes and preserves it in history", () => {
+    const event = createUserMessageEvent("acp-answer");
+    const reply = {
+      ...event,
+      source: "agent" as const,
+      llm_message: { ...event.llm_message, role: "assistant" as const },
+    };
+    const store = useConversationStateStore.getState();
+    store.setExecutionStatus(CONVERSATION_ID, ExecutionStatus.RUNNING);
+    const view = renderWithProviders(
+      <Messages messages={[reply]} allEvents={[reply]} />,
+    );
+    const toolbar = () => screen.getByTestId("assistant-message-actions");
+    expect(
+      screen.queryByTestId("assistant-message-actions"),
+    ).not.toBeInTheDocument();
+
+    act(() =>
+      store.setExecutionStatus(CONVERSATION_ID, ExecutionStatus.FINISHED),
+    );
+    expect(toolbar()).not.toHaveClass("opacity-0");
+    expect(
+      within(toolbar()).getByRole("button", { name: "CHAT_INTERFACE$HELPFUL" }),
+    ).toBeEnabled();
+
+    const nextTurn = [
+      reply,
+      createUserMessageEvent("next-request"),
+      makeBashAction("next-tool"),
+    ];
+    act(() =>
+      store.setExecutionStatus(CONVERSATION_ID, ExecutionStatus.RUNNING),
+    );
+    view.rerender(<Messages messages={nextTurn} allEvents={nextTurn} />);
+    fireEvent.mouseEnter(screen.getByTestId("agent-message"));
+    expect(
+      within(toolbar()).getByRole("button", { name: "CHAT_INTERFACE$HELPFUL" }),
+    ).toBeEnabled();
   });
 
   it("renders model entries anchored to non-last events inside grouped runs", () => {

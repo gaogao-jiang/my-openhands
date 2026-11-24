@@ -186,7 +186,7 @@ export function ChatInputActions({
   }, [showChangeAgentButton, showAgentProfileSwitch]);
 
   const handlePauseAgent = () => {
-    if (!conversationId) return;
+    if (!conversationId || isPausing) return;
     pauseConversationMutation.mutate({ conversationId });
   };
 
@@ -197,6 +197,17 @@ export function ChatInputActions({
 
   const isPausing =
     unifiedPauseMutation.isPending || pauseConversationMutation.isPending;
+  const isStopping =
+    !!conversationId && (curAgentState === AgentState.RUNNING || isPausing);
+  const primaryButton = (
+    <ChatSendButton
+      buttonClassName={buttonClassName}
+      handleSubmit={isStopping ? handlePauseAgent : handleSubmit}
+      disabled={isStopping ? isPausing : disabled || !canSubmit}
+      isStopping={isStopping}
+      isPending={isStopping && isPausing}
+    />
+  );
 
   const OVERFLOW_BUTTON_WIDTH = 28;
   const INLINE_GAP = 12;
@@ -256,7 +267,7 @@ export function ChatInputActions({
   const showAgentProfileInline = fitWithOverflow.showAgentProfileInline;
   const showAddFileInline = true;
   // Below this width the status label is visually hidden, but the status
-  // control itself (Stop, Resume, progress) always stays in the row.
+  // control itself (Resume, progress) always stays in the row.
   const showAgentStatusLabel = actionsRowWidth >= 360;
 
   // Which chat-input LLM picker to show — the constrained ACP model picker or
@@ -496,13 +507,7 @@ export function ChatInputActions({
         data-testid="chat-input-actions-minimal"
         className="w-full min-w-0 flex items-center justify-end gap-2"
       >
-        {showButton ? (
-          <ChatSendButton
-            buttonClassName={buttonClassName}
-            handleSubmit={handleSubmit}
-            disabled={disabled || !canSubmit}
-          />
-        ) : null}
+        {showButton ? primaryButton : null}
       </div>
     );
   }
@@ -588,6 +593,7 @@ export function ChatInputActions({
             handleResumeAgent={handleResumeAgentClick}
             disabled={disabled}
             isPausing={isPausing}
+            showStopControl={!showButton}
           />
         )}
         <ContextWindowMeter />
@@ -597,13 +603,7 @@ export function ChatInputActions({
             disabled={isDictationDisabled}
           />
         )}
-        {showButton && (
-          <ChatSendButton
-            buttonClassName={buttonClassName}
-            handleSubmit={handleSubmit}
-            disabled={disabled || !canSubmit}
-          />
-        )}
+        {showButton && primaryButton}
       </div>
     </div>
   );

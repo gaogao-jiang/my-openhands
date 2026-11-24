@@ -132,6 +132,28 @@ describe("FileContentViewer", () => {
     },
   );
 
+  it("previews the text and basic formatting of a local Word document", async () => {
+    const encodedDocx =
+      "UEsDBBQAAAAIAPSOd10pANHkxgAAAEABAAARAAAAd29yZC9kb2N1bWVudC54bWxtT81uwjAMfpUo95Fuh2mq2nLbrpsGDxAaA5GSOHJMQ9+elEBPXD7b+n5sd9urd2ICShZDL983jRQQRjQ2nHq5332/fcnt0OXW4HjxEFgUfUht7uWZObZKpfEMXqcNRgiFOyJ5zWWkk8pIJhKOkFKJ8059NM2n8toGuUQe0MxLjXf4pXv559mByO2kXS93lh1INXRqFVSo/aEyj4mHv4smBnKzIIhIvJBcJTVi3fYw/EAA0gxGrO9FgslCfmEtWC8uzVM+3ABQSwECFAAUAAAACAD0jnddKQDR5MYAAABAAQAAEQAAAAAAAAAAAAAAAAAAAAAAd29yZC9kb2N1bWVudC54bWxQSwUGAAAAAAEAAQA/AAAA9QAAAAAA";
+    const bytes = Uint8Array.from(atob(encodedDocx), (character) =>
+      character.charCodeAt(0),
+    );
+    fetchMock.mockResolvedValue({
+      ok: true,
+      status: 200,
+      arrayBuffer: () => Promise.resolve(bytes.slice().buffer),
+    });
+
+    renderViewer("report.docx");
+
+    const preview = await screen.findByTestId("docx-file-preview");
+    expect(preview).toHaveTextContent("Quarterly report");
+    expect(preview).toHaveTextContent("Generated document preview");
+    expect(
+      screen.queryByTestId("file-content-viewer-binary-fallback"),
+    ).toBeNull();
+  });
+
   it("keeps alert prose descendants readable without recoloring ordinary Markdown or links", async () => {
     // Use the real file hook, viewer, prose wrapper and Markdown components.
     const markdown = [

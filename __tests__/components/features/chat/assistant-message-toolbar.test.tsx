@@ -78,6 +78,70 @@ describe("AssistantMessageToolbar", () => {
     await waitFor(() => expect(more).toHaveFocus());
   });
 
+  it("dismisses the more menu with Escape and restores focus", async () => {
+    const user = userEvent.setup();
+    render(
+      <AssistantMessageToolbar
+        {...props}
+        actions={[{ icon: <span />, tooltip: "Branch here", onClick: vi.fn() }]}
+      />,
+    );
+    const more = screen.getByRole("button", {
+      name: I18nKey.COMMON$MORE_OPTIONS,
+    });
+    await user.click(more);
+    expect(await screen.findByRole("menu")).toBeInTheDocument();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    await waitFor(() => expect(more).toHaveFocus());
+  });
+
+  it("toggles the more menu when its trigger is clicked", async () => {
+    const user = userEvent.setup();
+    render(
+      <AssistantMessageToolbar
+        {...props}
+        actions={[{ icon: <span />, tooltip: "Branch here", onClick: vi.fn() }]}
+      />,
+    );
+    const more = screen.getByRole("button", {
+      name: I18nKey.COMMON$MORE_OPTIONS,
+    });
+    expect(more).toHaveAttribute("aria-expanded", "false");
+    await user.click(more);
+    expect(more).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("menuitem", { name: "Branch here" })).toBeVisible();
+    await user.click(more);
+    expect(more).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    await waitFor(() => expect(more).not.toHaveAttribute("data-focus-visible"));
+  });
+
+  it("does not render an inactive more button without actions", () => {
+    render(<AssistantMessageToolbar {...props} />);
+
+    expect(
+      screen.queryByRole("button", {
+        name: I18nKey.COMMON$MORE_OPTIONS,
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("retains a visible focus indicator for keyboard navigation", async () => {
+    const user = userEvent.setup();
+    render(
+      <AssistantMessageToolbar
+        {...props}
+        actions={[{ icon: <span />, tooltip: "Branch here", onClick: vi.fn() }]}
+      />,
+    );
+    const more = screen.getByRole("button", {
+      name: I18nKey.COMMON$MORE_OPTIONS,
+    });
+    while (document.activeElement !== more) await user.tab();
+    expect(more).toHaveAttribute("data-focus-visible");
+  });
+
   it("saves, replaces and clears local feedback across remounts without affecting another message", async () => {
     const user = userEvent.setup();
     const getFeedbackPaths = () =>

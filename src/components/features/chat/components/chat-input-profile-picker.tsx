@@ -15,6 +15,11 @@ import { Typography } from "#/ui/typography";
 import { I18nKey } from "#/i18n/declaration";
 import { cn } from "#/utils/utils";
 import { getLockedCloudHost } from "#/api/agent-server-config";
+import {
+  getAgentProfileDescriptionKey,
+  getAgentProfileDisplayName,
+} from "#/utils/agent-profile-display-name";
+import PlusIcon from "#/icons/u-plus.svg?react";
 
 interface ChatInputProfileMenuContentProps {
   onClose: () => void;
@@ -62,7 +67,7 @@ export function ChatInputProfileMenuContent({
               ContextMenu <ul> without exposing the label as a menu item. */}
           <li role="presentation" className="px-2 pt-1 pb-0.5">
             <Typography.Text className="menu-caption-text font-medium text-text-dim uppercase tracking-wide leading-4">
-              {t(I18nKey.SETTINGS$AVAILABLE_PROFILES)}
+              {t(I18nKey.CHAT$SELECT_AGENT)}
             </Typography.Text>
           </li>
           {profiles.map((profile) => {
@@ -83,15 +88,22 @@ export function ChatInputProfileMenuContent({
                   handleSelect(profile);
                 }}
                 className={cn(
-                  "flex items-center gap-2",
+                  "flex items-start gap-2",
                   isCurrent && "bg-interactive-hover",
                 )}
               >
-                <span
-                  className="flex-1 truncate text-sm leading-5"
-                  title={profile.name}
-                >
-                  {profile.name}
+                <span className="min-w-0 flex-1">
+                  <span
+                    className="block truncate text-sm leading-5"
+                    title={getAgentProfileDisplayName(profile)}
+                  >
+                    {getAgentProfileDisplayName(profile)}
+                  </span>
+                  {getAgentProfileDescriptionKey(profile) ? (
+                    <span className="block whitespace-normal text-xs leading-4 text-text-dim">
+                      {t(getAgentProfileDescriptionKey(profile)!)}
+                    </span>
+                  ) : null}
                 </span>
                 {isCurrent && (
                   <CheckIcon
@@ -117,24 +129,44 @@ export function ChatInputProfileMenuContent({
         <Divider inset={dividerInset} />
       )}
       {showSettingsLink && (
-        <li className="text-sm">
-          <NavigationLink
-            to="/settings/agents"
-            onClick={onClose}
-            className={cn(
-              "flex h-7.5 items-center gap-2 rounded p-2 leading-5 text-foreground hover:bg-interactive-hover transition-colors",
-              settingsLinkClassName,
-            )}
-          >
-            <SettingsGearIcon
-              width={16}
-              height={16}
-              className={cn("shrink-0", settingsIconClassName)}
-              aria-hidden
-            />
-            <span>{t(I18nKey.CHAT$MANAGE_AGENT_PROFILES)}</span>
-          </NavigationLink>
-        </li>
+        <>
+          <li className="text-sm">
+            <NavigationLink
+              to="/settings/agents?create=true"
+              onClick={onClose}
+              className={cn(
+                "flex h-7.5 items-center gap-2 rounded p-2 leading-5 text-foreground hover:bg-interactive-hover transition-colors",
+                settingsLinkClassName,
+              )}
+            >
+              <PlusIcon
+                width={16}
+                height={16}
+                className={cn("shrink-0", settingsIconClassName)}
+                aria-hidden
+              />
+              <span>{t(I18nKey.CHAT$CREATE_AGENT)}</span>
+            </NavigationLink>
+          </li>
+          <li className="text-sm">
+            <NavigationLink
+              to="/settings/agents"
+              onClick={onClose}
+              className={cn(
+                "flex h-7.5 items-center gap-2 rounded p-2 leading-5 text-foreground hover:bg-interactive-hover transition-colors",
+                settingsLinkClassName,
+              )}
+            >
+              <SettingsGearIcon
+                width={16}
+                height={16}
+                className={cn("shrink-0", settingsIconClassName)}
+                aria-hidden
+              />
+              <span>{t(I18nKey.CHAT$MANAGE_AGENTS)}</span>
+            </NavigationLink>
+          </li>
+        </>
       )}
     </>
   );
@@ -164,8 +196,8 @@ export function ChatInputAgentProfilePicker() {
         ref={triggerRef}
         type="button"
         className={cn(chatInputPillButtonClassName, "max-w-40")}
-        title={t(I18nKey.CHAT$SWITCH_AGENT_PROFILE)}
-        aria-label={`${t(I18nKey.CHAT$SWITCH_AGENT_PROFILE)}: ${label}`}
+        title={t(I18nKey.CHAT$SELECT_AGENT)}
+        aria-label={`${t(I18nKey.CHAT$SELECT_AGENT)}: ${label}`}
         data-testid="chat-input-agent-profile"
         aria-expanded={isOpen}
         aria-haspopup="dialog"

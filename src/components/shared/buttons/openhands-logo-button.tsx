@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
-import OpenHandsLogo from "#/assets/branding/openhands-logo.svg?react";
+import JoraMark from "#/assets/branding/jora-mark.svg?react";
 import { NavigationLink } from "#/components/shared/navigation-link";
 import { I18nKey } from "#/i18n/declaration";
 import { cn } from "#/utils/utils";
 
-const DEFAULT_LOGO_WIDTH = 46;
-const DEFAULT_LOGO_HEIGHT = 30;
+const DEFAULT_LOGO_WIDTH = 24;
+const DEFAULT_LOGO_HEIGHT = 24;
 
 export type OpenHandsLogoButtonProps = {
   className?: string;
@@ -13,6 +13,7 @@ export type OpenHandsLogoButtonProps = {
   logoClassName?: string;
   logoWidth?: number;
   logoHeight?: number;
+  showName?: boolean;
 };
 
 export function OpenHandsLogoButton({
@@ -20,25 +21,33 @@ export function OpenHandsLogoButton({
   logoClassName,
   logoWidth = DEFAULT_LOGO_WIDTH,
   logoHeight = DEFAULT_LOGO_HEIGHT,
+  showName = false,
 }: OpenHandsLogoButtonProps = {}) {
   const { t } = useTranslation("openhands");
 
   const ariaLabel = t(I18nKey.BRANDING$OPENHANDS_LOGO);
+  const productName = t(I18nKey.BRANDING$OPENHANDS);
 
   return (
     <NavigationLink
       to="/conversations"
       aria-label={ariaLabel}
-      className={cn(className)}
+      className={cn(
+        "min-w-0 items-center",
+        showName ? "flex gap-2" : "inline-flex",
+        className,
+      )}
     >
-      <OpenHandsLogo
+      <JoraMark
         width={logoWidth}
         height={logoHeight}
-        className={cn(
-          "shrink-0 text-contrast [&_path[fill=white]]:fill-current",
-          logoClassName,
-        )}
+        className={cn("shrink-0 text-contrast", logoClassName)}
       />
+      {showName ? (
+        <span className="truncate text-sm-plus font-semibold text-contrast">
+          {productName}
+        </span>
+      ) : null}
     </NavigationLink>
   );
 }

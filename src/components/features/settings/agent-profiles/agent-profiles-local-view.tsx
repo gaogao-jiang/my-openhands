@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router";
 import { useActiveBackend } from "#/contexts/active-backend-context";
 import { ensureDefaultAgentProfileMigrated } from "#/hooks/use-migrate-default-agent-profile";
 import { useTranslation } from "react-i18next";
 import { AgentProfilesManager } from "./agent-profiles-manager";
 import { mergeAgentProfileSaveInput } from "./merge-agent-profile-save-input";
 import { newProfileSeed } from "./new-profile-seed";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 import { ProfileNameInput } from "#/components/features/settings/llm-profiles/profile-name-input";
 import { BrandButton } from "#/components/features/settings/brand-button";
 import { SettingsDropdownInput } from "#/components/features/settings/settings-dropdown-input";
@@ -114,6 +116,7 @@ function defaultProfileOverride(
  * an LLM-profile picker. Available on local backends only.
  */
 export function AgentProfilesLocalView() {
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation("openhands");
   const { setHideSectionHeader } = useSettingsSectionHeader();
   const saveProfile = useSaveAgentProfile();
@@ -140,7 +143,9 @@ export function AgentProfilesLocalView() {
     [backend.kind],
   );
 
-  const [viewMode, setViewMode] = useState<ViewMode>("list");
+  const [viewMode, setViewMode] = useState<ViewMode>(() =>
+    searchParams.get("create") === "true" ? "create" : "list",
+  );
   const [profileName, setProfileName] = useState("");
   const [nameTouched, setNameTouched] = useState(false);
   const [editingProfile, setEditingProfile] = useState<AgentProfile | null>(
@@ -354,8 +359,18 @@ export function AgentProfilesLocalView() {
 
       displaySuccessToast(
         viewMode === "create"
-          ? t(I18nKey.SETTINGS$PROFILE_CREATED, { name: trimmedName })
-          : t(I18nKey.SETTINGS$PROFILE_UPDATED, { name: trimmedName }),
+          ? t(I18nKey.SETTINGS$PROFILE_CREATED, {
+              name: getAgentProfileDisplayName({
+                name: trimmedName,
+                agent_kind: input.agent_kind,
+              }),
+            })
+          : t(I18nKey.SETTINGS$PROFILE_UPDATED, {
+              name: getAgentProfileDisplayName({
+                name: trimmedName,
+                agent_kind: input.agent_kind,
+              }),
+            }),
       );
       handleBackToList();
     } catch (error) {
@@ -398,7 +413,9 @@ export function AgentProfilesLocalView() {
       : t(I18nKey.SETTINGS$ADD_AGENT_PROFILE);
   const editorDescription =
     viewMode === "edit" && editingProfile
-      ? t(I18nKey.SETTINGS$PROFILE_LOADED, { name: editingProfile.name })
+      ? t(I18nKey.SETTINGS$PROFILE_LOADED, {
+          name: getAgentProfileDisplayName(editingProfile),
+        })
       : t(I18nKey.SETTINGS$AGENT_PROFILE_SAVE_HINT);
   const isOpenHands = saveControl?.agentType !== "acp";
   const isDefaultLocked =
@@ -476,7 +493,11 @@ export function AgentProfilesLocalView() {
       <div className="flex flex-col gap-2">
         <ProfileNameInput
           testId="agent-profile-name-input"
-          value={profileName}
+          value={
+            isDefaultLocked && editingProfile?.agent_kind === "openhands"
+              ? getAgentProfileDisplayName(editingProfile)
+              : profileName
+          }
           onChange={(name) => {
             setNameTouched(true);
             setProfileName(name);

@@ -283,7 +283,7 @@ describe("HomeChatLauncher failed launch", () => {
         }) as never,
     );
     const loadingToast = vi.spyOn(toast, "loading");
-    renderLauncher();
+    const view = renderLauncher();
     await submitPrompt();
     expect(screen.getByTestId("startup-user-message")).toHaveTextContent(
       PROMPT,
@@ -306,6 +306,10 @@ describe("HomeChatLauncher failed launch", () => {
     expect(loadingToast).not.toHaveBeenCalled();
     expect(
       screen.queryByTestId("conversation-startup-progress"),
+    ).toBeInTheDocument();
+    view.unmount();
+    expect(
+      screen.queryByTestId("startup-user-message"),
     ).not.toBeInTheDocument();
   });
 

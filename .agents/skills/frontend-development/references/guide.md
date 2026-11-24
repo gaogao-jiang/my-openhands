@@ -83,14 +83,35 @@ who navigated elsewhere. Do not show a delayed global creation toast or add a
 minimum loading duration. Cloud starts retain their existing in-memory launch
 registry and launch-URL handoff.
 
+After successful Local creation, retain the mounted startup snapshot until the
+router commits the destination; clearing it in `finally` can repaint the welcome
+screen during route loading. Carry the submitted text or the successfully sent
+attachment payload into the optimistic-message store before navigation. The
+destination's existing REST/WebSocket echo reconciliation replaces that bubble,
+so startup never needs to flash a history skeleton or send the message again.
+Creation/upload failures still clear progress and leave the existing recovery
+flow available.
+
 ## Assistant message actions
 
-Assistant replies show Copy, separate Like/Dislike toggles, Read aloud, More,
-and a Beijing clock in the footer. Only the latest assistant reply keeps its
-icons visible; historical replies reveal them on hover or keyboard focus, and
-an open More menu keeps its trigger visible. Clocks appear only on message
-hover or direct keyboard focus. Latest-reply selection includes streaming and
-Finish replies and ignores trailing user/tool events, without changing the
+The composer's primary Send button becomes Stop while the conversation is
+running, including the minimal embedded composer. Stop interrupts the agent
+through the existing pause mutation, independently of draft submit availability;
+while the request is pending it is disabled and shows progress. The status
+component keeps notifications and loading-state ownership, but omits its
+separate running control when the primary button owns Stop. Resume and error
+status controls retain their existing behavior.
+
+Final assistant replies show Copy, separate Like/Dislike toggles, Read aloud,
+More, and a Beijing clock in the footer. Progress and streaming messages have
+no action footer or clock, including on hover or keyboard focus. Only a final reply
+that is also the latest assistant reply keeps its icons visible; historical
+final replies reveal their full actions on hover or keyboard focus, and an
+open More menu keeps its trigger visible. Final-reply selection uses Finish
+actions and completed text-only turns, independently for main and planning
+agents; messages followed by tool work remain progress. Clocks appear only on
+message hover or direct keyboard focus. Latest-reply selection ignores trailing
+user/tool events, without changing the
 meaning of the existing `isLastMessage` event-tail flag. Like/Dislike are mutually exclusive
 and clicking the selected rating clears it. More contains branch actions without
 a duplicate Copy entry, and is disabled when no actions are available. User-message
@@ -106,6 +127,10 @@ Unfinished messages cannot be rated or read aloud. Menus must stay inside the
 embedding appearance scope and support keyboard selection and focus restoration.
 
 ## Conversation list activity
+
+The conversation-list menu does not offer Stop on local backends; interrupting
+an active local agent stays in the composer. Cloud menus retain Stop for a
+stoppable runtime, including a running sandbox after the agent is paused.
 
 Conversation rows and their previews put activity indicators on the right:
 a rotating ring while running and a green dot for an unviewed completion.

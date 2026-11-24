@@ -27,6 +27,21 @@ export const CHILD_CONVERSATION_ISOLATIONS = ["worktree", "shared"] as const;
 export type ChildConversationIsolation =
   (typeof CHILD_CONVERSATION_ISOLATIONS)[number];
 
+/** Expert roles the Jora main agent can request for a delegated child. */
+export const JORA_SUBAGENT_TYPES = [
+  "developer",
+  "reviewer",
+  "documenter",
+] as const;
+export type JoraSubagentType = (typeof JORA_SUBAGENT_TYPES)[number];
+
+/** Stored profile names remain wire identity; these are presentation aliases. */
+export const JORA_SUBAGENT_PROFILE_NAMES: Record<JoraSubagentType, string> = {
+  developer: "Jora-Developer",
+  reviewer: "Jora-Reviewer",
+  documenter: "Jora-Documenter",
+};
+
 /**
  * `parent_conversation_id` on the local start-conversation request landed in
  * software-agent-sdk#4188. Older agent-servers accept the request and drop the

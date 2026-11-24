@@ -10,6 +10,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { EllipsisButton } from "#/components/features/conversation-panel/ellipsis-button";
 import { BrandBadge } from "#/components/shared/badge";
 import { cn } from "#/utils/utils";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 import {
   settingsListIconActionButtonClassName,
   settingsListRowClassName,
@@ -37,6 +38,7 @@ export function AgentProfileRow({
 }: AgentProfileRowProps) {
   const { t } = useTranslation("openhands");
   const { backend } = useActiveBackend();
+  const displayName = getAgentProfileDisplayName(profile);
   // The server reseeds a deleted `default`, which would reset what it shares
   // with the global pages.
   const isProtected =
@@ -59,9 +61,9 @@ export function AgentProfileRow({
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <span
           className="min-w-0 max-w-full truncate text-sm font-medium text-contrast"
-          title={profile.name}
+          title={displayName}
         >
-          {profile.name}
+          {displayName}
         </span>
         {secondary ? (
           <span

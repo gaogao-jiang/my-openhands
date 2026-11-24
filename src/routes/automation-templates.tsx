@@ -8,6 +8,9 @@ import {
 } from "#/components/features/automations/template-filter-chips";
 import { ManifestSubpageLayout } from "#/components/features/manifest/manifest-subpage-layout";
 import { getTemplatesPageSpec } from "#/manifests/automation-interface";
+import { localizeManifestPageCopy } from "#/manifests/automation-localization";
+import { useTranslation } from "react-i18next";
+import { I18nKey } from "#/i18n/declaration";
 
 /**
  * The templates sub-page. It exists only while the admitted interface
@@ -22,14 +25,15 @@ export const clientLoader = () => {
 };
 
 export default function AutomationTemplates() {
+  const { t, i18n } = useTranslation("openhands");
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<TemplateFilters>(
     EMPTY_TEMPLATE_FILTERS,
   );
   const spec = getTemplatesPageSpec();
   const nav = useAutomationSubPageNav();
-
   if (!spec || !nav) return null;
+  const copy = localizeManifestPageCopy("templates", spec, i18n.language);
 
   return (
     <ManifestSubpageLayout
@@ -38,8 +42,16 @@ export default function AutomationTemplates() {
       items={nav.items}
     >
       <div className="min-w-0">
-        <h1 className="text-xl font-semibold text-content">{spec.title}</h1>
-        <p className="mt-1 text-sm text-muted">{spec.description}</p>
+        <h1 className="text-xl font-semibold text-content">
+          {t(I18nKey.AUTOMATIONS$MANIFEST_TEMPLATES_TITLE, {
+            defaultValue: copy.title,
+          })}
+        </h1>
+        <p className="mt-1 text-sm text-muted">
+          {t(I18nKey.AUTOMATIONS$MANIFEST_TEMPLATES_DESCRIPTION, {
+            defaultValue: copy.description,
+          })}
+        </p>
       </div>
       <div className="w-full">
         <SearchInput value={searchQuery} onChange={setSearchQuery} />

@@ -19,6 +19,7 @@
 import { AUTOMATION_CATALOG } from "@openhands/extensions/automations";
 import { validateInterfaceManifest } from "./interface-validation";
 import { AUTOMATION_INTERFACE_CANDIDATE } from "./manifest-sources";
+import { localizeInterfaceCopy } from "./automation-localization";
 import type {
   InterfaceDashboardFilter,
   InterfaceDashboardSort,
@@ -168,9 +169,9 @@ export interface InterfaceCopy {
   editTitle: string;
 }
 
-export function getInterfaceCopy(): InterfaceCopy {
+export function getInterfaceCopy(language?: string): InterfaceCopy {
   const manifest = requireInterface();
-  return {
+  const copy = {
     sidebarLabel: manifest.navigation.sidebar.label,
     commandMenuTitle: manifest.navigation.commandMenu.title,
     commandMenuDescription: manifest.navigation.commandMenu.description,
@@ -179,7 +180,8 @@ export function getInterfaceCopy(): InterfaceCopy {
     listSubtitle: manifest.pages.list.subtitle,
     detailBackLabel: manifest.pages.detail.backLabel,
     editTitle: manifest.pages.edit.title,
-  };
+  } satisfies InterfaceCopy;
+  return localizeInterfaceCopy(copy, language);
 }
 
 export function getImportExportSpec(): InterfaceImportExport {

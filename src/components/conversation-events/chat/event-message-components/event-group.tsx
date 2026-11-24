@@ -28,6 +28,27 @@ import { getEventContent } from "../event-content-helpers/get-event-content";
 import { IsInEventGroupContext } from "../../../features/chat/is-in-event-group-context";
 import { PathInteractiveContext } from "../../../features/chat/path-component";
 import { buildActionById } from "../event-thought-helpers";
+import { parseDateAsUTC } from "#/utils/format-time-delta";
+
+function formatDuration(durationMs: number, locale: string): string {
+  const totalSeconds = Math.max(1, Math.round(durationMs / 1000));
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const parts: string[] = [];
+  const formatUnit = (value: number, unit: "hour" | "minute" | "second") =>
+    new Intl.NumberFormat(locale, {
+      style: "unit",
+      unit,
+      unitDisplay: "long",
+    }).format(value);
+
+  if (hours) parts.push(formatUnit(hours, "hour"));
+  if (minutes || hours) parts.push(formatUnit(minutes, "minute"));
+  if (seconds || parts.length === 0) parts.push(formatUnit(seconds, "second"));
+
+  return parts.join(locale.startsWith("zh") ? "" : " ");
+}
 
 interface EventGroupProps {
   /** The events represented by this group. Used to compute the summary. */
@@ -93,6 +114,28 @@ export function EventGroup({
     () => actionById ?? buildActionById(lookupSource),
     [actionById, lookupSource],
   );
+  const durationMs = React.useMemo(() => {
+    if (session || events.length === 0) return null;
+    const timestamps = events.flatMap((event) => {
+      const eventTime = event.timestamp
+        ? parseDateAsUTC(event.timestamp).getTime()
+        : Number.NaN;
+      const action =
+        isObservationEvent(event) || isUserRejectObservation(event)
+          ? resolvedActions.get(event.action_id ?? "")
+          : isActionEvent(event)
+            ? event
+            : undefined;
+      const actionTime = action?.timestamp
+        ? parseDateAsUTC(action.timestamp).getTime()
+        : Number.NaN;
+      return [eventTime, actionTime].filter(Number.isFinite);
+    });
+    if (timestamps.length === 0) return null;
+    const start = Math.min(...timestamps);
+    const end = Math.max(...timestamps);
+    return Math.max(0, end - start);
+  }, [events, resolvedActions, session]);
 
   if (events.length === 0 && !session && !hasReasoning) {
     return null;
@@ -155,6 +198,21 @@ export function EventGroup({
 
   if (session && session.phase !== "complete")
     summary = t(sessionActivityLiveTitle(session));
+
+  const isThinkingOnly =
+    events.length > 0 &&
+    events.every(
+      (event) => isActionEvent(event) && event.action.kind === "ThinkAction",
+    );
+  if (!isLive && !session && !isThinkingOnly && durationMs !== null) {
+    summary = (
+      <span data-testid="event-group-duration">
+        {t(I18nKey.EVENT_GROUP$TOOK_TIME, {
+          duration: formatDuration(durationMs, i18n.language),
+        })}
+      </span>
+    );
+  }
   const timestampLabel = formatEventTimestamp(
     singleTool?.timestamp,
     i18n?.language,

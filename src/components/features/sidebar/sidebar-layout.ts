@@ -39,7 +39,7 @@ export function sidebarNavRowClassName(options?: {
   return cn(
     "flex h-9 min-h-9 min-w-0 items-center rounded-md",
     navInteractiveTransitionClassName,
-    "text-sm leading-5 w-full",
+    "text-xs-plus leading-5 w-full",
     collapsed
       ? "group gap-0 px-0 overflow-visible bg-transparent hover:bg-transparent"
       : "gap-2 px-2.5 overflow-hidden",

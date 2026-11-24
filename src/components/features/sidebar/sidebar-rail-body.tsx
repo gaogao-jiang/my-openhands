@@ -35,7 +35,6 @@ import {
   SIDEBAR_COLLAPSE_TOGGLE_OVERLAY_CLASS,
   SIDEBAR_COLLAPSED_LOGO_WRAPPER_CLASS,
   SIDEBAR_ICON_BUTTON_CLASS,
-  SIDEBAR_ICON_SLOT_CLASS,
   sidebarHeaderRowClassName,
   sidebarNavLabelClassName,
   sidebarNavListClassName,
@@ -46,8 +45,8 @@ import { CanvasExtensionIcon } from "#/components/features/canvas-extensions/can
 import type { Backend } from "#/api/backend-registry/types";
 
 const ICON_SIZE = 18;
-const SIDEBAR_LOGO_WIDTH = 34;
-const SIDEBAR_LOGO_HEIGHT = Math.round((SIDEBAR_LOGO_WIDTH * 30) / 46);
+const SIDEBAR_LOGO_WIDTH = 18;
+const SIDEBAR_LOGO_HEIGHT = 18;
 
 export interface SidebarRailBodyProps {
   collapsed: boolean;
@@ -94,7 +93,7 @@ export function SidebarRailBody({
   onOpenAddBackend,
   onOpenManageBackends,
 }: SidebarRailBodyProps) {
-  const { t } = useTranslation("openhands");
+  const { t, i18n } = useTranslation("openhands");
   const { pages: canvasExtensionPages } = useCanvasExtensionsRuntime();
   const backendCloseTimerRef = collapsedBackendCloseTimer;
   const { isPinnedRoute, togglePinnedRoute } = usePinnedHomeRoute();
@@ -147,8 +146,14 @@ export function SidebarRailBody({
             <OpenHandsLogoButton
               logoWidth={SIDEBAR_LOGO_WIDTH}
               logoHeight={SIDEBAR_LOGO_HEIGHT}
+              showName={!collapsed}
               logoClassName="max-w-none"
-              className={cn(SIDEBAR_ICON_SLOT_CLASS, "overflow-visible")}
+              className={cn(
+                collapsed
+                  ? "flex h-9 w-6 shrink-0 items-center justify-center"
+                  : "max-w-full",
+                "overflow-visible",
+              )}
             />
           </div>
           {collapsed && showCollapseToggle ? (
@@ -255,7 +260,7 @@ export function SidebarRailBody({
         {hasAutomationInterface() && (
           <SidebarNavLink
             to={automationListPath()}
-            label={getInterfaceCopy().sidebarLabel}
+            label={getInterfaceCopy(i18n.language).sidebarLabel}
             testId="sidebar-automations-link"
             collapsed={collapsed}
             icon={<AutomationsIcon width={ICON_SIZE} height={ICON_SIZE} />}

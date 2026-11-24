@@ -31,6 +31,17 @@
 
 ## API Access Rules
 
+### Jora preset ownership
+
+Local Jora expert initialization owns only `misc_settings.jora_agent_presets.handled`
+and newly created expert profiles. Keep it independent of the profile-list query
+so failures never hide existing agents. Clients must capture the backend before
+awaiting; never activate or overwrite existing profiles while provisioning.
+Completed roles stay handled after deletion or rename. Persona capability and
+usable tools gate provisioning; Cloud skips it. Profile names/UUIDs remain the
+wire identity; Jora aliases are presentation only. See
+`docs/jora-agent-profiles.md` for tool scopes and permission limitations.
+
 Two strict conventions govern every REST call in the frontend. Violations break CI
 via `src/api/no-direct-agent-server-calls.test.ts`.
 

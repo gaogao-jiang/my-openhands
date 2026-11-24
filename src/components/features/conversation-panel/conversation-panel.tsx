@@ -11,6 +11,7 @@ import { useActiveBackend } from "#/contexts/active-backend-context";
 import { useBackendScopedPath } from "#/hooks/use-backend-scoped-path";
 import { usePaginatedConversations } from "#/hooks/query/use-paginated-conversations";
 import { useAgentProfiles } from "#/hooks/query/use-agent-profiles";
+import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
 import { useResolvedWorkspaces } from "#/hooks/query/use-resolved-workspaces";
 import { useStartTasks } from "#/hooks/query/use-start-tasks";
 import { useDeleteConversation } from "#/hooks/mutation/use-delete-conversation";
@@ -314,7 +315,8 @@ export function ConversationPanel({
   const agentProfileNames = React.useMemo(() => {
     const names = new Map<string, string>();
     for (const profile of agentProfilesData?.profiles ?? []) {
-      if (profile.id) names.set(profile.id, profile.name);
+      if (profile.id)
+        names.set(profile.id, getAgentProfileDisplayName(profile));
     }
     return names;
   }, [agentProfilesData]);
@@ -1331,7 +1333,7 @@ export function ConversationPanel({
                 aria-expanded={!allGroupsCollapsed}
                 onClick={toggleAllGroupsCollapsed}
                 className={cn(
-                  "min-w-0 cursor-pointer truncate text-left text-sm font-medium",
+                  "min-w-0 cursor-pointer truncate text-left text-xs-plus font-medium",
                   "text-muted transition-colors hover:text-contrast",
                   "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border",
                 )}
@@ -1339,7 +1341,7 @@ export function ConversationPanel({
                 {t(I18nKey.SIDEBAR$CONVERSATIONS)}
               </button>
             ) : (
-              <span className="min-w-0 truncate text-sm font-medium text-muted">
+              <span className="min-w-0 truncate text-xs-plus font-medium text-muted">
                 {t(I18nKey.SIDEBAR$CONVERSATIONS)}
               </span>
             )}

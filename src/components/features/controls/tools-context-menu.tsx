@@ -15,11 +15,9 @@ import PuzzleIcon from "#/icons/u-puzzle-piece.svg?react";
 import FishingHookIcon from "#/icons/fishing-hook.svg?react";
 import ToolsIcon from "#/icons/u-tools.svg?react";
 import RobotIcon from "#/icons/u-robot.svg?react";
-import SettingsIcon from "#/icons/settings.svg?react";
 import CarretRightFillIcon from "#/icons/carret-right-fill.svg?react";
 import { ToolsContextMenuIconText } from "./tools-context-menu-icon-text";
 import { GitToolsSubmenu } from "./git-tools-submenu";
-import { MacrosSubmenu } from "./macros-submenu";
 import { ChatInputProfileMenuContent } from "#/components/features/chat/components/chat-input-profile-picker";
 import { ArchivedDisabledTooltip } from "../context-menu/archived-disabled-tooltip";
 import { useIsArchivedConversation } from "#/hooks/use-is-archived-conversation";
@@ -39,7 +37,7 @@ interface ToolsContextMenuProps {
    * without query/navigation providers when the item is off.
    */
   showAgentProfileSwitch?: boolean;
-  /** When set, renders a divider and this action as the last menu item. */
+  /** When set, renders this action as the first menu item. */
   footerAction?: {
     testId: string;
     icon: React.ReactNode;
@@ -66,14 +64,14 @@ export function ToolsContextMenu({
   const isArchivedConversation = useIsArchivedConversation();
 
   const [activeSubmenu, setActiveSubmenu] = useState<
-    "git" | "macros" | "agent-profile" | null
+    "git" | "agent-profile" | null
   >(null);
 
   const hasRepository = !!conversation?.selected_repository;
   const providersAreSet = providers.length > 0;
   const showGitTools = hasRepository && providersAreSet;
 
-  const handleSubmenuClick = (submenu: "git" | "macros" | "agent-profile") => {
+  const handleSubmenuClick = (submenu: "git" | "agent-profile") => {
     if (isArchivedConversation) {
       return;
     }
@@ -95,6 +93,26 @@ export function ToolsContextMenu({
       alignment="left"
       className="tools-menu-offset mb-2 bottom-full overflow-visible min-w-50"
     >
+      {footerAction && (
+        <>
+          <ContextMenuListItem
+            testId={footerAction.testId}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              footerAction.onClick();
+              handleClose();
+            }}
+          >
+            <ToolsContextMenuIconText
+              icon={footerAction.icon}
+              text={footerAction.label}
+            />
+          </ContextMenuListItem>
+          <Divider inset="menu" />
+        </>
+      )}
+
       {/* Switch agent profile — only while starting a new conversation; the
           profile is locked once the conversation starts (OSS-5735). Selecting
           a profile activates it (home) or recreates the blank conversation
@@ -108,7 +126,7 @@ export function ToolsContextMenu({
           >
             <ToolsContextMenuIconText
               icon={<RobotIcon width={16} height={16} aria-hidden />}
-              text={t(I18nKey.CHAT$SWITCH_AGENT_PROFILE)}
+              text={t(I18nKey.CHAT$SELECT_AGENT)}
               rightIcon={<CarretRightFillIcon width={10} height={10} />}
             />
           </ContextMenuListItem>
@@ -168,36 +186,6 @@ export function ToolsContextMenu({
           )}
         </div>
       )}
-
-      {/* Macros */}
-      <div className="relative group/macros">
-        <ArchivedDisabledTooltip isDisabled={isArchivedConversation}>
-          <ContextMenuListItem
-            testId="macros-button"
-            onClick={() => handleSubmenuClick("macros")}
-            isDisabled={isArchivedConversation}
-          >
-            <ToolsContextMenuIconText
-              icon={<SettingsIcon width={16} height={16} />}
-              text={t(I18nKey.COMMON$MACROS)}
-              rightIcon={<CarretRightFillIcon width={10} height={10} />}
-            />
-          </ContextMenuListItem>
-        </ArchivedDisabledTooltip>
-        {!isArchivedConversation && (
-          <div
-            className={cn(
-              "absolute left-full tools-submenu-offset z-60 opacity-0 invisible pointer-events-none transition-all duration-200 ml-px",
-              "group-hover/macros:opacity-100 group-hover/macros:visible group-hover/macros:pointer-events-auto",
-              "hover:opacity-100 hover:visible hover:pointer-events-auto",
-              activeSubmenu === "macros" &&
-                "opacity-100 visible pointer-events-auto",
-            )}
-          >
-            <MacrosSubmenu onClose={handleClose} />
-          </div>
-        )}
-      </div>
 
       {shouldShowAgentTools && <Divider inset="menu" />}
 
@@ -267,26 +255,6 @@ export function ToolsContextMenu({
             />
           </ContextMenuListItem>
         </ArchivedDisabledTooltip>
-      )}
-
-      {footerAction && (
-        <>
-          <Divider />
-          <ContextMenuListItem
-            testId={footerAction.testId}
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              footerAction.onClick();
-              handleClose();
-            }}
-          >
-            <ToolsContextMenuIconText
-              icon={footerAction.icon}
-              text={footerAction.label}
-            />
-          </ContextMenuListItem>
-        </>
       )}
     </ContextMenu>
   );

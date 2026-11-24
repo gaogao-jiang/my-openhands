@@ -1,4 +1,6 @@
 import { MANIFEST_ICON_BY_SLUG } from "#/components/features/manifest/manifest-icons";
+import { useTranslation } from "react-i18next";
+import { localizeSubPageLabel } from "#/manifests/automation-localization";
 import type { SubPageNavItem } from "#/components/features/manifest/manifest-subpage-layout";
 import {
   getInterfaceCopy,
@@ -15,14 +17,15 @@ export interface AutomationSubPageNav {
  * manifest declares none.
  */
 export function useAutomationSubPageNav(): AutomationSubPageNav | null {
+  const { i18n } = useTranslation("openhands");
   const spec = getSubPagesSpec();
   if (!spec) return null;
 
   return {
-    heading: getInterfaceCopy().sidebarLabel,
+    heading: getInterfaceCopy(i18n.language).sidebarLabel,
     items: spec.map((item) => ({
       to: item.to,
-      label: item.label,
+      label: localizeSubPageLabel(item.page, item.label, i18n.language),
       // Templates is a catalog, so the host always shows the library icon
       // even while the published manifest still names sparkles.
       Icon:

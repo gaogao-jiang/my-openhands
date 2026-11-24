@@ -9,6 +9,7 @@ import { useCloseOnEscape } from "#/hooks/use-close-on-escape";
 import { ConversationCardContextMenu } from "./conversation-card-context-menu";
 import { EllipsisButton } from "../ellipsis-button";
 import { AppearancePortal } from "#/components/shared/appearance-portal";
+import { useActiveBackend } from "#/contexts/active-backend-context";
 
 interface ConversationCardActionsProps {
   contextMenuOpen: boolean;
@@ -48,8 +49,10 @@ export function ConversationCardActions({
   showOptions,
 }: ConversationCardActionsProps) {
   const { t } = useTranslation("openhands");
+  const { backend } = useActiveBackend();
   const isPaused = isExecutionPaused(executionStatus);
-  const canStop = canStopRuntime(executionStatus, sandboxStatus);
+  const canStop =
+    backend.kind === "cloud" && canStopRuntime(executionStatus, sandboxStatus);
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [, bumpPosition] = useReducer((i: number) => i + 1, 0);
   useCloseOnEscape(

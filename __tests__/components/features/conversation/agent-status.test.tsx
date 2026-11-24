@@ -79,6 +79,7 @@ interface AgentStatusScenario {
   webSocketStatus?: WebSocketConnectionState;
   hasConnectedOnce?: boolean;
   compact?: boolean;
+  showStopControl?: boolean;
 }
 
 function renderAgentStatus({
@@ -96,6 +97,7 @@ function renderAgentStatus({
   webSocketStatus = "OPEN",
   hasConnectedOnce = false,
   compact,
+  showStopControl,
 }: AgentStatusScenario = {}) {
   const handleResumeAgent = vi.fn();
   const handleStop = vi.fn();
@@ -138,6 +140,7 @@ function renderAgentStatus({
           handleStop={handleStop}
           isPausing={isPausing}
           compact={compact}
+          showStopControl={showStopControl}
         />
       </ChatProgressContext.Provider>
     </NavigationProvider>,
@@ -157,6 +160,24 @@ afterEach(() => {
 });
 
 describe("AgentStatus", () => {
+  it("omits the separate running control when Stop is owned by the composer", () => {
+    const { container } = renderAgentStatus({
+      agentState: AgentState.RUNNING,
+      executionStatus: ExecutionStatus.RUNNING,
+      showStopControl: false,
+    });
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it("preserves Resume when the composer owns Stop", () => {
+    const { handleResumeAgent } = renderAgentStatus({
+      agentState: AgentState.PAUSED,
+      executionStatus: ExecutionStatus.PAUSED,
+      showStopControl: false,
+    });
+    fireEvent.click(screen.getByTestId("play-button"));
+    expect(handleResumeAgent).toHaveBeenCalledOnce();
+  });
   it.each([AgentState.RUNNING, AgentState.STOPPED])(
     "does not control the previous agent while a new conversation launches from %s",
     (agentState) => {
@@ -402,10 +423,6 @@ describe("AgentStatus", () => {
       scenario: { agentState: AgentState.RATE_LIMITED },
     },
     {
-      label: "a closed websocket",
-      scenario: { webSocketStatus: "CLOSED" as const },
-    },
-    {
       label: "a failed conversation task",
       scenario: {
         taskStatus: "ERROR" as const,
@@ -421,6 +438,15 @@ describe("AgentStatus", () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByTestId("stop-button")).not.toBeInTheDocument();
     expect(screen.queryByTestId("play-button")).not.toBeInTheDocument();
+  });
+
+  it("hides the initial disconnected websocket status", () => {
+    const { container } = renderAgentStatus({
+      webSocketStatus: "CLOSED",
+      hasConnectedOnce: false,
+    });
+
+    expect(container).toBeEmptyDOMElement();
   });
 
   it("shows a non-interactive waiting indicator for user confirmation", () => {

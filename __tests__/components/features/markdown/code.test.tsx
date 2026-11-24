@@ -43,9 +43,22 @@ describe("code (markdown)", () => {
   });
 
   it("should render a syntax-highlighted block with a copy button", () => {
-    render(<Code className="language-js">{"console.log('hi')"}</Code>);
+    const { container } = render(
+      <Code className="language-js">{"console.log('hi')"}</Code>,
+    );
 
     expect(screen.getByTestId("copy-to-clipboard")).toBeInTheDocument();
+    const codeBlock = container.querySelector(
+      '[style*="--oh-surface-raised"]',
+    );
+    expect(codeBlock).toHaveAttribute(
+      "style",
+      expect.stringContaining("background-color: var(--oh-surface-raised)"),
+    );
+    expect(codeBlock).toHaveAttribute(
+      "style",
+      expect.stringContaining("border: 1px solid var(--oh-border-subtle)"),
+    );
   });
 
   it("should copy code block content to clipboard", async () => {

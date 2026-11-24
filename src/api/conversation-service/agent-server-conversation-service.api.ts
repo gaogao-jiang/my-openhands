@@ -91,6 +91,7 @@ import {
 } from "../automation-form-client-tool";
 import type { DeploymentCapabilities } from "#/manifests/types";
 import { CANVAS_UI_CLIENT_TOOL } from "../canvas-ui-client-tool";
+import type { ClientToolSpec } from "../canvas-ui-client-tool";
 import { LAUNCH_CHILD_CONVERSATION_CLIENT_TOOL } from "../launch-child-conversation-client-tool";
 import type {
   GetHooksResponse,
@@ -105,6 +106,9 @@ import type {
   SendMessageRequest,
   SendMessageResponse,
 } from "./agent-server-conversation-service.types";
+
+import i18n from "#/i18n";
+import { I18nKey } from "#/i18n/declaration";
 
 const DEFAULT_CONVERSATION_TIMESTAMP = "1970-01-01T00:00:00.000Z";
 
@@ -128,6 +132,11 @@ const CREATE_CONVERSATION_TIMEOUT_MS = 5 * 60 * 1000;
 // The agent-server rejects the whole create request when any tag value is
 // longer than this (SDK `TAG_VALUE_MAX_LENGTH`).
 const TAG_VALUE_MAX_LENGTH = 256;
+const CLIENT_TOOL_SCHEMA_CONFLICT_MARKERS = [
+  "launch_child_conversation",
+  "already registered",
+  "different parameters schema",
+];
 const INVALID_CONVERSATION_RESPONSE_MESSAGE =
   "Unable to load conversations because the selected agent server returned " +
   "data this UI does not understand. Check the backend URL/session key and " +
@@ -146,6 +155,19 @@ function numberOrNull(value: unknown): number | null {
 
 function numberOrZero(value: unknown): number {
   return typeof value === "number" ? value : 0;
+}
+
+function isLaunchChildToolSchemaConflict(error: unknown): boolean {
+  const text =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+        ? error
+        : JSON.stringify(error);
+  const normalized = text.toLowerCase();
+  return CLIENT_TOOL_SCHEMA_CONFLICT_MARKERS.every((marker) =>
+    normalized.includes(marker),
+  );
 }
 
 function stringOrNull(value: unknown): string | null {
@@ -527,6 +549,8 @@ export interface CreateConversationOptions {
   hasActiveMetaProfile?: boolean;
   /** Local only: the launched profile carries a Model Router. */
   profileHasRouter?: boolean;
+  /** Local only: append Jora's main-agent delegation rules. */
+  isJoraMainAgent?: boolean;
   /**
    * A home-page model pick was made before the first message, so the
    * route-at-start suffix should be suppressed for this single launch. The
@@ -623,6 +647,7 @@ class AgentServerConversationService {
       agentLlmProfileRef,
       agentLlmProfileOverride,
       profileHasRouter,
+      isJoraMainAgent,
       acpServer,
       llmProfile,
     } = options;
@@ -760,6 +785,7 @@ class AgentServerConversationService {
       agentProfileKind,
       llmProfileOverride: agentLlmProfileOverride,
       profileHasRouter,
+      isJoraMainAgent,
       suppressRouterAtStart: options.suppressRouterAtStart,
       acpServer,
       titleLlmProfile,
@@ -793,15 +819,54 @@ class AgentServerConversationService {
     }
 
     const telemetryDistinctId = await getTelemetryDistinctId();
-    const data = await new ConversationClient(
+    const conversationClient = new ConversationClient(
       getAgentServerClientOptions({ timeout: CREATE_CONVERSATION_TIMEOUT_MS }),
-    ).createConversation<DirectConversationInfo>({
-      ...payload,
-      ...(conversationRuntime
-        ? { conversation_runtime: conversationRuntime }
-        : {}),
-      ...(telemetryDistinctId ? { user_id: telemetryDistinctId } : {}),
-    });
+    );
+    let data: DirectConversationInfo;
+    try {
+      data =
+        await conversationClient.createConversation<DirectConversationInfo>({
+          ...payload,
+          ...(conversationRuntime
+            ? { conversation_runtime: conversationRuntime }
+            : {}),
+          ...(telemetryDistinctId ? { user_id: telemetryDistinctId } : {}),
+        });
+    } catch (error) {
+      // Agent Server caches client-tool schemas by name for the lifetime of
+      // the process. A hot-reloaded Canvas can therefore hit a stale schema
+      // and fail before a conversation exists. Child delegation is optional,
+      // so let ordinary Q&A recover without masking unrelated create errors.
+      if (!isLaunchChildToolSchemaConflict(error)) throw error;
+
+      const fallbackPayload = {
+        ...payload,
+        client_tools: (payload.client_tools as ClientToolSpec[]).filter(
+          (tool) => tool.name !== LAUNCH_CHILD_CONVERSATION_CLIENT_TOOL.name,
+        ),
+        ...(isJoraMainAgent
+          ? {
+              agent_launch_additions: (() => {
+                const additions = payload.agent_launch_additions as
+                  Record<string, unknown> | undefined;
+                if (!additions || typeof additions !== "object") {
+                  return additions;
+                }
+                const { system_message_suffix_append: _, ...rest } = additions;
+                return rest;
+              })(),
+            }
+          : {}),
+      };
+      data =
+        await conversationClient.createConversation<DirectConversationInfo>({
+          ...fallbackPayload,
+          ...(conversationRuntime
+            ? { conversation_runtime: conversationRuntime }
+            : {}),
+          ...(telemetryDistinctId ? { user_id: telemetryDistinctId } : {}),
+        });
+    }
     const localBackend = getEffectiveLocalBackend();
     if (!localBackend) throw new NoBackendAvailableError();
 
@@ -1416,6 +1481,65 @@ class AgentServerConversationService {
     }
 
     return data;
+  }
+
+  /** Replace a question in this conversation, without creating another one. */
+  static async editUserMessage(
+    conversationId: string,
+    eventId: string,
+    text: string,
+  ): Promise<boolean> {
+    if (getActiveBackend().backend.kind === "cloud") {
+      throw new Error(i18n.t(I18nKey.CHAT_INTERFACE$EDIT_UNAVAILABLE));
+    }
+    if (!text.trim()) throw new Error("The edited question cannot be empty.");
+    const client = new ConversationClient(getAgentServerClientOptions());
+    // Refuse an active run: moving HEAD while a tool is running is unsafe.
+    const info = await client.getConversation<
+      DirectConversationInfo & { leaf_event_id?: string | null }
+    >(conversationId);
+    if (
+      !["idle", "finished", "paused", "error", "stuck"].includes(
+        String(info.execution_status).toLowerCase(),
+      )
+    ) {
+      throw new Error(i18n.t(I18nKey.CHAT_INTERFACE$EDIT_BUSY));
+    }
+    if (typeof info.leaf_event_id !== "string" || !info.leaf_event_id) {
+      throw new Error(i18n.t(I18nKey.CHAT_INTERFACE$EDIT_UNAVAILABLE));
+    }
+    const originalHead = info.leaf_event_id;
+    const parent = await AgentServerConversationService.getEventParentId(
+      conversationId,
+      eventId,
+    );
+    await client.navigateConversation(conversationId, {
+      event_id: parent ?? null,
+    });
+    try {
+      // Persist the replacement first. Only run once the replacement is saved.
+      await client.sendEvent(
+        conversationId,
+        {
+          role: "user",
+          content: [{ type: "text", text }],
+        },
+        { run: false },
+      );
+    } catch (error) {
+      // A failed save must not silently leave the user on a shortened history.
+      await client.navigateConversation(conversationId, {
+        event_id: originalHead,
+      });
+      throw error;
+    }
+    try {
+      await client.runConversation(conversationId);
+      return true;
+    } catch {
+      // The question is already saved. Do not invite a second replacement.
+      return false;
+    }
   }
 
   /**

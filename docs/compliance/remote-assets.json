@@ -1,0 +1,77 @@
+[
+  {
+    "file": ".agents/skills/custom-codereview-guide.md",
+    "url": "https://github.com/OpenHands/docs/blob/2409e927af05a40acc27190383a424615fc0f807/openhands/static/img/agent-canvas-setup-step-1.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": ".agents/skills/custom-codereview-guide.md",
+    "url": "https://github.com/OpenHands/docs/blob/2409e927af05a40acc27190383a424615fc0f807/openhands/static/img/agent-canvas-llm-profiles-manager.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": ".agents/skills/custom-codereview-guide.md",
+    "url": "https://github.com/OpenHands/docs/blob/2409e927af05a40acc27190383a424615fc0f807/openhands/static/img/model-command-agent-canvas.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": ".agents/skills/verify-openhands/references/backfills/2026-10-18-migration.md",
+    "url": "https://github.com/enyst/playground/blob/c461066866f4dcffec9e845995b57e9ba25ffb89/.agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/final/checkedin-app-backend-fixture.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": ".agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/final/proposed-pr-body.md",
+    "url": "https://github.com/enyst/playground/blob/c461066866f4dcffec9e845995b57e9ba25ffb89/.agents/skills/verify-openhands/references/backfills/evidence/2026-10-17/final/checkedin-app-backend-fixture.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "README.md",
+    "url": "https://assets.openhands.dev/logo-whitebackground.png",
+    "context": "source/docs; manually classify before reusing external material"
+  },
+  {
+    "file": "README.md",
+    "url": "https://assets.openhands.dev/screenshot/automation-preview.png",
+    "context": "source/docs; manually classify before reusing external material"
+  },
+  {
+    "file": "src/themes/color-theme/definitions/paper/README.md",
+    "url": "https://github.com/productiontype/Newsreader/blob/cfcb4f7af0e52c25e8df2a2431814c8e5fe2e155/fonts/variable/woff2/Newsreader%5Bopsz%2Cwght%5D.woff2",
+    "context": "source/docs; manually classify before reusing external material"
+  },
+  {
+    "file": "__tests__/components/conversation-events/chat/group-events.test.ts",
+    "url": "https://example.com/result.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "__tests__/components/features/markdown/markdown-renderer.test.tsx",
+    "url": "https://example.com/x.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "__tests__/components/image-preview.test.tsx",
+    "url": "https://example.com/image.jpg",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "__tests__/components/user-avatar.test.tsx",
+    "url": "https://example.com/avatar.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "__tests__/components/user-avatar.test.tsx",
+    "url": "https://example.com/avatar.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "__tests__/routes/files-tab.test.tsx",
+    "url": "http://localhost:3000/api/conversations/c1/workspace/logo.png",
+    "context": "test/docs/evidence"
+  },
+  {
+    "file": "__tests__/routes/files-tab.test.tsx",
+    "url": "http://localhost:3000/api/conversations/c1/workspace/assets/logo.png",
+    "context": "test/docs/evidence"
+  }
+]

@@ -145,7 +145,9 @@ describe("useWorkspaceFiles — local backend", () => {
 
     await waitFor(() => expect(result.current.data).toEqual(["src/index.ts"]));
     const command = executeCommandSpy.mock.calls[0][2] as string;
-    expect(command).toMatch(/^dir \/b \/s/);
+    expect(command).toMatch(
+      /^powershell -NoProfile -NonInteractive -EncodedCommand /,
+    );
     expect(command).not.toMatch(/head|\/dev\/null/);
     userAgent.mockRestore();
   });
@@ -195,8 +197,14 @@ describe("useWorkspaceFiles — local backend", () => {
 
     await waitFor(() => expect(result.current.data).toEqual(["src/a.ts"]));
     const command = executeCommandSpy.mock.calls[0][2] as string;
-    expect(command).not.toContain('/c:"\\build\\"');
-    expect(command).toContain('/c:"\\node_modules\\"');
+    const script = Buffer.from(command.split(" ").pop()!, "base64").toString(
+      "utf16le",
+    );
+    expect(script).toContain("'build'");
+    expect(script).toContain("'node_modules'");
+    expect(script).toContain(
+      "$relative = $item.FullName.Substring($root.Length)",
+    );
   });
 
   // @spec WFD-002 — Workspace-scoped server persistence
