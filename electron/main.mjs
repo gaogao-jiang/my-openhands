@@ -72,7 +72,7 @@ const projectRoot = app.isPackaged ? __dirname : join(__dirname, "..");
 const buildDir = join(projectRoot, "build");
 const scriptsDir = join(projectRoot, "scripts");
 
-// OpenHands raised-hands app icon, used as the BrowserWindow.icon option.
+// Jora app icon, used as the BrowserWindow.icon option.
 // Windows gets the multi-size icon.ico (16→256, small sizes as classic BMP
 // entries — the Windows shell needs those); Linux uses the 1024×1024 PNG
 // for its taskbar. On macOS the dock icon comes from the .app bundle's
@@ -91,7 +91,7 @@ const appIconPath = join(
 // icon. Must match appId in electron-builder.config.mjs, and must be set
 // before any BrowserWindow is created.
 if (process.platform === "win32") {
-  app.setAppUserModelId("dev.openhands.agent-canvas");
+  app.setAppUserModelId("com.jora.desktop");
 }
 
 // ── Bundled uv ────────────────────────────────────────────────────────────────
@@ -680,7 +680,7 @@ async function startStack() {
   //   onServiceLog: stream uvx/agent-server output to the loading window so
   //     the user sees progress instead of an indefinite spinner.
   const result = await main({
-    bannerTitle: "OpenHands Agent Canvas",
+    bannerTitle: "Jora",
     staticMode: true,
     staticDir: buildDir,
     mode: "agent-canvas",
@@ -742,7 +742,7 @@ function failStartup(err) {
     ? `\n\nRecent service errors:\n${recentServiceErrors.join("\n")}`
     : "";
   dialog.showErrorBox(
-    "OpenHands Agent Canvas failed to start",
+    "Jora failed to start",
     summary + errorTail,
   );
   app.quit();
@@ -782,7 +782,7 @@ app.whenReady().then(async () => {
     dialog.showErrorBox(
       "Missing prerequisite: uv",
       app.isPackaged
-        ? "The bundled uv binary could not be found. Please reinstall OpenHands Agent Canvas."
+        ? "The bundled uv binary could not be found. Please reinstall Jora."
         : "uv (uvx) is not installed.\n\nInstall it from https://docs.astral.sh/uv/ then restart.",
     );
     app.quit();

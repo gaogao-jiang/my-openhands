@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * CLI entry point for @openhands/agent-canvas
+ * CLI entry point for Jora. The legacy agent-canvas command remains available
+ * for compatibility with the upstream package layout.
  *
  * Runs the full Agent Canvas stack locally by default:
  * - Agent-server via uvx
@@ -32,7 +33,7 @@ if (args.includes("-v") || args.includes("--version")) {
 if (args.includes("--info")) {
   const { version } = JSON.parse(readFileSync(PKG_JSON, "utf-8"));
   const defaults = JSON.parse(readFileSync(DEFAULTS_JSON, "utf-8"));
-  console.log(`@openhands/agent-canvas ${version}
+  console.log(`Jora ${version}
 
 Default stack versions:
   agent-server:    ${defaults.versions.agentServer}
@@ -57,13 +58,13 @@ const isBackendOnly = args.includes("--backend-only");
 
 if (args.includes("-h") || args.includes("--help")) {
   console.log(`
-@openhands/agent-canvas - Run the Agent Canvas UI with agent-server
+Jora - Run the Jora AI coding assistant with agent-server
 
 Runs the full stack with agent-server and automation backend via uvx,
 and serves pre-built static frontend assets.
 
 USAGE:
-  npx @openhands/agent-canvas [options]
+  jora [options]
 
 AUTH MODES:
   By default the server auto-generates an API key that is injected into
@@ -102,28 +103,28 @@ not environment variables.
 
 EXAMPLES:
   # Start full stack (local mode, auto-generated key)
-  npx @openhands/agent-canvas
+  jora
 
   # Pin a specific key (local mode, key auto-injected into frontend)
-  LOCAL_BACKEND_API_KEY=my-key npx @openhands/agent-canvas
+  LOCAL_BACKEND_API_KEY=my-key jora
 
   # Public mode — users must enter the API key in the browser
-  LOCAL_BACKEND_API_KEY=my-secret npx @openhands/agent-canvas --public
+  LOCAL_BACKEND_API_KEY=my-secret jora --public
 
   # Use a specific port
-  npx @openhands/agent-canvas --port 3000
+  jora --port 3000
 
   # Start only the static frontend behind ingress
-  npx @openhands/agent-canvas --frontend-only
+  jora --frontend-only
 
   # Start only the agent-server and automation backend behind ingress
-  npx @openhands/agent-canvas --backend-only
+  jora --backend-only
 
   # Show default stack versions and ports
-  npx @openhands/agent-canvas --info
+  jora --info
 
   # Use local SDK checkout for development
-  OH_AGENT_SERVER_LOCAL_PATH=/path/to/sdk npx @openhands/agent-canvas
+  OH_AGENT_SERVER_LOCAL_PATH=/path/to/sdk jora
 `);
   process.exit(0);
 }
@@ -165,7 +166,7 @@ try {
 }
 
 main({
-  bannerTitle: "Agent Canvas",
+  bannerTitle: "Jora",
   staticMode: true,
   staticDir: BUILD_DIR,
   mode: "agent-canvas",

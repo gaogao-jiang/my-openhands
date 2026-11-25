@@ -323,8 +323,8 @@ function getDirSizeBytes(dir) {
 
 /** @type {import('electron-builder').Configuration} */
 const config = {
-  appId: "dev.openhands.agent-canvas",
-  productName: "OpenHands Agent Canvas",
+  appId: "com.jora.desktop",
+  productName: "Jora",
   copyright: "Copyright © 2025 OpenHands contributors",
 
   // Stamp the packaged app with the released version (see rootPackageJson
@@ -451,16 +451,16 @@ const config = {
   },
 
   dmg: {
-    title: "OpenHands Agent Canvas",
+    title: "Jora",
     contents: [
       { x: 130, y: 220 },
       { x: 410, y: 220, type: "link", path: "/Applications" },
     ],
     window: { width: 540, height: 380 },
-    // Default is "OpenHands Agent Canvas-<version>-<arch>.dmg"; GitHub release
+    // Default is "Jora-<version>-<arch>.dmg"; GitHub release
     // assets mangle spaces, so keep the asset name literal (matches the nsis
     // convention). ${version}/${arch}/${ext} are electron-builder macros.
-    artifactName: "OpenHands-Agent-Canvas-${version}-${arch}.${ext}",
+    artifactName: "Jora-${version}-${arch}.${ext}",
   },
 
   // ── Windows ────────────────────────────────────────────────────────────────
@@ -477,10 +477,10 @@ const config = {
     allowToChangeInstallationDirectory: true,
     createDesktopShortcut: true,
     createStartMenuShortcut: true,
-    // The default artifact name is "OpenHands Agent Canvas Setup <version>.exe";
+    // The default artifact name is "Jora Setup <version>.exe";
     // GitHub release assets mangle spaces, so ship a space-free name.
     // ${version}/${ext} are electron-builder macros, not JS interpolation.
-    artifactName: "OpenHands-Agent-Canvas-Setup-${version}.${ext}",
+    artifactName: "Jora-Installer-${version}.${ext}",
   },
 
   // ── Linux ──────────────────────────────────────────────────────────────────

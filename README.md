@@ -1,8 +1,10 @@
-# My OpenHands — 非官方个人二次开发版本
+# Jora — 基于 OpenHands Agent Canvas 的个人 AI 编程助手
 
 本仓库由 [gaogao-jiang](https://github.com/gaogao-jiang) 基于
 [OpenHands/OpenHands](https://github.com/OpenHands/OpenHands) 进行个人二次开发，
 不代表 OpenHands 官方项目或其维护者，也不表示获得其认可或背书。
+
+Jora 是基于 OpenHands Agent Canvas 二次开发的个人 AI 编程助手，用于在本地运行和管理编码智能体。
 
 主要定制内容：
 
@@ -27,13 +29,13 @@
 <a name="readme-top"></a>
 
 <div align="center">
-  <img src="https://assets.openhands.dev/logo-whitebackground.png" alt="OpenHands logo" width="340">
-  <h1 align="center" style="border-bottom: none">Agent Canvas</h1>
+  <img src="./src/assets/branding/jora-mark.svg" alt="Jora logo" width="160">
+  <h1 align="center" style="border-bottom: none">Jora</h1>
   <p align="center">
-    <strong>The self-hosted developer control center for coding agents and automations.</strong>
+    <strong>Your personal AI coding assistant for building, debugging, and automating software.</strong>
   </p>
   <p align="center">
-    Run OpenHands, Claude Code, Codex, Gemini, Pi, OpenCode, or any ACP-compatible agent across local, remote, and cloud backends.
+    Run Jora with OpenHands Agent Server, Claude Code, Codex, Gemini, Pi, OpenCode, or any ACP-compatible agent.
   </p>
 </div>
 <div align="center">
@@ -55,11 +57,11 @@
 </p>
 <hr>
 
-OpenHands Agent Canvas turns your coding agents into a self-hosted, always-on engineering team. It's a developer control center for starting conversations and automating everyday tasks — like generating reports that publish to Slack or automatically decomposing GitHub issues into tasks.
+Jora turns coding agents into a self-hosted developer assistant for starting conversations, editing code, and automating everyday tasks.
 
 It runs locally on your machine by default, but can connect to multiple “agent backends”, e.g. running agents in Docker containers, on VMs, or within your company infrastructure. You can optionally choose to run agents on OpenHands Cloud or OpenHands Enterprise infrastructure.
 
-Agent Canvas runs the open source OpenHands agent out-of-the-box, but can use third-party agents such as Claude Code, Codex, Gemini CLI, Pi, and OpenCode.
+Jora uses the OpenHands Agent Server as its local execution backend and can also connect to third-party agents such as Claude Code, Codex, Gemini CLI, Pi, and OpenCode.
 
 |                                                                                                                      |                                                                                                                                          |
 | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -70,14 +72,14 @@ Agent Canvas runs the open source OpenHands agent out-of-the-box, but can use th
 | [**Bring your own model**](https://docs.openhands.dev/openhands/usage/settings/llm-settings#llm-profiles)            | Use with any LLM                                                                                                                         |
 | [**Use with any agent**](https://docs.openhands.dev/openhands/usage/agent-canvas/acp-agents)                         | Use with OpenHands, Claude Code, Codex, Gemini, Pi, OpenCode, or any agent with Agent-Client Protocol (ACP).                             |
 
-If you have questions or feedback, please open a GitHub issue or join the [#proj-agent-canvas channel in Slack](https://openhands.dev/joinslack).
+For technical questions about the underlying platform, consult the OpenHands documentation and source repositories linked below.
 
 ## Quickstart
 
-You can install OpenHands to run agents on any machine: on your laptop, on a dedicated computer like a Mac Mini,
+You can install Jora to run agents on any machine: on your laptop, on a dedicated computer like a Mac Mini,
 or on a server in the cloud.
 
-The most powerful way to run OpenHands is on a server in the cloud. This allows your agents to continue running
+The most powerful way to run Jora is on a server in the cloud. This allows your agents to continue running
 even when your laptop is shut, and makes it easier to trigger your agents through third-party services
 like Slack, GitHub, and Datadog. See [SELF_HOSTING.md](docs/SELF_HOSTING.md) for details, especially with respect to security hardening.
 
@@ -94,14 +96,16 @@ code review and dependency updates, then have your personal agents running on yo
 
 ```sh
 npm install -g @openhands/agent-canvas
-agent-canvas
+jora
 ```
 
-The `agent-canvas` command starts the full local stack by default. You can also split it when you want to run pieces separately:
+The `jora` command starts the full local stack by default. The legacy
+`agent-canvas` command remains available for compatibility. You can also split
+the stack when you want to run pieces separately:
 
 ```sh
-agent-canvas --frontend-only  # static frontend + ingress only
-agent-canvas --backend-only   # agent server + automation backend + ingress only
+jora --frontend-only  # static frontend + ingress only
+jora --backend-only   # agent server + automation backend + ingress only
 ```
 
 ### Option 2: With a Docker Sandbox
@@ -133,7 +137,7 @@ These commands grant all host users access to the workspace. Keep it separate
 from `~/.openhands` and other sensitive data. Docker Desktop on macOS/Windows
 handles bind-mount permissions, so those commands are normally unnecessary.
 
-**2. Start Agent Canvas**
+**2. Start Jora**
 
 ```sh
 docker run -it --rm \
@@ -206,8 +210,8 @@ requirement is for contributor dependency resolution, not for installing the
 published Canvas package.
 
 ```sh
-git clone https://github.com/OpenHands/OpenHands.git
-cd OpenHands
+git clone https://github.com/gaogao-jiang/my-openhands.git Jora
+cd Jora
 npm ci
 npm run dev
 ```
