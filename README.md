@@ -6,12 +6,6 @@
 
 Jora 是基于 OpenHands Agent Canvas 二次开发的个人 AI 编程助手，用于在本地运行和管理编码智能体。
 
-主要定制内容：
-
-- 优化聊天布局、消息操作栏、点赞与点踩反馈、朗读及北京时间显示。
-- 调整对话列表右侧的执行进度圆环与完成提示，查看结果后清除绿色提示点。
-- 改进首页启动反馈和语言切换体验。
-
 ## 来源、版权与许可
 
 - 原项目：[OpenHands Agent Canvas](https://github.com/OpenHands/OpenHands)。
