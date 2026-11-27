@@ -98,7 +98,7 @@ describe("LLM profile creation with the real embedded form", () => {
     renderWithProviders(<LlmSettingsLocalView />);
 
     // Act: create a profile, keeping its displayed temperature unchanged.
-    await user.click(await screen.findByTestId("add-llm-profile"));
+    await openManualProfile(user);
     await user.click(await screen.findByTestId("sdk-section-all-toggle"));
     expect(screen.getByTestId("sdk-settings-llm.temperature")).toHaveValue(0.4);
     expect(screen.getByTestId("llm-api-key-input")).toHaveValue("");
@@ -182,7 +182,7 @@ describe("LLM profile creation with the real embedded form", () => {
           <LlmSettingsLocalView />
         </QueryClientProvider>,
       );
-      await user.click(await screen.findByTestId("add-llm-profile"));
+      await openManualProfile(user);
       await user.click(await screen.findByTestId("sdk-section-all-toggle"));
       const checkbox = screen.getByTestId(
         "sdk-settings-llm.force_string_serializer",
@@ -213,3 +213,8 @@ describe("LLM profile creation with the real embedded form", () => {
     },
   );
 });
+
+async function openManualProfile(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(await screen.findByTestId("add-model-menu-trigger"));
+  await user.click(screen.getByTestId("add-llm-profile"));
+}

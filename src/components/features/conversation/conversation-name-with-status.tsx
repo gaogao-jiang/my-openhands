@@ -47,6 +47,8 @@ export function ConversationNameWithStatus({
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [hoveredOpen, setHoveredOpen] = React.useState(false);
   const [profileDetailsOpen, setProfileDetailsOpen] = React.useState(false);
+  const profileTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const profileDetailsRef = React.useRef<HTMLDivElement>(null);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const { data: agentProfiles } = useAgentProfiles();
   const { data: subConversations = [] } = useSubConversations(
@@ -79,6 +81,28 @@ export function ConversationNameWithStatus({
   const launchedProfileName = launchedProfileSummary
     ? getAgentProfileDisplayName(launchedProfileSummary)
     : null;
+
+  React.useEffect(() => {
+    if (!profileDetailsOpen) return undefined;
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !profileDetailsRef.current?.contains(event.target) &&
+        !profileTriggerRef.current?.contains(event.target)
+      ) {
+        setProfileDetailsOpen(false);
+      }
+    };
+    // Capture before controls in the conversation can stop propagation.
+    document.addEventListener("pointerdown", handleOutsidePointerDown, true);
+    return () => {
+      document.removeEventListener(
+        "pointerdown",
+        handleOutsidePointerDown,
+        true,
+      );
+    };
+  }, [profileDetailsOpen]);
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -191,12 +215,14 @@ export function ConversationNameWithStatus({
                 aria-expanded={profileDetailsOpen}
                 onClick={() => setProfileDetailsOpen((open) => !open)}
                 data-testid="conversation-launched-agent"
+                ref={profileTriggerRef}
               >
                 {launchedProfileName}
               </button>
               {profileDetailsOpen ? (
                 <div
                   role="dialog"
+                  ref={profileDetailsRef}
                   aria-label={launchedProfileName}
                   className="absolute left-0 top-7 z-50 min-w-56 rounded-md border border-border bg-surface p-3 text-xs shadow-lg"
                 >

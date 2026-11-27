@@ -749,18 +749,23 @@ describe("the command menu shortcut hint", () => {
 });
 
 describe("CommandMenuTrigger", () => {
-  it("opens the command menu from the sidebar trigger", async () => {
-    renderWithProviders(
-      <>
-        <CommandMenuTrigger collapsed={false} />
-        <CommandMenu />
-      </>,
-    );
+  it.each([false, true])(
+    "opens the command menu from the sidebar trigger (collapsed=%s)",
+    async (collapsed) => {
+      renderWithProviders(
+        <>
+          <CommandMenuTrigger collapsed={collapsed} />
+          <CommandMenu />
+        </>,
+      );
 
-    await userEvent.click(screen.getByRole("button", { name: OPEN_LABEL_KEY }));
+      await userEvent.click(
+        screen.getByRole("button", { name: OPEN_LABEL_KEY }),
+      );
 
-    expect(
-      await screen.findByRole("combobox", { name: SEARCH_LABEL_KEY }),
-    ).toBeInTheDocument();
-  });
+      expect(
+        await screen.findByRole("combobox", { name: SEARCH_LABEL_KEY }),
+      ).toBeInTheDocument();
+    },
+  );
 });

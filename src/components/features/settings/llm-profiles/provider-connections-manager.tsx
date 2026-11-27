@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { KeyRound, Plug, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BrandButton } from "#/components/features/settings/brand-button";
 import { ProviderConnectionRow } from "./provider-connection-row";
@@ -67,9 +68,10 @@ export function ProviderConnectionsManager({
       return (
         <div
           data-testid="provider-connections-empty"
-          className={extensionModuleEmptyStateClassName}
+          className="flex items-center gap-2 py-2 text-muted"
         >
-          <p className="text-sm text-muted">
+          <KeyRound size={16} className="shrink-0" aria-hidden="true" />
+          <p className="text-xs text-muted">
             {t(I18nKey.SETTINGS$PROVIDER_CONNECTIONS_EMPTY)}
           </p>
         </div>
@@ -99,13 +101,17 @@ export function ProviderConnectionsManager({
 
   return (
     <>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3 border-t border-border-subtle pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-col gap-1">
-            <h2 className="text-base font-medium text-contrast">
+            <h2 className="flex items-center gap-2 text-sm font-medium text-contrast">
+              <Plug size={16} aria-hidden="true" />
               {t(I18nKey.SETTINGS$PROVIDER_CONNECTIONS_TITLE)}
+              <span className="text-xs font-normal text-muted">
+                {connections.length}
+              </span>
             </h2>
-            <p className="text-sm text-muted">
+            <p className="text-xs text-muted">
               {t(I18nKey.SETTINGS$PROVIDER_CONNECTIONS_SUBLINE)}
             </p>
           </div>
@@ -113,6 +119,7 @@ export function ProviderConnectionsManager({
             testId="add-provider-connection"
             type="button"
             variant="secondary"
+            startContent={<Plus size={14} aria-hidden="true" />}
             className="ml-auto"
             onClick={() => setIsCreating(true)}
           >

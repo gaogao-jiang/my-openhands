@@ -76,7 +76,7 @@ export function Sidebar() {
   const [addBackendModalOpen, setAddBackendModalOpen] = React.useState(false);
   const [manageBackendsModalOpen, setManageBackendsModalOpen] =
     React.useState(false);
-  const [collapsedRailHovered, setCollapsedRailHovered] = React.useState(false);
+  const [collapsedLogoHovered, setCollapsedLogoHovered] = React.useState(false);
   const suppressCollapsedExpandRef = React.useRef(false);
   const [, refreshCollapsedExpandGate] = React.useReducer((n) => n + 1, 0);
   const { isOpen: isMobileNavOpen, close: closeMobileNav } =
@@ -180,7 +180,7 @@ export function Sidebar() {
     [collapsed, setCollapsed],
   );
   const handleCollapse = React.useCallback(() => {
-    setCollapsedRailHovered(false);
+    setCollapsedLogoHovered(false);
     suppressCollapsedExpandRef.current = true;
     refreshCollapsedExpandGate();
     setCollapsed(true);
@@ -190,7 +190,7 @@ export function Sidebar() {
     }, 250);
   }, [setCollapsed]);
   const showCollapsedExpandButton =
-    collapsed && collapsedRailHovered && !suppressCollapsedExpandRef.current;
+    collapsed && collapsedLogoHovered && !suppressCollapsedExpandRef.current;
 
   const isExtensionsActive =
     currentPath === "/customize" ||
@@ -204,6 +204,8 @@ export function Sidebar() {
     onCollapse: handleCollapse,
     onExpand: () => setCollapsed(false),
     showCollapsedExpandButton,
+    onCollapsedLogoEnter: () => setCollapsedLogoHovered(true),
+    onCollapsedLogoLeave: () => setCollapsedLogoHovered(false),
     isExtensionsActive,
     currentPath,
     activeBackend: active.backend,
@@ -225,18 +227,10 @@ export function Sidebar() {
         aria-label={t(I18nKey.SIDEBAR$NAVIGATION_LABEL)}
         data-collapsed={collapsed ? "true" : "false"}
         onClick={handleCollapsedRailClick}
-        onMouseEnter={() => {
-          if (collapsed) {
-            setCollapsedRailHovered(true);
-          }
-        }}
-        onMouseLeave={() => {
-          setCollapsedRailHovered(false);
-        }}
         className={cn(
-          "max-md:hidden relative flex bg-canvas-base flex-col min-h-0 sidebar-text-scale",
+          "app-shell-chrome max-md:hidden relative flex flex-col min-h-0 sidebar-text-scale",
           !isResizingSidebar && "transition-sidebar-width duration-200",
-          "md:border-r md:border-border md:h-full",
+          "md:h-full",
           collapsed
             ? "md:w-15 md:min-w-15 md:px-2.5"
             : "md:sidebar-expanded-width pb-2 md:pl-2.5 md:pr-0",
@@ -282,7 +276,7 @@ export function Sidebar() {
             data-testid="sidebar-mobile-drawer"
             aria-hidden={!mobileDrawerVisible}
             className={cn(
-              "fixed inset-y-0 left-0 z-50 flex min-h-0 w-[min(300px,85vw)] flex-col bg-canvas-base sidebar-text-scale",
+              "app-shell-chrome fixed inset-y-0 left-0 z-50 flex min-h-0 w-[min(300px,85vw)] flex-col sidebar-text-scale",
               "border-r border-border md:hidden mobile-sidebar-drawer-safe-area",
               "transition-transform duration-(--mobile-drawer-transition-duration) ease-in-out motion-reduce:transition-none",
               mobileDrawerVisible ? "translate-x-0" : "-translate-x-full",

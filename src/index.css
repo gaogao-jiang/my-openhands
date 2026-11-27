@@ -60,7 +60,130 @@
 }
 
 .app-shell-titlebar-inset {
-  padding-top: calc(env(safe-area-inset-top, 0px) + 1.75rem);
+  padding-top: calc(env(safe-area-inset-top, 0px) + 36px);
+}
+
+/* The Windows caption buttons occupy the rest of the title-bar overlay. */
+.desktop-titlebar {
+  padding-left: env(titlebar-area-x, 0px);
+  padding-right: max(
+    0px,
+    calc(100% - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100%))
+  );
+}
+
+.desktop-menu-trigger {
+  border-radius: 6px;
+  color: var(--oh-text-secondary);
+  outline: none;
+}
+
+.desktop-menu-trigger:hover,
+.desktop-menu-trigger[aria-expanded="true"] {
+  color: var(--oh-foreground);
+  background: var(--oh-overlay);
+}
+
+.desktop-menu-trigger:focus-visible {
+  outline: 2px solid var(--oh-focus);
+  outline-offset: -2px;
+}
+
+.desktop-app-menu {
+  width: 180px;
+  padding: 5px 0;
+  border: 1px solid var(--oh-border);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--oh-overlay) 60%, var(--oh-surface));
+  color: var(--oh-foreground);
+  box-shadow:
+    0 0 8px rgba(0, 0, 0, 0.1),
+    0 6px 20px rgba(0, 0, 0, 0.16),
+    0 16px 32px -8px rgba(0, 0, 0, 0.12);
+}
+
+.desktop-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: calc(100% - 8px);
+  min-height: 28px;
+  margin: 0 4px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: start;
+  outline: none;
+}
+
+.desktop-app-menu[data-menu="view"] {
+  width: max-content;
+  min-width: 180px;
+}
+
+.desktop-menu-item:not(:disabled):hover,
+.desktop-menu-item:focus-visible {
+  background: var(--oh-surface-raised);
+}
+
+.desktop-menu-item:disabled {
+  opacity: 0.45;
+}
+
+.desktop-menu-shortcut {
+  color: var(--oh-text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.desktop-menu-separator {
+  height: 1px;
+  margin: 6px 0;
+  background: var(--oh-border);
+}
+
+/* Dark themes use a deeper workspace; light themes use a brighter workspace. */
+.app-shell-chrome {
+  background-color: var(--oh-background);
+}
+
+.app-shell-content {
+  --oh-color-base: color-mix(
+    in srgb,
+    var(--oh-background) 25%,
+    var(--oh-surface-deep)
+  );
+  background-color: var(--oh-color-base);
+}
+
+[data-theme="light"] .app-shell-chrome {
+  background-color: var(--oh-surface);
+}
+
+[data-theme="light"] .app-shell-content {
+  --oh-color-base: var(--oh-background);
+}
+
+html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root-outlet::-webkit-scrollbar,
+.settings-main-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+#root-outlet,
+.settings-main-scroll {
+  scrollbar-width: none !important;
 }
 
 body {
@@ -96,7 +219,26 @@ code {
   background-color: inherit;
 }
 
-.markdown-body {
+.markdown-html,
+body {
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root-outlet::-webkit-scrollbar,
+.settings-main-scroll::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+#root-outlet,
+.settings-main-scroll {
+  scrollbar-width: none !important;
+}
+
+body {
   white-space: pre-wrap; /* Handles line breaks */
 }
 

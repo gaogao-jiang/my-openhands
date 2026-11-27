@@ -1,4 +1,4 @@
-import { useRef, type ReactNode, type CSSProperties } from "react";
+import { useRef, useState, type ReactNode, type CSSProperties } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChatInterface } from "../../chat/chat-interface";
 import { ConversationOverviewPanel } from "../conversation-overview-panel";
@@ -41,6 +41,8 @@ export function ChatInterfaceWrapper({
     (state) => state.isOverviewPanelShown,
   );
   const containerRef = useRef<HTMLDivElement>(null);
+  const [timelineContainer, setTimelineContainer] =
+    useState<HTMLDivElement | null>(null);
   const wantsOverviewPanel = !isMobile && isOverviewPanelShown;
   const hasOverviewColumnSpace = useConversationOverviewColumnSpace(
     containerRef,
@@ -53,12 +55,17 @@ export function ChatInterfaceWrapper({
       ref={containerRef}
       className="flex h-full min-h-0 w-full overflow-hidden"
     >
-      <div className="flex min-h-0 min-w-0 flex-1 justify-center overflow-hidden">
+      <div
+        ref={setTimelineContainer}
+        data-testid="chat-timeline-anchor"
+        className="relative flex min-h-0 min-w-0 flex-1 justify-center overflow-hidden"
+      >
         <div className={THREAD_CLASSNAME}>
           {pendingContent ?? (
             <ChatInterface
               showGitControlBar={showGitControlBar}
               showEmptyStateSuggestions={showEmptyStateSuggestions}
+              timelineContainer={timelineContainer}
               composerDockTarget={composerDockTarget}
               onDockedComposerSubmit={onDockedComposerSubmit}
               minimalComposer={minimalComposer}

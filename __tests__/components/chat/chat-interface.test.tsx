@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { afterEach, beforeEach, describe, expect, it, test, vi } from "vitest";
 import {
   fireEvent,
@@ -396,6 +396,105 @@ describe("ChatInterface - Scroll-up loads older events", () => {
     });
     return loadOlder;
   };
+
+  it("keeps the clicked message selected until the reader manually scrolls", async () => {
+    setupPaginationTest();
+    const second: MessageEvent = {
+      ...(useEventStore.getState().events[0] as MessageEvent),
+      id: "msg-second",
+      llm_message: {
+        role: "user",
+        content: [{ type: "text", text: "Second conversation message" }],
+      },
+    };
+    useEventStore.getState().addEvent({
+      ...second,
+      id: "assistant-reply",
+      source: "agent",
+      llm_message: {
+        role: "assistant",
+        content: [{ type: "text", text: "Reply to the first question" }],
+      },
+    });
+    useEventStore.getState().addEvent(second);
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
+      top: 0,
+      bottom: 600,
+      left: 0,
+      right: 800,
+      width: 800,
+      height: 600,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+    const anchor = document.createElement("div");
+    document.body.append(anchor);
+    try {
+      renderWithQueryClient(
+        <ChatInterface timelineContainer={anchor} />,
+        queryClient,
+      );
+      const markers = await screen.findAllByTestId(
+        "conversation-timeline-marker",
+      );
+      expect(markers).toHaveLength(2);
+      const scrollContainer = screen.getByTestId("chat-scroll-container");
+      setScrollMetrics(scrollContainer, {
+        scrollTop: 100,
+        scrollHeight: 2000,
+        clientHeight: 600,
+      });
+      const scrollTo = vi.fn();
+      scrollContainer.scrollTo = scrollTo;
+
+      fireEvent.click(markers[1]);
+      expect(markers[1]).toHaveAttribute("aria-current", "location");
+      expect(scrollTo).toHaveBeenCalledOnce();
+      // A last message can be clamped below the viewport top. Programmatic
+      // scrolling must not select the earlier row still visible above it.
+      fireEvent.scroll(scrollContainer);
+      expect(markers[1]).toHaveAttribute("aria-current", "location");
+
+      fireEvent.wheel(scrollContainer, { deltaY: -100 });
+      fireEvent.scroll(scrollContainer);
+      expect(markers[0]).toHaveAttribute("aria-current", "location");
+    } finally {
+      anchor.remove();
+    }
+  });
+
+  it("scrolls the chat from the surrounding gutter without intercepting content or composer wheels", () => {
+    setupPaginationTest();
+    function ChatWithGutters() {
+      const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
+      return (
+        <div ref={setAnchor} data-testid="chat-gutter">
+          <ChatInterface timelineContainer={anchor} />
+        </div>
+      );
+    }
+    renderWithQueryClient(<ChatWithGutters />, queryClient);
+    const gutter = screen.getByTestId("chat-gutter");
+    const scrollContainer = screen.getByTestId("chat-scroll-container");
+    setScrollMetrics(scrollContainer, {
+      scrollTop: 100,
+      scrollHeight: 2000,
+      clientHeight: 600,
+    });
+    const scrollBy = vi.fn();
+    scrollContainer.scrollBy = scrollBy;
+
+    fireEvent.wheel(scrollContainer, { deltaY: 120 });
+    fireEvent.wheel(screen.getByTestId("chat-input"), { deltaY: 120 });
+    fireEvent.wheel(gutter, { deltaY: 120, ctrlKey: true });
+    expect(scrollBy).not.toHaveBeenCalled();
+
+    fireEvent.wheel(gutter, { deltaY: 120 });
+    expect(scrollBy).toHaveBeenLastCalledWith({ top: 120, behavior: "auto" });
+    fireEvent.wheel(gutter, { deltaY: -1, deltaMode: 2 });
+    expect(scrollBy).toHaveBeenLastCalledWith({ top: -600, behavior: "auto" });
+  });
 
   // The auto-scroll-to-bottom hook schedules a rAF that does
   // `dom.scrollTop = dom.scrollHeight`, which clobbers any value we set

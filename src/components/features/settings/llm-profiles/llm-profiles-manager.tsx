@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BrandButton } from "#/components/features/settings/brand-button";
+import { AddModelMenu } from "./add-model-menu";
 import { RenameProfileModal } from "./rename-profile-modal";
 import { DeleteProfileModal } from "./delete-profile-modal";
 import { AddModelsModal } from "./add-models-modal";
@@ -134,36 +134,29 @@ export function LlmProfilesManager({
 
   return (
     <>
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4">
+      <div className="flex w-full max-w-168 flex-col gap-6">
+        <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-base font-medium text-contrast">
-              {t(I18nKey.SETTINGS$AVAILABLE_PROFILES)}
+              {t(I18nKey.SETTINGS$MODEL_CARDS_TITLE)}
+              <span className="ml-2 text-xs font-normal text-muted">
+                {profiles.length}
+              </span>
             </h2>
             <div className="ml-auto flex items-center gap-2">
-              {canManage && supportsConnections ? (
-                <BrandButton
-                  testId="add-models-from-provider"
-                  type="button"
-                  variant="tertiary"
-                  onClick={() => {
-                    setAddModelsConnectionId(null);
-                    setShowAddModels(true);
-                  }}
-                >
-                  {t(I18nKey.SETTINGS$ADD_MODELS_FROM_PROVIDER)}
-                </BrandButton>
-              ) : null}
-              {onAddProfile && canManage ? (
-                <BrandButton
-                  testId="add-llm-profile"
-                  type="button"
-                  variant="secondary"
-                  onClick={onAddProfile}
-                >
-                  {t(I18nKey.SETTINGS$ADD_LLM_PROFILE)}
-                </BrandButton>
-              ) : null}
+              {canManage && (
+                <AddModelMenu
+                  onManual={onAddProfile}
+                  onProvider={
+                    supportsConnections
+                      ? () => {
+                          setAddModelsConnectionId(null);
+                          setShowAddModels(true);
+                        }
+                      : undefined
+                  }
+                />
+              )}
             </div>
           </div>
 

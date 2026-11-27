@@ -3,7 +3,7 @@
  *
  * The renderer is the ordinary web app served over loopback, so it cannot tell
  * a desktop launch from a browser tab. This exposes just enough for the shell
- * to reserve room for the macOS traffic lights and mark a drag region — see
+ * to reserve room for desktop title-bar controls and mark a drag region — see
  * src/utils/desktop-shell.ts.
  *
  * It also exposes the MARS bridge (`window.marsBridge`). Page JavaScript never
@@ -29,6 +29,17 @@ ipcRenderer.on("window:full-screen", (_event, value) => {
 
 contextBridge.exposeInMainWorld("desktopShell", {
   platform: process.platform,
+  performWindowAction: (action) =>
+    ipcRenderer.invoke("window:menu-action", action),
+  performEditingAction: (action) =>
+    ipcRenderer.invoke("window:edit-action", action),
+  onMenuAction(cb) {
+    const listener = (_event, action) => cb(action);
+    ipcRenderer.on("window:frontend-menu-action", listener);
+    return () => ipcRenderer.removeListener("window:frontend-menu-action", listener);
+  },
+  setTitleBarTheme: (theme) =>
+    ipcRenderer.invoke("window:titlebar-theme", theme),
   /** The window's current fullscreen state. */
   isFullScreen: () => isFullScreen,
   /**

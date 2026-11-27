@@ -15,6 +15,7 @@ import {
 } from "#/components/features/chat/scroll-anchor";
 import {
   createUserMessageEvent,
+  createOtherActionEvent,
   createPlanningObservationEvent,
   renderWithProviders,
 } from "test-utils";
@@ -78,10 +79,14 @@ function Harness({
   events,
   withScrollParent,
   messagesRef,
+  onTimelineRowsChange,
+  onTimelineVisibilityChange,
 }: {
   events: OpenHandsEvent[];
   withScrollParent: boolean;
   messagesRef?: React.Ref<MessagesHandle>;
+  onTimelineRowsChange?: (rowKeys: string[]) => void;
+  onTimelineVisibilityChange?: (rowKeys: string[]) => void;
 }) {
   const [scrollElement, setScrollElement] =
     React.useState<HTMLDivElement | null>(null);
@@ -96,6 +101,8 @@ function Harness({
         messages={events}
         allEvents={events}
         scrollParent={withScrollParent ? scrollElement : undefined}
+        onTimelineRowsChange={onTimelineRowsChange}
+        onTimelineVisibilityChange={onTimelineVisibilityChange}
       />
     </div>
   );
@@ -780,6 +787,306 @@ describe("Messages virtualization", () => {
     expect(
       messagesRef.current?.getRowScrollStart("single-message-0"),
     ).toBeNull();
+  });
+
+  it.each([3, 400])(
+    "reports navigation previews even for unmounted rows (%i events)",
+    (count) => {
+      const onTimelineRowsChange = vi.fn();
+      const events = buildEvents(count);
+      const last = createUserMessageEvent(`message-${count - 1}`);
+      last.llm_message.content = [
+        { type: "text", text: "Review the navigation preview" },
+      ];
+      events[count - 1] = last;
+
+      renderWithProviders(
+        <Harness
+          events={events}
+          withScrollParent
+          onTimelineRowsChange={onTimelineRowsChange}
+        />,
+      );
+
+      const [keys, previews] = onTimelineRowsChange.mock.lastCall!;
+      expect(keys).toHaveLength(count);
+      expect(previews[keys[count - 1]]).toBe("Review the navigation preview");
+    },
+  );
+
+  it.each([2, 100])(
+    "creates one marker per user question and keeps replies in that question (%i turns)",
+    async (turns) => {
+      const onTimelineRowsChange = vi.fn();
+      const messagesRef = React.createRef<MessagesHandle>();
+      const assistantMessage = (id: string) => {
+        const event = createUserMessageEvent(id);
+        event.source = "agent";
+        event.llm_message.role = "assistant";
+        return event;
+      };
+      const environmentMessage = createUserMessageEvent("environment");
+      environmentMessage.source = "environment";
+      const events: OpenHandsEvent[] = [
+        assistantMessage("intro"),
+        environmentMessage,
+      ];
+      for (let index = 0; index < turns; index += 1) {
+        const question = createUserMessageEvent(`question-${index}`);
+        question.llm_message.content = [
+          { type: "text", text: `Question ${index}` },
+        ];
+        events.push(
+          question,
+          assistantMessage(`answer-${index}`),
+          createOtherActionEvent(`tool-${index}`),
+          assistantMessage(`final-${index}`),
+        );
+      }
+      renderWithProviders(
+        <Harness
+          events={events}
+          withScrollParent
+          messagesRef={messagesRef}
+          onTimelineRowsChange={onTimelineRowsChange}
+        />,
+      );
+      const [keys, previews] = onTimelineRowsChange.mock.lastCall!;
+      expect(keys).toEqual(
+        Array.from({ length: turns }, (_, index) => `single-question-${index}`),
+      );
+      expect(Object.keys(previews)).toHaveLength(turns);
+      expect(previews[keys[1]]).toBe("Question 1");
+
+      const parent = screen.getByTestId("scroll-parent");
+      if (turns === 2) {
+        vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+          function (this: Element) {
+            const id = this.getAttribute("data-testid");
+            const top =
+              this === parent
+                ? 0
+                : id === "event-message-answer-0"
+                  ? -10
+                  : -1000;
+            return {
+              top,
+              bottom: top + 100,
+              height: 100,
+              width: 800,
+              left: 0,
+              right: 800,
+              x: 0,
+              y: top,
+              toJSON: () => ({}),
+            };
+          },
+        );
+        expect(messagesRef.current?.getCurrentRowKey()).toBe(
+          "single-question-0",
+        );
+      } else {
+        const answerStart =
+          messagesRef.current?.getRowScrollStart("single-answer-0");
+        expect(answerStart).toEqual(expect.any(Number));
+        act(() => {
+          parent.scrollTop = (answerStart as number) + 1;
+          fireEvent.scroll(parent);
+        });
+        await waitFor(() =>
+          expect(messagesRef.current?.getCurrentRowKey()).toBe(
+            "single-question-0",
+          ),
+        );
+      }
+    },
+  );
+
+  it("reports both visible question turns, including a reply whose question has scrolled out", () => {
+    const reply = createUserMessageEvent("reply");
+    reply.source = "agent";
+    reply.llm_message.role = "assistant";
+    let offset = 0;
+    const positions: Record<string, number> = {
+      "event-message-first": -200,
+      "event-message-reply": 20,
+      "event-message-second": 400,
+      "event-message-third": 1000,
+    };
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+      function (this: Element) {
+        const id = this.getAttribute("data-testid") ?? "";
+        const top = id === "scroll-parent" ? 0 : (positions[id] ?? 0) - offset;
+        const height = id === "scroll-parent" ? 600 : 100;
+        return {
+          top,
+          bottom: top + height,
+          height,
+          width: 800,
+          left: 0,
+          right: 800,
+          x: 0,
+          y: top,
+          toJSON: () => ({}),
+        };
+      },
+    );
+    const onVisible = vi.fn();
+    renderWithProviders(
+      <Harness
+        events={[
+          createUserMessageEvent("first"),
+          reply,
+          createUserMessageEvent("second"),
+          createUserMessageEvent("third"),
+        ]}
+        withScrollParent
+        onTimelineVisibilityChange={onVisible}
+      />,
+    );
+    expect(onVisible).toHaveBeenLastCalledWith([
+      "single-first",
+      "single-second",
+    ]);
+    offset = 500;
+    fireEvent.scroll(screen.getByTestId("scroll-parent"));
+    expect(onVisible).toHaveBeenLastCalledWith(["single-third"]);
+  });
+
+  it("darkens only viewport questions in a virtualized list, excluding overscan", () => {
+    const onVisible = vi.fn();
+    renderWithProviders(
+      <Harness
+        events={buildEvents(400)}
+        withScrollParent
+        onTimelineVisibilityChange={onVisible}
+      />,
+    );
+    const parent = screen.getByTestId("scroll-parent");
+    Object.defineProperty(parent, "clientHeight", {
+      configurable: true,
+      value: 1300,
+    });
+    fireEvent.scroll(parent);
+    expect(onVisible).toHaveBeenLastCalledWith([
+      "single-message-0",
+      "single-message-1",
+      "single-message-2",
+    ]);
+    act(() => {
+      parent.scrollTop = 608;
+      fireEvent.scroll(parent);
+    });
+    expect(onVisible).toHaveBeenLastCalledWith([
+      "single-message-1",
+      "single-message-2",
+      "single-message-3",
+    ]);
+  });
+
+  it("scrolls a plain list to the selected row", () => {
+    const scrollTo = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollTo", {
+      configurable: true,
+      writable: true,
+      value: scrollTo,
+    });
+    const messagesRef = React.createRef<MessagesHandle>();
+    renderWithProviders(
+      <Harness
+        events={buildEvents(3)}
+        withScrollParent
+        messagesRef={messagesRef}
+      />,
+    );
+
+    messagesRef.current?.scrollToRow("single-message-2");
+
+    expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+  });
+
+  it.each([
+    ["single-message-0", 234],
+    ["single-message-2", 634],
+  ])(
+    "aligns the selected message %s below the chat viewport top",
+    (key, expectedTop) => {
+      const messagesRef = React.createRef<MessagesHandle>();
+      renderWithProviders(
+        <Harness
+          events={buildEvents(3)}
+          withScrollParent
+          messagesRef={messagesRef}
+        />,
+      );
+      const parent = screen.getByTestId("scroll-parent");
+      parent.scrollTop = 200;
+      const rect = (top: number) => ({
+        top,
+        bottom: top + 100,
+        height: 100,
+        width: 800,
+        left: 0,
+        right: 800,
+        x: 0,
+        y: top,
+        toJSON: () => ({}),
+      });
+      vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(
+        function (this: Element) {
+          if (this === parent) return rect(50);
+          const id = this.getAttribute("data-testid");
+          const match = /^event-message-message-(\d+)$/.exec(id ?? "");
+          return rect(match ? 100 + Number(match[1]) * 200 : 0);
+        },
+      );
+      const scrollTo = vi.fn();
+      parent.scrollTo = scrollTo;
+
+      messagesRef.current?.scrollToRow(key);
+
+      expect(scrollTo).toHaveBeenCalledWith({
+        top: expectedTop,
+        behavior: "smooth",
+      });
+    },
+  );
+
+  it("scrolls a virtualized list to the selected row", () => {
+    const scrollTo = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollTo", {
+      configurable: true,
+      writable: true,
+      value: scrollTo,
+    });
+    const messagesRef = React.createRef<MessagesHandle>();
+    renderWithProviders(
+      <Harness
+        events={buildEvents(400)}
+        withScrollParent
+        messagesRef={messagesRef}
+      />,
+    );
+    const parent = screen.getByTestId("scroll-parent");
+    Object.defineProperty(parent, "scrollHeight", {
+      configurable: true,
+      value: 100000,
+    });
+    Object.defineProperty(parent, "clientHeight", {
+      configurable: true,
+      value: 600,
+    });
+    const start = messagesRef.current?.getRowScrollStart("single-message-399");
+    scrollTo.mockClear();
+
+    messagesRef.current?.scrollToRow("single-message-399");
+
+    expect(scrollTo).toHaveBeenCalledWith(
+      expect.objectContaining({
+        top: (start as number) - 16,
+        behavior: "auto",
+      }),
+    );
   });
 
   it("anchors the load-older restore on a virtual row after older events prepend", () => {

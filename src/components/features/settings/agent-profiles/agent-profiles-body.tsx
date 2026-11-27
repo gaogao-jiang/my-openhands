@@ -1,13 +1,9 @@
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { AgentProfileRow } from "./agent-profile-row";
 import { type AgentProfileSummary } from "#/api/agent-profiles-service/agent-profiles-service.api";
 import { I18nKey } from "#/i18n/declaration";
-import { cn } from "#/utils/utils";
-import {
-  settingsListContainerClassName,
-  settingsListDividerClassName,
-} from "#/utils/settings-list-classes";
 import { extensionModuleEmptyStateClassName } from "#/utils/extension-module-card-classes";
 
 interface AgentProfilesBodyProps {
@@ -21,6 +17,7 @@ interface AgentProfilesBodyProps {
   onEdit: (profile: AgentProfileSummary) => void;
   onDelete: (profile: AgentProfileSummary) => void;
   isActivating: boolean;
+  showSyncStatus?: boolean;
 }
 
 export function AgentProfilesBody({
@@ -33,8 +30,40 @@ export function AgentProfilesBody({
   onEdit,
   onDelete,
   isActivating,
+  showSyncStatus = false,
 }: AgentProfilesBodyProps) {
   const { t } = useTranslation("openhands");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrollContentRef = useRef<HTMLDivElement>(null);
+  const [hasMoreBelow, setHasMoreBelow] = useState(false);
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    const scrollContent = scrollContentRef.current;
+    if (!scrollContainer || !scrollContent) return;
+
+    const updateScrollHint = () => {
+      const hasOverflow =
+        scrollContainer.scrollHeight > scrollContainer.clientHeight + 1;
+      const isAtBottom =
+        scrollContainer.scrollTop + scrollContainer.clientHeight >=
+        scrollContainer.scrollHeight - 1;
+      setHasMoreBelow(hasOverflow && !isAtBottom);
+    };
+
+    updateScrollHint();
+    scrollContainer.addEventListener("scroll", updateScrollHint, {
+      passive: true,
+    });
+    const resizeObserver = new ResizeObserver(updateScrollHint);
+    resizeObserver.observe(scrollContainer);
+    resizeObserver.observe(scrollContent);
+
+    return () => {
+      scrollContainer.removeEventListener("scroll", updateScrollHint);
+      resizeObserver.disconnect();
+    };
+  }, [profiles.length]);
 
   if (isLoading) {
     return (
@@ -71,24 +100,54 @@ export function AgentProfilesBody({
   }
 
   return (
-    <div
-      className={cn(
-        settingsListContainerClassName,
-        settingsListDividerClassName,
-      )}
-    >
-      {profiles.map((profile) => (
-        <AgentProfileRow
-          key={profile.name}
-          profile={profile}
-          isActive={!!profile.id && profile.id === activeId}
-          canManage={canManage}
-          onActivate={onActivate}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          isActivating={isActivating}
+    <div className="flex flex-col gap-4">
+      <div className="relative">
+        <div
+          ref={scrollContainerRef}
+          data-testid="agent-profiles-scroll-container"
+          className="agent-profile-list-scroll scrollbar-hide overflow-y-auto"
+        >
+          <div ref={scrollContentRef} className="flex flex-col gap-3 pr-1">
+            {profiles.map((profile) => (
+              <AgentProfileRow
+                key={profile.name}
+                profile={profile}
+                isActive={!!profile.id && profile.id === activeId}
+                canManage={canManage}
+                onActivate={onActivate}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                isActivating={isActivating}
+              />
+            ))}
+          </div>
+        </div>
+        <div
+          aria-hidden="true"
+          data-testid="agent-profiles-scroll-fade"
+          className={`agent-profile-list-fade pointer-events-none absolute inset-x-0 bottom-0 h-12 transition-opacity duration-200 ${hasMoreBelow ? "opacity-100" : "opacity-0"}`}
         />
-      ))}
+      </div>
+      {showSyncStatus ? (
+        <div
+          data-testid="agent-profiles-sync-status"
+          className="flex items-center gap-2 px-1 text-xs text-muted"
+        >
+          <span className="flex size-4 items-center justify-center rounded-full bg-success/10 text-success">
+            <svg viewBox="0 0 16 16" className="size-3" aria-hidden="true">
+              <path
+                d="m3.5 8 3 3 6-6"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1.75"
+              />
+            </svg>
+          </span>
+          {t(I18nKey.SETTINGS$AGENT_PAGE_SYNCED)}
+        </div>
+      ) : null}
     </div>
   );
 }

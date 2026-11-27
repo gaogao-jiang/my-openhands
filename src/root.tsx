@@ -39,7 +39,6 @@ import {
   useBackendsHealth,
 } from "#/hooks/query/use-backends-health";
 import { TOAST_OPTIONS } from "#/utils/custom-toast-handlers";
-import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { useConfig } from "#/hooks/query/use-config";
 import { useRestoreMarsTunnels } from "#/hooks/use-mars-tunnel-backend";
 import { QUERY_KEYS } from "#/hooks/query/query-keys";
@@ -56,6 +55,11 @@ import {
   COLOR_THEME_BOOTSTRAP_SCRIPT,
   readPersistedColorTheme,
 } from "#/themes/color-themes";
+
+// Keep notifications below the app chrome, including Windows caption overlays.
+const TOASTER_CONTAINER_STYLE: React.CSSProperties = {
+  top: "max(4rem, calc(env(titlebar-area-height, 0px) + 1rem))",
+};
 
 /** Applies the persisted palette before paint; useEffect lands a frame late. */
 function ColorThemeApplier() {
@@ -113,7 +117,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <AgentServerUIRoot contentClassName="h-dvh min-h-0">
           <ColorThemeApplier />
           {children}
-          <Toaster toastOptions={TOAST_OPTIONS} />
+          <Toaster
+            position={TOAST_OPTIONS.position}
+            containerStyle={TOASTER_CONTAINER_STYLE}
+            toastOptions={TOAST_OPTIONS}
+          />
           <div id="modal-portal-exit" />
         </AgentServerUIRoot>
         <ScrollRestoration />
@@ -125,11 +133,41 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function AgentServerBootstrapLoading() {
   return (
-    <main className="min-h-screen bg-canvas-base px-6 py-10 text-contrast">
-      <div className="mx-auto flex min-h-screen max-w-6xl items-center justify-center">
-        <div className="rounded-3xl border border-contrast/10 bg-canvas-base/80 px-8 py-10 shadow-2xl">
-          <LoadingSpinner size="large" />
+    <main
+      aria-busy="true"
+      className="min-h-screen overflow-hidden bg-canvas-base text-contrast"
+    >
+      <div className="h-10 border-b border-border/40 bg-canvas-base/95">
+        <div className="flex h-full items-center gap-3 px-3">
+          <div className="size-7 animate-pulse rounded-full bg-surface-raised" />
+          <div className="h-3 w-14 animate-pulse rounded-full bg-surface-raised" />
+          <div className="ml-1 h-5 w-px bg-border/50" />
+          <div className="h-3 w-12 animate-pulse rounded-full bg-surface-raised" />
+          <div className="h-3 w-12 animate-pulse rounded-full bg-surface-raised" />
         </div>
+      </div>
+      <div className="flex min-h-[calc(100vh-2.5rem)]">
+        <aside className="hidden w-64 shrink-0 border-r border-border/40 p-4 sm:block">
+          <div className="mb-6 h-9 w-full animate-pulse rounded-lg bg-surface-raised" />
+          <div className="space-y-3">
+            <div className="h-3 w-24 animate-pulse rounded-full bg-surface-raised" />
+            <div className="h-3 w-36 animate-pulse rounded-full bg-surface-raised" />
+            <div className="h-3 w-28 animate-pulse rounded-full bg-surface-raised" />
+            <div className="h-3 w-32 animate-pulse rounded-full bg-surface-raised" />
+          </div>
+        </aside>
+        <section className="flex min-w-0 flex-1 items-center justify-center px-6 py-12">
+          <div className="w-full max-w-2xl">
+            <div className="mx-auto mb-8 h-7 w-64 animate-pulse rounded-full bg-surface-raised" />
+            <div className="mx-auto mb-3 h-3 w-96 max-w-full animate-pulse rounded-full bg-surface-raised" />
+            <div className="mx-auto mb-10 h-3 w-72 max-w-full animate-pulse rounded-full bg-surface-raised" />
+            <div className="h-28 animate-pulse rounded-2xl border border-border/50 bg-surface-raised/60" />
+            <div className="mt-4 flex justify-center gap-3">
+              <div className="h-8 w-28 animate-pulse rounded-full bg-surface-raised" />
+              <div className="h-8 w-20 animate-pulse rounded-full bg-surface-raised" />
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );

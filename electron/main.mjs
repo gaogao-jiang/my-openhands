@@ -1,3 +1,5 @@
+import { registerDesktopMenu, handleDesktopMenuShortcut } from "./lib/desktop-menu.mjs";
+import { getDesktopStackOptions } from "./lib/desktop-stack-options.mjs";
 /**
  * Electron Main Process — Agent Canvas Desktop
  *
@@ -44,6 +46,7 @@ import {
   clipboard,
   dialog,
   ipcMain,
+  Menu,
   nativeImage,
   nativeTheme,
   safeStorage,
@@ -93,6 +96,13 @@ const appIconPath = join(
 if (process.platform === "win32") {
   app.setAppUserModelId("com.jora.desktop");
 }
+
+// The renderer owns the application UI. Remove Electron's default
+// File/Edit/View/Window menu so the native title bar only carries Jora's
+// icon, the current window title, and the standard window controls.
+app.whenReady().then(() => {
+  Menu.setApplicationMenu(null);
+});
 
 // ── Bundled uv ────────────────────────────────────────────────────────────────
 
@@ -314,14 +324,15 @@ async function waitForAgentServer(
 
 let loadingWin = null;
 let mainWin = null;
+const appWindows = new Set();
 /** MARS session bridge (port-forward tunnels, MARSOHS-1429) — created in app.whenReady(). */
 let marsTunnelBridge = null;
 
 // Collapsed splash size — loading.html's .container height must match. The
 // expanded height reveals the startup-log console below it ("Show details").
-const LOADING_WIN_WIDTH = 460;
-const LOADING_WIN_HEIGHT = 360;
-const LOADING_WIN_EXPANDED_HEIGHT = 560;
+const LOADING_WIN_WIDTH = 520;
+const LOADING_WIN_HEIGHT = 420;
+const LOADING_WIN_EXPANDED_HEIGHT = 640;
 
 /**
  * Grow or shrink the loading window to reveal/hide the startup-log console.
@@ -383,18 +394,30 @@ function createLoadingWindow() {
 }
 
 function createMainWindow() {
-  mainWin = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 1440,
     height: 900,
-    minWidth: 800,
-    minHeight: 600,
+    // A Windows half-screen can be narrower than 800 DIP at higher DPI.
+    minWidth: process.platform === "win32" ? 640 : 800,
+    minHeight: process.platform === "win32" ? 480 : 600,
     show: false,
     // App-shell background (--oh-background in src/index.css) — avoids white
     // flashes during the show → maximize repaint after the splash closes.
     backgroundColor: "#0b0e14",
-    // hiddenInset hides the native title bar but keeps the traffic lights
-    // floating over the app shell; the renderer reserves a drag band for them.
-    titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "default",
+    // Hide the duplicated native title text while keeping native window
+    // controls available as an overlay on Windows and macOS.
+    titleBarStyle:
+      process.platform === "darwin" || process.platform === "win32"
+        ? "hidden"
+        : "default",
+    titleBarOverlay:
+      process.platform === "win32"
+        ? {
+            color: "#0b0e14",
+            symbolColor: "#a5afbd",
+            height: 36,
+          }
+        : undefined,
     icon: appIconPath,
     webPreferences: {
       nodeIntegration: false,
@@ -404,27 +427,47 @@ function createMainWindow() {
     },
   });
 
+  appWindows.add(win);
+  if (!mainWin) mainWin = win;
+
   // The renderer drops its reserved traffic-light band in fullscreen, where
   // macOS hides the buttons. Only transitions are pushed; the preload reads the
   // current state over "window:full-screen:get" on every page load.
   const sendFullScreenState = () => {
-    if (!mainWin || mainWin.isDestroyed()) return;
-    mainWin.webContents.send("window:full-screen", mainWin.isFullScreen());
+    if (!win || win.isDestroyed()) return;
+    win.webContents.send("window:full-screen", win.isFullScreen());
   };
-  mainWin.on("enter-full-screen", sendFullScreenState);
-  mainWin.on("leave-full-screen", sendFullScreenState);
+  win.on("enter-full-screen", sendFullScreenState);
+  win.on("leave-full-screen", sendFullScreenState);
 
-  mainWin.loadURL("http://localhost:8000");
+  win.loadURL("http://localhost:8000");
 
-  mainWin.once("ready-to-show", () => {
+  // The application menu is intentionally hidden, so Chromium's default
+  // reload accelerator is not always available. Keep the familiar shortcut
+  // working from every renderer focus target, including the chat input.
+  win.webContents.on("before-input-event", (event, input) => {
+    if (handleDesktopMenuShortcut(event, input, win, { platform: process.platform, app })) return;
+    const isReloadShortcut =
+      input.type === "keyDown" &&
+      input.key.toLowerCase() === "r" &&
+      (input.control || input.meta);
+    if (!isReloadShortcut) return;
+    event.preventDefault();
+    if (input.shift) {
+      win?.webContents.reloadIgnoringCache();
+    } else {
+      win?.webContents.reload();
+    }
+  });
+
+  win.once("ready-to-show", () => {
     loadingWin?.destroy();
     loadingWin = null;
-    mainWin?.show();
-    mainWin?.maximize();
+    win?.show();
   });
 
   // Route window.open() calls appropriately.
-  mainWin.webContents.setWindowOpenHandler(({ url }) => {
+  win.webContents.setWindowOpenHandler(({ url }) => {
     // The "Login with OpenHands Cloud" device-flow opens about:blank immediately
     // on the user's click (to beat popup blockers), then navigates the popup to
     // the OAuth verification URL once it has one.  We must allow about:blank
@@ -456,7 +499,7 @@ function createMainWindow() {
   // first navigation away from about:blank.  That navigation will be to the
   // OAuth verification URL — open it in the system browser and close the
   // now-unneeded Electron popup.
-  mainWin.webContents.on("did-create-window", (popupWin) => {
+  win.webContents.on("did-create-window", (popupWin) => {
     popupWin.webContents.on("will-navigate", (_event, url) => {
       if (url !== "about:blank" && !isLoopbackAppUrl(url)) {
         _event.preventDefault();
@@ -468,8 +511,9 @@ function createMainWindow() {
     });
   });
 
-  mainWin.on("closed", () => {
-    mainWin = null;
+  win.on("closed", () => {
+    appWindows.delete(win);
+    if (mainWin === win) mainWin = appWindows.values().next().value ?? null;
   });
 }
 
@@ -583,6 +627,32 @@ ipcMain.handle("boot-log:quit", (event) => {
   app.quit();
 });
 
+registerDesktopMenu({ ipcMain, BrowserWindow, app, windows: appWindows, createWindow: createMainWindow });
+
+ipcMain.handle("window:titlebar-theme", (event, theme) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (
+    !appWindows.has(win) ||
+    win.isDestroyed() ||
+    event.sender !== win.webContents ||
+    process.platform !== "win32" ||
+    typeof theme?.color !== "string" ||
+    typeof theme?.symbolColor !== "string"
+  ) {
+    return;
+  }
+  const isWindowsColor = (value) =>
+    /^#[0-9a-f]{3,8}$/i.test(value) ||
+    /^(rgb|rgba|hsl|hsla)\(\s*[\d.%\s,/-]+\)$/i.test(value);
+  win.setTitleBarOverlay({
+    color: isWindowsColor(theme.color) ? theme.color.slice(0, 64) : "#0b0e14",
+    symbolColor: isWindowsColor(theme.symbolColor)
+      ? theme.symbolColor.slice(0, 64)
+      : "#a5afbd",
+    height: 36,
+  });
+});
+
 // Synchronous so the preload has the state before the first render; a
 // renderer that starts with "not fullscreen" paints the band and then drops it.
 ipcMain.on("window:full-screen:get", (event) => {
@@ -679,16 +749,16 @@ async function startStack() {
   //     agent-server from PyPI. 10 minutes is generous but bounded.
   //   onServiceLog: stream uvx/agent-server output to the loading window so
   //     the user sees progress instead of an indefinite spinner.
+  const useViteFrontend =
+    !app.isPackaged && process.env.JORA_DESKTOP_DEV === "1";
   const result = await main({
     bannerTitle: "Jora",
-    staticMode: true,
+    ...getDesktopStackOptions(useViteFrontend),
     staticDir: buildDir,
-    mode: "agent-canvas",
     isPublic: false,
     // The preload provides window.marsBridge; the stack's ingress must not
     // host a second, separate one.
     marsWebBridge: false,
-    skipNpmCheck: true,
     agentServerReadyTimeoutMs: 10 * 60_000,
     onServiceLog: handleServiceLog,
     // main() announces the stack without waiting for the automation backend.
@@ -731,7 +801,7 @@ function failStartup(err) {
     // Open the splash before closing the main window so window-all-closed
     // does not quit the app.
     if (!loadingWin || loadingWin.isDestroyed()) createLoadingWindow();
-    mainWin.destroy();
+    for (const win of [...appWindows]) win.destroy();
   }
   // Keep the splash open in its failure state so the full startup log can
   // be read and copied; the app quits via the splash's Quit button (or

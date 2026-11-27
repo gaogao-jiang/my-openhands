@@ -1,11 +1,19 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createRoutesStub, data, Link } from "react-router";
 import MainApp, { ErrorBoundary } from "#/routes/root-layout";
 import { ActiveBackendProvider } from "#/contexts/active-backend-context";
 import { I18nKey } from "#/i18n/declaration";
+import { useSidebarStore } from "#/stores/sidebar-store";
 
 const useConfigMock = vi.fn();
 const useSettingsMock = vi.fn();
@@ -17,6 +25,7 @@ const syncTelemetryConsentMock = vi.fn();
 const syncAutomationTelemetryConsentMock = vi.fn();
 const telemetryIdentityMock = vi.fn();
 const syncDocumentLanguageMock = vi.fn();
+const openWorkspaceLauncherMock = vi.fn();
 
 vi.mock("#/hooks/query/use-config", () => ({
   useConfig: () => useConfigMock(),
@@ -99,8 +108,26 @@ vi.mock("react-i18next", async (importOriginal) => {
   return {
     ...actual,
     useTranslation: (namespace?: string) => ({
-      t: (key: string) =>
-        namespace === "openhands" ? key : `missing-namespace:${key}`,
+      i18n: { language: "en" },
+      t: (key: string) => {
+        const labels: Record<string, string> = {
+          [I18nKey.DESKTOP_MENU$NEW_WINDOW]: "New window",
+          [I18nKey.DESKTOP_MENU$OPEN_FOLDER]: "Open folder",
+          [I18nKey.DESKTOP_MENU$QUIT]: "Quit Jora",
+          [I18nKey.COMMAND_MENU$NEW_CHAT_TITLE]: "New chat",
+          [I18nKey.BUTTON$CLOSE]: "Close",
+          [I18nKey.DESKTOP_MENU$CUT]: "Cut",
+          [I18nKey.DESKTOP_MENU$COPY]: "Copy",
+          [I18nKey.DESKTOP_MENU$PASTE]: "Paste",
+          [I18nKey.DESKTOP_MENU$SELECT_ALL]: "Select all",
+          [I18nKey.BUTTON$DELETE]: "Delete",
+          [I18nKey.SIDEBAR$SETTINGS]: "Settings",
+          [I18nKey.DESKTOP_MENU$TOGGLE_SIDEBAR]: "Show/hide sidebar",
+        };
+        return namespace === "openhands"
+          ? (labels[key] ?? key)
+          : `missing-namespace:${key}`;
+      },
     }),
   };
 });
@@ -137,7 +164,16 @@ const RouterStub = createRoutesStub([
       },
       {
         path: "/conversations",
-        Component: () => <div data-testid="outlet-content" />,
+        Component: () => (
+          <div data-testid="outlet-content">
+            <button
+              data-testid="open-workspace-button"
+              onClick={openWorkspaceLauncherMock}
+            >
+              Workspace launcher
+            </button>
+          </div>
+        ),
       },
       {
         path: "/conversations/:id",
@@ -145,7 +181,11 @@ const RouterStub = createRoutesStub([
       },
       {
         path: "/settings",
-        Component: () => <div data-testid="outlet-content" />,
+        Component: () => (
+          <div data-testid="outlet-content">
+            <div data-testid="settings-content" />
+          </div>
+        ),
       },
       {
         path: "*",
@@ -422,24 +462,325 @@ describe("root layout", () => {
     expect(screen.queryByTestId("alert-banner")).not.toBeInTheDocument();
   });
 
-  describe("macOS desktop title bar", () => {
+  describe("desktop title bar", () => {
     afterEach(() => {
       delete window.desktopShell;
     });
 
-    it("reserves a draggable band for the traffic lights on the macOS desktop app", () => {
-      window.desktopShell = { platform: "darwin" };
-
+    it("toggles the sidebar through the renamed view menu and native shortcut", async () => {
+      let emit:
+        | Parameters<
+            NonNullable<NonNullable<Window["desktopShell"]>["onMenuAction"]>
+          >[0]
+        | undefined;
+      window.desktopShell = {
+        platform: "win32",
+        onMenuAction: (cb) => {
+          emit = cb;
+          return () => {};
+        },
+      };
+      const user = userEvent.setup();
+      const initialCollapsed = useSidebarStore.getState().collapsed;
       renderMainApp();
+      try {
+        await user.click(screen.getByRole("button", { name: "View" }));
+        const item = screen.getByRole("menuitem", {
+          name: "Show/hide sidebar",
+        });
+        expect(item).toHaveTextContent("Ctrl+Shift+S");
 
-      expect(screen.getByTestId("titlebar-drag-region")).toHaveAttribute(
-        "aria-hidden",
-        "true",
-      );
-      expect(screen.getByTestId("root-layout")).toHaveClass(
-        "app-shell-titlebar-inset",
-      );
+        await user.click(item);
+
+        expect(useSidebarStore.getState().collapsed).toBe(!initialCollapsed);
+        act(() => emit?.("toggle-sidebar"));
+        expect(useSidebarStore.getState().collapsed).toBe(initialCollapsed);
+      } finally {
+        act(() => useSidebarStore.getState().setCollapsed(initialCollapsed));
+      }
     });
+
+    it("keeps the input selection when invoking an edit command and shows the Windows redo shortcut", async () => {
+      const observedTargets: {
+        focused: boolean;
+        start: number;
+        end: number;
+      }[] = [];
+      const performEditingAction = vi.fn().mockImplementation(() => {
+        const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+        observedTargets.push({
+          focused: document.activeElement === input,
+          start: input.selectionStart,
+          end: input.selectionEnd,
+        });
+        return Promise.resolve();
+      });
+      window.desktopShell = { platform: "win32", performEditingAction };
+      const user = userEvent.setup();
+      renderMainApp();
+      render(<textarea defaultValue="hello world" />);
+      const input = screen.getByRole("textbox") as HTMLTextAreaElement;
+      input.focus();
+      input.setSelectionRange(0, 5);
+
+      await user.click(screen.getByRole("button", { name: "Edit" }));
+      expect(screen.getByRole("menuitem", { name: "Redo" })).toHaveTextContent(
+        "Ctrl+Y",
+      );
+      await user.click(screen.getByRole("menuitem", { name: "Cut" }));
+
+      expect(performEditingAction).toHaveBeenCalledWith("cut");
+      expect(observedTargets).toEqual([{ focused: true, start: 0, end: 5 }]);
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    it("restores a contenteditable selection after keyboard focus enters the menu", async () => {
+      const observedTargets: {
+        element: Element | null;
+        selection: string | undefined;
+      }[] = [];
+      const performEditingAction = vi.fn().mockImplementation(() => {
+        observedTargets.push({
+          element: document.activeElement,
+          selection: window.getSelection()?.toString(),
+        });
+        return Promise.resolve();
+      });
+      window.desktopShell = { platform: "win32", performEditingAction };
+      const user = userEvent.setup();
+      renderMainApp();
+      const { container } = render(
+        <div contentEditable suppressContentEditableWarning>
+          chosen text
+        </div>,
+      );
+      const editor = container.firstElementChild as HTMLElement;
+      editor.focus();
+      const range = document.createRange();
+      range.setStart(editor.firstChild!, 0);
+      range.setEnd(editor.firstChild!, 6);
+      window.getSelection()?.removeAllRanges();
+      window.getSelection()?.addRange(range);
+      await user.click(screen.getByRole("button", { name: "Edit" }));
+      screen.getByRole("menuitem", { name: "Copy" }).focus();
+      window.getSelection()?.removeAllRanges();
+
+      await user.keyboard("{Enter}");
+
+      expect(performEditingAction).toHaveBeenCalledWith("copy");
+      expect(observedTargets).toEqual([
+        { element: editor, selection: "chosen" },
+      ]);
+    });
+
+    it("opens the settings screen from the edit menu", async () => {
+      window.desktopShell = { platform: "win32" };
+      const user = userEvent.setup();
+      renderMainApp();
+      await user.click(screen.getByRole("button", { name: "Edit" }));
+
+      await user.click(screen.getByRole("menuitem", { name: "Settings" }));
+
+      expect(await screen.findByTestId("settings-content")).toBeInTheDocument();
+    });
+
+    it("uses the existing Cloud settings entry when it is available", async () => {
+      const openCloudSettings = vi.fn();
+      window.desktopShell = { platform: "win32" };
+      const user = userEvent.setup();
+      renderMainApp();
+      render(
+        <a
+          href="https://cloud.example.test/settings?org=team"
+          data-testid="backend-selector-settings-link"
+          onClick={(event) => {
+            event.preventDefault();
+            openCloudSettings();
+          }}
+        >
+          Cloud settings
+        </a>,
+      );
+      await user.click(screen.getByRole("button", { name: "Edit" }));
+
+      await user.click(screen.getByRole("menuitem", { name: "Settings" }));
+
+      expect(openCloudSettings).toHaveBeenCalledOnce();
+      expect(screen.queryByTestId("settings-content")).not.toBeInTheDocument();
+    });
+
+    it("opens the workspace launcher from another route through native shortcuts, including fullscreen", async () => {
+      let emit:
+        ((action: "new-conversation" | "open-workspace") => void) | undefined;
+      const unsubscribe = vi.fn();
+      window.desktopShell = {
+        platform: "win32",
+        isFullScreen: () => true,
+        onMenuAction: (cb) => {
+          emit = cb;
+          return unsubscribe;
+        },
+      };
+      const { unmount } = renderMainApp("/settings");
+
+      await act(async () => emit?.("open-workspace"));
+
+      await waitFor(() =>
+        expect(openWorkspaceLauncherMock).toHaveBeenCalledOnce(),
+      );
+      expect(screen.getByTestId("open-workspace-button")).toBeInTheDocument();
+      unmount();
+      expect(unsubscribe).toHaveBeenCalled();
+    });
+
+    it.each([
+      ["New window", "new-window"],
+      ["Close", "close-window"],
+      ["Quit Jora", "quit"],
+    ] as const)("executes the %s window command", async (label, action) => {
+      const performWindowAction = vi.fn().mockResolvedValue(undefined);
+      window.desktopShell = { platform: "win32", performWindowAction };
+      const user = userEvent.setup();
+      renderMainApp();
+      await user.click(screen.getByRole("button", { name: "File" }));
+
+      await user.click(screen.getByRole("menuitem", { name: label }));
+
+      expect(performWindowAction).toHaveBeenCalledWith(action);
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    });
+
+    it("switches an open menu when hovering another title and supports keyboard selection", async () => {
+      window.desktopShell = {
+        platform: "win32",
+        performEditingAction: vi.fn(),
+      };
+      const user = userEvent.setup();
+      renderMainApp();
+      await user.click(screen.getByRole("button", { name: "File" }));
+
+      await user.hover(screen.getByRole("button", { name: "Edit" }));
+
+      const undo = screen.getByRole("menuitem", { name: "Undo" });
+      undo.focus();
+      await user.keyboard("{ArrowDown}");
+      expect(screen.getByRole("menuitem", { name: "Redo" })).toHaveFocus();
+    });
+
+    it.each(["outlet-content", "sidebar"])(
+      "dismisses an open menu when clicking %s, even if propagation is stopped",
+      async (testId) => {
+        window.desktopShell = { platform: "win32" };
+        const user = userEvent.setup();
+        renderMainApp();
+        const fileMenu = screen.getByRole("button", { name: "File" });
+        const outside = screen.getByTestId(testId);
+        outside.addEventListener(
+          "pointerdown",
+          (event) => event.stopPropagation(),
+          { once: true },
+        );
+        await user.click(fileMenu);
+        expect(fileMenu).toHaveAttribute("aria-expanded", "true");
+
+        await user.click(outside);
+
+        expect(fileMenu).toHaveAttribute("aria-expanded", "false");
+        expect(
+          screen.queryByRole("menuitem", { name: "Open folder" }),
+        ).not.toBeInTheDocument();
+      },
+    );
+
+    it("dismisses the menu when clicking another title bar control", async () => {
+      window.desktopShell = { platform: "win32" };
+      const user = userEvent.setup();
+      renderMainApp();
+      const fileMenu = screen.getByRole("button", { name: "File" });
+      await user.click(fileMenu);
+
+      await user.click(screen.getByRole("button", { name: "Toggle sidebar" }));
+
+      expect(fileMenu).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("switches between menus and closes on a second click of the active title", async () => {
+      window.desktopShell = { platform: "win32" };
+      const user = userEvent.setup();
+      renderMainApp();
+      const fileMenu = screen.getByRole("button", { name: "File" });
+      const editMenu = screen.getByRole("button", { name: "Edit" });
+      await user.click(fileMenu);
+
+      await user.click(editMenu);
+
+      expect(fileMenu).toHaveAttribute("aria-expanded", "false");
+      expect(editMenu).toHaveAttribute("aria-expanded", "true");
+      expect(
+        screen.getByRole("menuitem", { name: "Undo" }),
+      ).toBeInTheDocument();
+
+      await user.click(editMenu);
+
+      expect(editMenu).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("runs a selected menu action and dismisses the menu", async () => {
+      window.desktopShell = { platform: "win32" };
+      const user = userEvent.setup();
+      const openWorkspace = vi.fn();
+      renderMainApp();
+      render(
+        <button data-testid="open-workspace-button" onClick={openWorkspace}>
+          Choose folder
+        </button>,
+      );
+      const fileMenu = screen.getByRole("button", { name: "File" });
+      await user.click(fileMenu);
+
+      await user.click(screen.getByRole("menuitem", { name: "Open folder" }));
+
+      expect(openWorkspace).toHaveBeenCalledOnce();
+      expect(fileMenu).toHaveAttribute("aria-expanded", "false");
+    });
+
+    it("allows clicking the title bar's empty space to dismiss the menu", async () => {
+      window.desktopShell = { platform: "win32" };
+      const user = userEvent.setup();
+      renderMainApp();
+      const fileMenu = screen.getByRole("button", { name: "File" });
+      const emptyTitleBar = screen.getByTestId("titlebar-drag-region");
+      await user.click(fileMenu);
+      // Electron consumes mouse events in drag regions, so this surface must
+      // accept normal input while a menu is open.
+      expect(emptyTitleBar).toHaveClass("app-region-no-drag");
+      expect(emptyTitleBar).not.toHaveClass("app-region-drag");
+
+      await user.click(emptyTitleBar);
+
+      expect(fileMenu).toHaveAttribute("aria-expanded", "false");
+      expect(emptyTitleBar).toHaveClass("app-region-drag");
+    });
+
+    it.each(["darwin", "win32"])(
+      "reserves a native drag surface beside the menu on %s",
+      (platform) => {
+        window.desktopShell = { platform };
+
+        renderMainApp();
+
+        const dragRegion = screen.getByTestId("titlebar-drag-region");
+        expect(dragRegion).toHaveAttribute("aria-hidden", "true");
+        expect(dragRegion).toBeEmptyDOMElement();
+        fireEvent.click(screen.getByRole("button", { name: "File" }));
+        expect(
+          screen.getByRole("menuitem", { name: "New chat" }),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("root-layout")).toHaveClass(
+          "app-shell-titlebar-inset",
+        );
+      },
+    );
 
     it("adds no band in a browser tab, where the shell owns no window chrome", () => {
       renderMainApp();
@@ -452,21 +793,18 @@ describe("root layout", () => {
       );
     });
 
-    it.each(["win32", "linux"])(
-      "adds no band on %s, which keeps the native title bar",
-      (platform) => {
-        window.desktopShell = { platform };
+    it("adds no band on Linux, which keeps the native title bar", () => {
+      window.desktopShell = { platform: "linux" };
 
-        renderMainApp();
+      renderMainApp();
 
-        expect(
-          screen.queryByTestId("titlebar-drag-region"),
-        ).not.toBeInTheDocument();
-        expect(screen.getByTestId("root-layout")).not.toHaveClass(
-          "app-shell-titlebar-inset",
-        );
-      },
-    );
+      expect(
+        screen.queryByTestId("titlebar-drag-region"),
+      ).not.toBeInTheDocument();
+      expect(screen.getByTestId("root-layout")).not.toHaveClass(
+        "app-shell-titlebar-inset",
+      );
+    });
 
     it("keeps a drag band on the loading screen, before config resolves", () => {
       window.desktopShell = { platform: "darwin" };
@@ -484,8 +822,10 @@ describe("root layout", () => {
 
       expect(await screen.findByText("Kaboom")).toBeInTheDocument();
       expect(
-        screen.getByTestId("titlebar-drag-region").parentElement,
-      ).toHaveClass("app-shell-titlebar-inset");
+        screen
+          .getByTestId("titlebar-drag-region")
+          .closest(".app-shell-titlebar-inset"),
+      ).toBeInTheDocument();
     });
 
     it("drops the band once the window goes fullscreen, where macOS hides the traffic lights", async () => {

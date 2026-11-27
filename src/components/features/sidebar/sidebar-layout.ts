@@ -55,12 +55,10 @@ export function sidebarCollapsedIconBgClassName(active: boolean): string {
   );
 }
 
-/** Matches expanded row `px-2.5` + 18px icon column alignment. */
+/** Center each collapsed glyph in the rail, regardless of its own width. */
 export function sidebarCollapsedIconGlyphClassName(active: boolean): string {
   return cn(
-    // Full width inside the 36px-tall slot; `pl-2.5` aligns with expanded `px-2.5` rows.
-    // Do not set a narrow `w-4.5` here — with horizontal padding it shrinks the glyph.
-    "relative z-1 flex h-full w-full items-center justify-start pl-2.5 [&_svg]:shrink-0",
+    "relative z-1 flex h-full w-full items-center justify-center [&_svg]:shrink-0",
     active
       ? "text-contrast font-normal"
       : "text-muted group-hover:text-contrast",

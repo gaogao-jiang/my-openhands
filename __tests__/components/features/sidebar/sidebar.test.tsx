@@ -468,6 +468,33 @@ describe("Sidebar", () => {
     expect(getDesktopSidebar(false).dataset.collapsed).toBe("false");
   });
 
+  it("reveals the collapsed expand control only while hovering the logo area", () => {
+    useSidebarStore.setState({ collapsed: true });
+    renderSidebar("/conversations");
+    const toggle = screen.getByTestId("sidebar-collapse-toggle");
+    const logoArea =
+      screen.getByTestId("logo-button").parentElement!.parentElement!;
+    const search = screen.getByTestId("command-menu-trigger");
+    expect(toggle).toHaveClass("opacity-0");
+
+    fireEvent.mouseEnter(search);
+    expect(toggle).toHaveClass("opacity-0");
+    fireEvent.mouseEnter(logoArea);
+    expect(toggle).toHaveClass("opacity-100");
+    fireEvent.mouseLeave(logoArea);
+    fireEvent.mouseEnter(search);
+    expect(toggle).toHaveClass("opacity-0");
+
+    fireEvent.mouseEnter(logoArea);
+    fireEvent.click(toggle);
+    expect(getDesktopSidebar(false).dataset.collapsed).toBe("false");
+    fireEvent.mouseLeave(logoArea);
+    act(() => useSidebarStore.getState().setCollapsed(true));
+    expect(screen.getByTestId("sidebar-collapse-toggle")).toHaveClass(
+      "opacity-0",
+    );
+  });
+
   it("expands the sidebar when collapsed rail empty space is clicked", () => {
     useSidebarStore.setState({ collapsed: true });
     renderSidebar("/conversations");

@@ -11,14 +11,17 @@
        served, so it cannot import the app's CSS — these values mirror the
        static baseline in src/tailwind.css / src/index.css. Keep in sync. */
     :root {
-      --oh-background: #0b0e14; /* cool-grey-950 */
-      --oh-foreground: #eef2f7; /* cool-grey-100 */
-      --oh-muted: #a3b0c4; /* cool-grey-400 */
-      --oh-text-dim: #7e8a9e; /* cool-grey-500 */
-      --oh-text-subtle: #626d82; /* cool-grey-600 */
-      --oh-border: #4b5468; /* cool-grey-700 */
-      --oh-border-subtle: #383f50; /* cool-grey-800 */
-      --oh-surface-deep: #05070a; /* cool-grey-975 */
+      --oh-background: #0b0e14;
+      --oh-surface: #11151d;
+      --oh-surface-raised: #171c25;
+      --oh-foreground: #f4f6f8;
+      --oh-muted: #a5afbd;
+      --oh-text-dim: #7f8a9a;
+      --oh-text-subtle: #5e6878;
+      --oh-border: #303846;
+      --oh-border-subtle: #222936;
+      --oh-color-accent: #d7e2f1;
+      --oh-color-success: #86c99b;
       --oh-color-danger: #e76a5e;
     }
 
@@ -37,84 +40,191 @@
       overflow: hidden;
     }
 
-    body {
-      display: flex;
-      flex-direction: column;
-    }
+    body { display: flex; flex-direction: column; }
 
     .container {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      /* Must equal the collapsed window height (LOADING_WIN_HEIGHT in
-         main.mjs): the block keeps its layout when the window grows to
-         reveal the startup-log console below it. */
-      height: 360px;
+      /* Must equal LOADING_WIN_HEIGHT in main.mjs. */
+      height: 420px;
       flex: none;
+      padding: 28px 32px 26px;
       gap: 0;
     }
 
-    /* Real app icon — squircle corners are baked into the PNG. Kept inert so
-       image dragging cannot hijack the -webkit-app-region window drag. */
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      -webkit-app-region: no-drag;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .logo {
-      width: 72px;
-      height: 72px;
-      margin-bottom: 20px;
-      padding: 10px;
-      background: #fff;
-      border-radius: 18px;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
       -webkit-user-drag: none;
     }
 
-    h1 {
-      font-size: 22px;
+    .brand-name {
+      font-size: 14px;
       font-weight: 600;
-      letter-spacing: -0.3px;
-      margin-bottom: 8px;
       color: var(--oh-foreground);
     }
 
-    .tagline {
-      font-size: 13px;
-      color: var(--oh-muted);
-      margin-bottom: 36px;
+    .brand-caption {
+      margin-top: 2px;
+      font-size: 10px;
+      color: var(--oh-text-subtle);
+      letter-spacing: 0.2px;
     }
 
-    /* The app's canonical loading indicator: the 270° arc from
-       src/icons/loading-outer.svg with LoadingSpinner's animate-spin timing. */
+    .version {
+      padding: 5px 9px;
+      border: 1px solid var(--oh-border-subtle);
+      border-radius: 999px;
+      color: var(--oh-text-subtle);
+      font-size: 10px;
+      letter-spacing: 0.3px;
+      -webkit-app-region: no-drag;
+    }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      margin-bottom: 8px;
+      color: var(--oh-text-subtle);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      color: var(--oh-foreground);
+      font-size: 26px;
+      font-weight: 650;
+      letter-spacing: -0.4px;
+    }
+
+    .tagline {
+      max-width: 320px;
+      margin-bottom: 26px;
+      color: var(--oh-muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .status-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--oh-border);
+      border-radius: 10px;
+      background: var(--oh-surface);
+    }
+
     .spinner {
-      width: 25px;
-      height: 25px;
-      color: #fff;
+      flex: none;
+      width: 20px;
+      height: 20px;
+      color: var(--oh-color-accent);
       animation: spin 1s linear infinite;
-      margin-bottom: 14px;
     }
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
 
+    .status-wrap { min-width: 0; }
+
+    .status-label {
+      margin-bottom: 3px;
+      color: var(--oh-text-subtle);
+      font-size: 10px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+
     .status {
+      color: var(--oh-foreground);
       font-size: 12px;
-      color: var(--oh-text-dim);
-      letter-spacing: 0.3px;
-      /* Long lines (e.g. uvx "Installing openhands-agent-server==1.24.0…")
-         must not push the window or wrap awkwardly. */
-      max-width: 360px;
-      text-align: center;
-      white-space: nowrap;
+      letter-spacing: 0.1px;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .startup-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .step {
+      padding: 9px 10px;
+      border-top: 1px solid var(--oh-border-subtle);
+      color: var(--oh-text-subtle);
+      font-size: 10px;
+      line-height: 1.35;
+    }
+
+    .step::before {
+      content: "";
+      display: block;
+      width: 6px;
+      height: 6px;
+      margin-bottom: 6px;
+      border: 1px solid var(--oh-text-subtle);
+      border-radius: 50%;
+    }
+
+    .step.active {
+      color: var(--oh-muted);
+      border-color: var(--oh-color-accent);
+    }
+
+    .step.active::before {
+      border-color: var(--oh-color-accent);
+      background: var(--oh-color-accent);
+      box-shadow: 0 0 0 3px rgba(215, 226, 241, 0.1);
+    }
+
+    .step.done {
+      color: var(--oh-color-success);
+      border-color: rgba(134, 201, 155, 0.55);
+    }
+
+    .step.done::before {
+      border-color: var(--oh-color-success);
+      background: var(--oh-color-success);
     }
 
     .hint {
-      margin-top: 14px;
+      margin-top: 20px;
+      color: var(--oh-text-subtle);
       font-size: 11px;
       color: var(--oh-text-subtle);
-      letter-spacing: 0.2px;
-      max-width: 340px;
-      text-align: center;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     /* Progress dots animation for status text */
@@ -130,7 +240,10 @@
     }
 
     .actions {
-      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      margin-top: 10px;
       display: flex;
       gap: 10px;
       -webkit-app-region: no-drag;
@@ -139,11 +252,11 @@
     .ghost-button {
       font: inherit;
       font-size: 11px;
-      padding: 4px 12px;
+      padding: 6px 11px;
       color: var(--oh-muted);
       background: transparent;
       border: 1px solid var(--oh-border);
-      border-radius: 8px;
+      border-radius: 7px;
       cursor: pointer;
       -webkit-app-region: no-drag;
     }
@@ -162,10 +275,10 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
-      margin: 0 16px 16px;
+      margin: 0 24px 24px;
       background: var(--oh-surface-deep);
       border: 1px solid var(--oh-border-subtle);
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
       -webkit-app-region: no-drag;
     }
@@ -234,26 +347,43 @@
 </head>
 <body>
   <div class="container">
-    <img class="logo" src="build-resources/icon.png" alt="" draggable="false" />
-    <h1>Jora</h1>
-    <p class="tagline">AI coding agent interface</p>
-    <svg class="spinner" viewBox="0 0 66 66" fill="none" aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg">
-      <path d="M63 33C63 16.4315 49.5685 3 33 3C16.4315 3 3 16.4315 3 33C3 49.5685 16.4315 63 33 63"
-        stroke="currentColor" stroke-width="6" stroke-linecap="round" />
-    </svg>
-    <p id="status" class="status">Starting services<span class="dots"></span></p>
-    <p class="hint">
-      First launch downloads the Jora backend powered by OpenHands Agent Server.<br />
-      This can take a few minutes on a fresh machine.
-    </p>
+    <div class="brand-bar">
+      <div class="brand">
+        <img class="logo" src="build-resources/icon.png" alt="" draggable="false" />
+        <div>
+          <div class="brand-name">Jora</div>
+          <div class="brand-caption">Local coding workspace</div>
+        </div>
+      </div>
+      <div class="version">DESKTOP</div>
+    </div>
+    <div class="hero">
+      <div class="eyebrow">Preparing your workspace</div>
+      <h1>Almost ready.</h1>
+      <p class="tagline">Jora is starting the local services needed for your coding workspace.</p>
+      <div class="status-card">
+        <svg class="spinner" viewBox="0 0 66 66" fill="none" aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M63 33C63 16.4315 49.5685 3 33 3C16.4315 3 3 16.4315 3 33C3 49.5685 16.4315 63 33 63"
+            stroke="currentColor" stroke-width="6" stroke-linecap="round" />
+        </svg>
+        <div class="status-wrap">
+          <div class="status-label">Current step</div>
+          <p id="status" class="status">Starting services<span class="dots"></span></p>
+        </div>
+      </div>
+      <div class="startup-steps" aria-label="Startup progress">
+        <div class="step active" data-step="services">Local services</div>
+        <div class="step" data-step="agent">Agent server</div>
+        <div class="step" data-step="interface">Jora interface</div>
+      </div>
+      <p class="hint">
+        The first launch may take longer while Jora prepares its local backend.
+      </p>
+    </div>
     <div class="actions">
-      <button id="details-toggle" type="button" class="ghost-button">
-        Show details
-      </button>
-      <button id="quit-button" type="button" class="ghost-button quit-button">
-        Quit
-      </button>
+      <button id="details-toggle" type="button" class="ghost-button">View startup log</button>
+      <button id="quit-button" type="button" class="ghost-button quit-button">Quit</button>
     </div>
   </div>
   <div class="console" aria-label="Startup log">
@@ -272,7 +402,32 @@
       if (!el) return;
       var text = String(line == null ? "" : line);
       el.textContent = text || "";
+      updateStartupSteps(text);
     };
+
+    function updateStartupSteps(text) {
+      var normalized = String(text || "").toLowerCase();
+      var steps = document.querySelectorAll(".step");
+      var activeIndex = 0;
+      if (
+        normalized.indexOf("agent") !== -1 ||
+        normalized.indexOf("server") !== -1 ||
+        normalized.indexOf("backend") !== -1
+      ) {
+        activeIndex = 1;
+      } else if (
+        normalized.indexOf("ready") !== -1 ||
+        normalized.indexOf("interface") !== -1 ||
+        normalized.indexOf("frontend") !== -1 ||
+        normalized.indexOf("ingress") !== -1
+      ) {
+        activeIndex = 2;
+      }
+      for (var i = 0; i < steps.length; i++) {
+        steps[i].classList.toggle("done", i < activeIndex);
+        steps[i].classList.toggle("active", i === activeIndex);
+      }
+    }
 
     // ── Startup-log console ──────────────────────────────────────────────
     // Fed by the main process over IPC via preload.cjs (window.desktopBoot);
@@ -352,6 +507,8 @@
         boot.onFatal(function (summary) {
           document.body.classList.add("failed");
           statusEl.textContent = String(summary == null ? "" : summary);
+          statusEl.parentElement.querySelector(".status-label").textContent =
+            "Startup stopped";
           // Main already resized the window; sync the local toggle state.
           if (!expanded) setExpanded(true);
         });

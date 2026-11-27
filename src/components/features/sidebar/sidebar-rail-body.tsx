@@ -23,6 +23,10 @@ import { SidebarCollapsedIconSlot } from "./sidebar-collapsed-icon-slot";
 import { SidebarNavLink } from "./sidebar-nav-link";
 import { I18nKey } from "#/i18n/declaration";
 import { cn } from "#/utils/utils";
+import {
+  isMacDesktopShell,
+  isWindowsDesktopShell,
+} from "#/utils/desktop-shell";
 import { StyledTooltip } from "#/components/shared/buttons/styled-tooltip";
 import { BackendSelector } from "#/components/features/backends/backend-selector";
 import { BackendStatusDot } from "#/components/features/backends/backend-status-dot";
@@ -45,8 +49,8 @@ import { CanvasExtensionIcon } from "#/components/features/canvas-extensions/can
 import type { Backend } from "#/api/backend-registry/types";
 
 const ICON_SIZE = 18;
-const SIDEBAR_LOGO_WIDTH = 18;
-const SIDEBAR_LOGO_HEIGHT = 18;
+const SIDEBAR_LOGO_WIDTH = 24;
+const SIDEBAR_LOGO_HEIGHT = 24;
 
 export interface SidebarRailBodyProps {
   collapsed: boolean;
@@ -57,6 +61,8 @@ export interface SidebarRailBodyProps {
   onCollapse: () => void;
   onExpand: () => void;
   showCollapsedExpandButton: boolean;
+  onCollapsedLogoEnter: () => void;
+  onCollapsedLogoLeave: () => void;
   isExtensionsActive: boolean;
   currentPath: string;
   activeBackend: Backend;
@@ -81,6 +87,8 @@ export function SidebarRailBody({
   onCollapse,
   onExpand,
   showCollapsedExpandButton,
+  onCollapsedLogoEnter,
+  onCollapsedLogoLeave,
   isExtensionsActive,
   currentPath,
   activeBackend,
@@ -129,6 +137,10 @@ export function SidebarRailBody({
     <div className="flex min-h-0 flex-1 flex-col">
       <div className={sidebarHeaderRowClassName(collapsed)}>
         <div
+          onMouseEnter={
+            collapsed && showCollapseToggle ? onCollapsedLogoEnter : undefined
+          }
+          onMouseLeave={onCollapsedLogoLeave}
           className={cn(
             collapsed && showCollapseToggle
               ? SIDEBAR_COLLAPSED_LOGO_WRAPPER_CLASS
@@ -139,7 +151,7 @@ export function SidebarRailBody({
             className={cn(
               collapsed &&
                 showCollapseToggle &&
-                "flex h-full w-full items-center justify-start pl-2.5 transition-opacity duration-150",
+                "flex h-full w-full items-center justify-center transition-opacity duration-150",
               collapsed && showCollapsedExpandButton && "opacity-0",
             )}
           >
@@ -151,7 +163,7 @@ export function SidebarRailBody({
               className={cn(
                 collapsed
                   ? "flex h-9 w-6 shrink-0 items-center justify-center"
-                  : "max-w-full",
+                  : "max-w-full gap-2.5 [&>span]:text-base",
                 "overflow-visible",
               )}
             />
@@ -174,7 +186,10 @@ export function SidebarRailBody({
             </button>
           ) : null}
         </div>
-        {!collapsed && showCollapseToggle ? (
+        {!collapsed &&
+        showCollapseToggle &&
+        !isMacDesktopShell() &&
+        !isWindowsDesktopShell() ? (
           <button
             type="button"
             data-testid="sidebar-collapse-toggle"

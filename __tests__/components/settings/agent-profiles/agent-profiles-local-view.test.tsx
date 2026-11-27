@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { useEffect } from "react";
+import { MemoryRouter } from "react-router";
 import type { AgentSettingsSaveControl } from "#/routes/agent-settings";
 import { AgentProfilesLocalView } from "#/components/features/settings/agent-profiles/agent-profiles-local-view";
 import AgentProfilesService from "#/api/agent-profiles-service/agent-profiles-service.api";
@@ -156,7 +157,7 @@ function renderView() {
   return render(<AgentProfilesLocalView />, {
     wrapper: ({ children }) => (
       <QueryClientProvider client={new QueryClient()}>
-        {children}
+        <MemoryRouter>{children}</MemoryRouter>
       </QueryClientProvider>
     ),
   });

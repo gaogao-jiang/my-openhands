@@ -6,6 +6,7 @@ import { ConversationNameWithStatus } from "#/components/features/conversation/c
 import { AgentState } from "#/types/agent-state";
 import { ExecutionStatus } from "#/types/agent-server/core/base/common";
 import { useAgentState } from "#/hooks/use-agent-state";
+import { MOCK_DEFAULT_AGENT_PROFILE_ID } from "#/mocks/agent-profiles-handlers";
 
 vi.mock("#/hooks/use-agent-state", () => ({
   useAgentState: vi.fn(),
@@ -24,6 +25,10 @@ vi.mock("#/hooks/query/use-active-conversation", () => ({
       id: "test-conversation-id",
       title: "Test conversation",
       execution_status: ExecutionStatus.RUNNING,
+      launched_agent_profile: {
+        agent_profile_id: MOCK_DEFAULT_AGENT_PROFILE_ID,
+      },
+      llm_model: "deepseek/deepseek-chat",
     },
   }),
 }));
@@ -75,6 +80,35 @@ describe("ConversationNameWithStatus", () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+  });
+
+  it("keeps profile details open for inside clicks, closes for outside presses, and still toggles from its trigger", async () => {
+    const user = userEvent.setup();
+    renderWithProviders(
+      <div>
+        <button data-testid="outside-profile">Other control</button>
+        <ConversationNameWithStatus />
+      </div>,
+    );
+    const outside = screen.getByTestId("outside-profile");
+    outside.addEventListener(
+      "pointerdown",
+      (event) => event.stopPropagation(),
+      { once: true },
+    );
+    const trigger = await screen.findByTestId("conversation-launched-agent");
+    await user.click(trigger);
+    await user.click(screen.getByText(/deepseek\/deepseek-chat/));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    await user.click(outside);
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await user.click(trigger);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    await user.click(trigger);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("opens the server status menu on click and closes on outside click", async () => {

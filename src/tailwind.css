@@ -392,6 +392,27 @@
   }
 }
 
+@utility agent-profile-list-scroll {
+  max-height: min(40rem, calc(100dvh - 16rem));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility agent-profile-list-fade {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--oh-background) 24%, transparent) 48%,
+    color-mix(in srgb, var(--oh-background) 70%, transparent) 78%,
+    var(--oh-background) 100%
+  );
+}
+
 @utility scrollbar-hide {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -560,6 +581,17 @@ h2,
 }
 
 /* Custom styles for contenteditable */
+.chat-composer {
+  background-color: var(--oh-surface);
+}
+
+[data-theme="light"] .chat-composer {
+  background-color: var(--oh-background);
+  box-shadow:
+    0 2px 6px color-mix(in srgb, var(--oh-foreground) 4%, transparent),
+    0 12px 40px color-mix(in srgb, var(--oh-foreground) 3%, transparent);
+}
+
 .chat-input:empty:before {
   content: attr(data-placeholder);
   color: var(--cool-grey-400);
@@ -964,9 +996,15 @@ code .token {
   word-break: break-word;
 }
 
-/* Window drag handle for the macOS desktop app's hidden title bar. */
+/* Native hit testing for the desktop app's hidden title bar. */
 @utility app-region-drag {
   -webkit-app-region: drag;
+  app-region: drag;
+}
+
+@utility app-region-no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
 }
 
 /* Reset each nested panel locally until its own measurement is available. */

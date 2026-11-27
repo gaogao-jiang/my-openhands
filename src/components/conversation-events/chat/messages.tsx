@@ -22,8 +22,10 @@ import {
   isStreamingDeltaEvent,
   isUserRejectObservation,
   isMessageEvent,
+  isUserMessageEvent,
 } from "#/types/agent-server/type-guards";
 import { isCorrectiveNudge } from "./event-content-helpers/should-render-event";
+import { getTimelinePreview } from "./timeline-preview";
 import { getFinalReplyIds } from "./event-content-helpers/get-final-reply-ids";
 import { EventMessage } from "./event-message";
 import { usePlanPreviewEvents } from "./hooks/use-plan-preview-events";
@@ -87,6 +89,12 @@ interface MessagesProps {
    * the full plain list, so a long conversation never pays for a full render.
    */
   scrollParent?: HTMLDivElement | null;
+  /** Reports user-question anchors and their previews for conversation navigation. */
+  onTimelineVisibilityChange?: (rowKeys: string[]) => void;
+  onTimelineRowsChange?: (
+    rowKeys: string[],
+    previews: Record<string, string>,
+  ) => void;
   /**
    * Imperative handle for the caller that owns the "load older" restore (the
    * chat interface). It re-pins the reader from a row anchor after a prepend;
@@ -122,6 +130,10 @@ export interface MessagesHandle {
    * the virtual window, so not in the DOM.
    */
   getRowScrollStart: (key: string) => number | null;
+  /** Scroll the list to a rendered row by its stable key. */
+  scrollToRow: (key: string) => void;
+  /** Return the row currently nearest the top of the scroll viewport. */
+  getCurrentRowKey: () => string | null;
 }
 
 /**
@@ -156,6 +168,7 @@ const ESTIMATED_ROW_HEIGHT = 120;
  * each measured row instead of the container.
  */
 const ROW_GAP_PX = 8;
+const TIMELINE_SCROLL_INSET_PX = 16;
 
 const getLastEventId = (events: OpenHandsEvent[]) => events.at(-1)?.id;
 const getLastEvent = (events: OpenHandsEvent[]) => events.at(-1);
@@ -214,6 +227,8 @@ export const Messages: React.FC<MessagesProps> = React.memo(
     pendingSessionId,
     readOnly = false,
     scrollParent,
+    onTimelineRowsChange,
+    onTimelineVisibilityChange,
     ref,
   }) => {
     const { conversationId } = useOptionalConversationId();
@@ -395,6 +410,37 @@ export const Messages: React.FC<MessagesProps> = React.memo(
           : plainItems,
       [plainItems, shouldVirtualize, isHiddenPlanningObservation],
     );
+
+    // A navigation stop is a question submitted by the user. Every reply,
+    // thought and tool row belongs to the preceding question, not a new stop.
+    const { timelineRowKeys, timelinePreviews, questionKeyByRow } =
+      React.useMemo(() => {
+        const keys: string[] = [];
+        const previews: Record<string, string> = {};
+        const questionByRow = new Map<string, string | null>();
+        let questionKey: string | null = null;
+        for (const item of renderedItems) {
+          const key = renderedItemKey(item);
+          if (
+            item.kind === "single" &&
+            isUserMessageEvent(item.event) &&
+            item.event.source === "user"
+          ) {
+            questionKey = key;
+            keys.push(key);
+            previews[key] = getTimelinePreview(item.event);
+          }
+          questionByRow.set(key, questionKey);
+        }
+        return {
+          timelineRowKeys: keys,
+          timelinePreviews: previews,
+          questionKeyByRow: questionByRow,
+        };
+      }, [renderedItems]);
+    React.useEffect(() => {
+      onTimelineRowsChange?.(timelineRowKeys, timelinePreviews);
+    }, [onTimelineRowsChange, timelineRowKeys, timelinePreviews]);
 
     // Whether the row at each index should trim its top margin, true when the
     // nearest preceding *visible* row is a tool row. Hidden planning
@@ -1067,6 +1113,7 @@ export const Messages: React.FC<MessagesProps> = React.memo(
       // where this list begins inside it and shift each row back by the same
       // amount (see the transform below).
       scrollMargin,
+      scrollPaddingStart: TIMELINE_SCROLL_INSET_PX,
       // Seed the first virtualized render with the plain list's real row
       // heights, so the shell's total height (and the reader's scroll offset)
       // is unchanged by the switch.
@@ -1163,8 +1210,76 @@ export const Messages: React.FC<MessagesProps> = React.memo(
           );
           return row ? row.start : null;
         },
+        scrollToRow: (key) => {
+          const index = rowKeysRef.current.indexOf(key);
+          if (index < 0 || !scrollParent) return;
+          if (shouldVirtualize) {
+            rowVirtualizer.scrollToIndex(index, {
+              align: "start",
+              // Dynamic row heights need the virtualizer's automatic correction;
+              // smooth scrolling cannot reliably land on an unmeasured row.
+              behavior: "auto",
+            });
+            return;
+          }
+
+          const wrapper = Array.from(plainListRef.current?.children ?? []).find(
+            (child) => child.getAttribute("data-row-key") === key,
+          );
+          const row = wrapper?.firstElementChild;
+          if (!row) return;
+          const containerTop = scrollParent.getBoundingClientRect().top;
+          const rowTop = row.getBoundingClientRect().top;
+          scrollParent.scrollTo({
+            top: Math.max(
+              0,
+              scrollParent.scrollTop +
+                rowTop -
+                containerTop -
+                TIMELINE_SCROLL_INSET_PX,
+            ),
+            behavior: "smooth",
+          });
+        },
+        getCurrentRowKey: () => {
+          if (!scrollParent || timelineRowKeys.length === 0) return null;
+          if (shouldVirtualize) {
+            const visibleRow = rowVirtualizer
+              .getVirtualItems()
+              .find(
+                (item) =>
+                  item.end > scrollParent.scrollTop + TIMELINE_SCROLL_INSET_PX,
+              );
+            return visibleRow
+              ? (questionKeyByRow.get(String(visibleRow.key)) ?? null)
+              : null;
+          }
+
+          const containerTop = scrollParent.getBoundingClientRect().top;
+          for (const wrapper of Array.from(
+            plainListRef.current?.children ?? [],
+          )) {
+            const key = wrapper.getAttribute("data-row-key");
+            if (!key || !questionKeyByRow.has(key)) continue;
+            const row = wrapper.firstElementChild;
+            if (
+              row &&
+              row.getBoundingClientRect().bottom >
+                containerTop + TIMELINE_SCROLL_INSET_PX
+            ) {
+              return questionKeyByRow.get(key) ?? null;
+            }
+          }
+          return timelineRowKeys.at(-1) ?? null;
+        },
       }),
-      [shouldVirtualize, rowVirtualizer],
+      [
+        shouldVirtualize,
+        rowVirtualizer,
+        scrollParent,
+        timelineRowKeys,
+        questionKeyByRow,
+      ],
     );
 
     // Re-pin once the total size has changed, when `scrollTop + delta` is no
@@ -1175,6 +1290,76 @@ export const Messages: React.FC<MessagesProps> = React.memo(
     // shrinking row at the bottom lowers the maximum, so the browser has
     // already clamped the offset and adding the delta again would overshoot.
     const totalSize = rowVirtualizer.getTotalSize();
+    // Visibility is independent from the clicked/current question: several
+    // question turns can share the viewport, and all of them should be dark.
+    React.useLayoutEffect(() => {
+      if (!onTimelineVisibilityChange) return undefined;
+      const updateVisibility = () => {
+        const visible = new Set<string>();
+        const addQuestion = (rowKey: string) => {
+          const question = questionKeyByRow.get(rowKey);
+          if (question) visible.add(question);
+        };
+        if (scrollParent) {
+          const viewport = scrollParent.getBoundingClientRect();
+          if (shouldVirtualize) {
+            const top = scrollParent.scrollTop;
+            const bottom = top + (scrollParent.clientHeight || viewport.height);
+            for (const row of rowVirtualizer.getVirtualItems()) {
+              if (row.end > top && row.start < bottom)
+                addQuestion(String(row.key));
+            }
+          } else {
+            for (const wrapper of Array.from(
+              plainListRef.current?.children ?? [],
+            )) {
+              const key = wrapper.getAttribute("data-row-key");
+              if (!key) continue;
+              if (
+                Array.from(wrapper.children).some((child) => {
+                  const bounds = child.getBoundingClientRect();
+                  return (
+                    bounds.height > 0 &&
+                    bounds.bottom > viewport.top &&
+                    bounds.top < viewport.bottom
+                  );
+                })
+              )
+                addQuestion(key);
+            }
+          }
+        }
+        onTimelineVisibilityChange([...visible]);
+      };
+      updateVisibility();
+      if (!scrollParent) return undefined;
+      scrollParent.addEventListener("scroll", updateVisibility, {
+        passive: true,
+      });
+      const observer =
+        typeof ResizeObserver === "undefined"
+          ? null
+          : new ResizeObserver(updateVisibility);
+      observer?.observe(scrollParent);
+      // Watch content reflow (including images and expanded tool output), not
+      // just scroll events. Plain row wrappers use display:contents.
+      for (const wrapper of Array.from(plainListRef.current?.children ?? [])) {
+        for (const child of Array.from(wrapper.children))
+          observer?.observe(child);
+      }
+      return () => {
+        scrollParent.removeEventListener("scroll", updateVisibility);
+        observer?.disconnect();
+      };
+    }, [
+      scrollParent,
+      shouldVirtualize,
+      rowVirtualizer,
+      questionKeyByRow,
+      onTimelineVisibilityChange,
+      totalSize,
+    ]);
+
     React.useLayoutEffect(() => {
       flushScrollCorrection();
     }, [scrollParent, totalSize]);
@@ -1369,6 +1554,9 @@ export const Messages: React.FC<MessagesProps> = React.memo(
     prevProps.messages.length === nextProps.messages.length &&
     prevProps.allEvents.length === nextProps.allEvents.length &&
     prevProps.scrollParent === nextProps.scrollParent &&
+    prevProps.onTimelineRowsChange === nextProps.onTimelineRowsChange &&
+    prevProps.onTimelineVisibilityChange ===
+      nextProps.onTimelineVisibilityChange &&
     getLastEventId(prevProps.messages) === getLastEventId(nextProps.messages) &&
     getLastEventId(prevProps.allEvents) ===
       getLastEventId(nextProps.allEvents) &&

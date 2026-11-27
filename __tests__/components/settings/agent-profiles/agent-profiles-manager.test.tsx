@@ -1,4 +1,10 @@
-import { render, screen } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  within,
+  waitFor,
+} from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -16,6 +22,10 @@ vi.mock("react-i18next", () => ({
         SETTINGS$PROFILES_LOAD_ERROR: "Failed to load profiles",
         SETTINGS$PROFILES_EMPTY: "No profiles saved yet",
         SETTINGS$PROFILE_ACTIVE: "Active",
+        SETTINGS$AGENT_CARD_CURRENT: "Current",
+        SETTINGS$AGENT_CARD_USE: "Use this agent",
+        SETTINGS$AGENT_CARD_EDIT: "Edit configuration",
+        SETTINGS$AGENT_CARD_CREATE: "New agent",
         SETTINGS$PROFILE_DEFAULT: "Default",
         SETTINGS$PROFILE_MENU: "Profile menu",
         SETTINGS$PROFILE_EDIT: "Edit",
@@ -127,7 +137,33 @@ describe("AgentProfilesManager", () => {
     renderManager();
 
     const badge = await screen.findByTestId("agent-profile-active-badge");
-    expect(badge).toHaveTextContent("Active");
+    expect(badge).toHaveTextContent("Current");
+  });
+
+  it("shows a bottom fade while more agent cards are available below", async () => {
+    vi.mocked(AgentProfilesService.listProfiles).mockResolvedValue({
+      profiles: mockProfiles,
+      active_agent_profile_id: "id-oh",
+    });
+
+    renderManager();
+    await screen.findByText("my-openhands");
+
+    const list = screen.getByTestId("agent-profiles-scroll-container");
+    const fade = screen.getByTestId("agent-profiles-scroll-fade");
+    Object.defineProperties(list, {
+      clientHeight: { configurable: true, value: 100 },
+      scrollHeight: { configurable: true, value: 300 },
+      scrollTop: { configurable: true, writable: true, value: 0 },
+    });
+    fireEvent.scroll(list);
+
+    expect(fade).toHaveClass("opacity-100");
+
+    Object.defineProperty(list, "scrollTop", { value: 200 });
+    fireEvent.scroll(list);
+
+    expect(fade).toHaveClass("opacity-0");
   });
 
   it("displays Jora while activating the unchanged default UUID", async () => {
@@ -196,6 +232,47 @@ describe("AgentProfilesManager", () => {
     expect(
       screen.queryByTestId("agent-profile-menu-trigger"),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Edit configuration" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Use this agent" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("offers direct card editing and activates the selected agent by its UUID", async () => {
+    const onEditProfile = vi.fn();
+    vi.mocked(AgentProfilesService.listProfiles).mockResolvedValue({
+      profiles: mockProfiles,
+      active_agent_profile_id: "id-oh",
+    });
+    vi.mocked(AgentProfilesService.activateProfile).mockResolvedValue({
+      id: "id-acp",
+      message: "ok",
+      agent_settings_applied: false,
+    });
+    renderManager({ onEditProfile });
+    const user = userEvent.setup();
+    const card = await screen.findByRole("article", { name: "my-claude" });
+
+    await user.click(
+      within(card).getByRole("button", { name: "Edit configuration" }),
+    );
+    expect(onEditProfile).toHaveBeenCalledWith(mockProfiles[1]);
+    await user.click(
+      within(card).getByRole("button", { name: "Use this agent" }),
+    );
+
+    await waitFor(() =>
+      expect(AgentProfilesService.activateProfile).toHaveBeenCalledWith(
+        "id-acp",
+      ),
+    );
+    expect(
+      within(screen.getByRole("article", { name: "my-openhands" })).getByText(
+        "default",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("shows the empty state when there are no profiles", async () => {

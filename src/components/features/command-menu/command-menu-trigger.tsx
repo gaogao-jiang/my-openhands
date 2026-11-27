@@ -38,7 +38,12 @@ export function CommandMenuTrigger({ collapsed }: CommandMenuTriggerProps) {
           : "group justify-between border border-border-subtle bg-surface/50 hover:border-border hover:bg-surface-raised",
       )}
     >
-      <span className="flex min-w-0 items-center gap-2">
+      <span
+        className={cn(
+          "flex min-w-0 items-center",
+          collapsed ? "w-full" : "gap-2",
+        )}
+      >
         {collapsed ? (
           <SidebarCollapsedIconSlot active={false}>
             <Search

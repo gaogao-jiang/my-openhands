@@ -15,14 +15,19 @@ import {
   hasApiErrorResponse,
 } from "./api-error-message";
 
-// react-hot-toast accepts only CSSProperties via the style option — cannot use className
+// Keep the toast shell in the options shared by the Toaster and every helper.
 // @spec TN-001 — Every toast uses the theme's high-emphasis ink on its surface
 const TOAST_STYLE: CSSProperties = {
-  background: "var(--oh-color-tertiary)",
-  border: "1px solid var(--oh-border-input)",
+  background: "var(--oh-overlay)",
+  border: "1px solid var(--oh-border)",
   color: "var(--oh-contrast)",
   borderRadius: "var(--oh-radius)",
   maxWidth: "400px",
+  padding: "8px 12px",
+  fontSize: "0.8125rem",
+  lineHeight: "1.5",
+  boxShadow:
+    "0 4px 16px color-mix(in srgb, var(--oh-contrast) 12%, transparent)",
   wordBreak: "break-word",
   overflowWrap: "anywhere",
   whiteSpace: "pre-wrap",

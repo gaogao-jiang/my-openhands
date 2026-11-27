@@ -34,6 +34,9 @@ vi.mock("react-i18next", () => ({
         SETTINGS$PROVIDER_CONNECTION_DELETE_TITLE: "Delete provider connection",
         SETTINGS$PROVIDER_CONNECTION_MODEL_COUNT: `${params?.count} model(s)`,
         SETTINGS$AVAILABLE_PROFILES: "Available LLM Profiles",
+        SETTINGS$MODEL_CARDS_TITLE: "My models",
+        SETTINGS$MODEL_ADD: "Add model",
+        SETTINGS$MODEL_ADD_MANUALLY: "Configure manually",
         SETTINGS$ADD_LLM_PROFILE: "Add LLM Profile",
         SETTINGS$PROFILES_LOAD_ERROR: "Failed to load profiles",
         SETTINGS$PROFILES_EMPTY: "No profiles saved yet",
@@ -175,7 +178,9 @@ describe("LlmProfilesManager", () => {
 
     renderManager();
 
-    expect(screen.getByText("Available LLM Profiles")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /My models/ }),
+    ).toBeInTheDocument();
   });
 
   it("shows Add LLM Profile button when onAddProfile is provided", async () => {
@@ -186,11 +191,12 @@ describe("LlmProfilesManager", () => {
 
     renderManager({ onAddProfile: vi.fn() });
 
-    expect(screen.getByTestId("add-llm-profile")).toBeInTheDocument();
-    expect(screen.getByText("Add LLM Profile")).toBeInTheDocument();
+    expect(screen.getByTestId("add-model-menu-trigger")).toBeInTheDocument();
+    expect(screen.getByText("Add model")).toBeInTheDocument();
   });
 
   it("does not show Add LLM Profile button when onAddProfile is not provided", async () => {
+    const user = userEvent.setup();
     vi.mocked(ProfilesService.listProfiles).mockResolvedValue({
       profiles: [],
       active_profile: null,
@@ -198,6 +204,7 @@ describe("LlmProfilesManager", () => {
 
     renderManager();
 
+    await user.click(screen.getByTestId("add-model-menu-trigger"));
     expect(screen.queryByTestId("add-llm-profile")).not.toBeInTheDocument();
   });
 
@@ -211,6 +218,7 @@ describe("LlmProfilesManager", () => {
 
     renderManager({ onAddProfile: handleAddProfile });
 
+    await user.click(screen.getByTestId("add-model-menu-trigger"));
     await user.click(screen.getByTestId("add-llm-profile"));
 
     expect(handleAddProfile).toHaveBeenCalledTimes(1);
@@ -231,6 +239,39 @@ describe("LlmProfilesManager", () => {
     expect(screen.queryByTestId("add-llm-profile")).not.toBeInTheDocument();
     expect(
       screen.queryByTestId("profile-menu-trigger"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("add-model-menu-trigger"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("profile-card-edit")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("profile-card-set-default"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("supports keyboard navigation, Escape focus restoration and outside dismissal in the add menu", async () => {
+    vi.mocked(ProfilesService.listProfiles).mockResolvedValue({
+      profiles: [],
+      active_profile: null,
+    });
+    renderManager({ onAddProfile: vi.fn() });
+    const user = userEvent.setup();
+    const trigger = screen.getByTestId("add-model-menu-trigger");
+
+    await user.click(trigger);
+    const provider = screen.getByTestId("add-models-from-provider");
+    expect(provider).toHaveFocus();
+    await user.keyboard("{ArrowDown}");
+    expect(screen.getByTestId("add-llm-profile")).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(
+      screen.queryByRole("menu", { name: "Add model" }),
+    ).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+    await user.click(trigger);
+    await user.click(screen.getByRole("heading", { name: /My models/ }));
+    expect(
+      screen.queryByRole("menu", { name: "Add model" }),
     ).not.toBeInTheDocument();
   });
 
@@ -300,9 +341,10 @@ describe("LlmProfilesManager", () => {
       { connections: [makeConnection()] },
     );
 
+    await user.click(screen.getByTestId("add-model-menu-trigger"));
     const topButton = await screen.findByTestId("add-models-from-provider");
     expect(topButton).toBeInTheDocument();
-    // The regular single-profile button remains alongside it.
+    // Both creation paths are available in the shared menu.
     expect(screen.getByTestId("add-llm-profile")).toBeInTheDocument();
 
     // Chooser entry point: the modal opens with the combobox unset (no
@@ -315,7 +357,8 @@ describe("LlmProfilesManager", () => {
     expect(combobox.value).toBe("");
   });
 
-  it("still shows the top Add-from-provider-connections button when there are no connections", async () => {
+  it("keeps provider discovery reachable through the add menu without connections", async () => {
+    const user = userEvent.setup();
     // The entry point stays reachable with zero connections: the user can
     // pick a provider from the catalog and bulk-add keyless profiles, the
     // pre-connection behavior the linked issue requires.
@@ -325,6 +368,7 @@ describe("LlmProfilesManager", () => {
     });
 
     renderManager({ onAddProfile: vi.fn() }, { connections: [] });
+    await user.click(screen.getByTestId("add-model-menu-trigger"));
 
     expect(
       await screen.findByTestId("add-models-from-provider"),

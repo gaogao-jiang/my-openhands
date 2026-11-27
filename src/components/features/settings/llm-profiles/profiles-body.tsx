@@ -3,11 +3,6 @@ import { LoadingSpinner } from "#/components/shared/loading-spinner";
 import { ProfileRow } from "./profile-row";
 import { ProfileInfo } from "#/api/profiles-service/profiles-service.api";
 import { I18nKey } from "#/i18n/declaration";
-import { cn } from "#/utils/utils";
-import {
-  settingsListContainerClassName,
-  settingsListDividerClassName,
-} from "#/utils/settings-list-classes";
 import { extensionModuleEmptyStateClassName } from "#/utils/extension-module-card-classes";
 
 interface ProfilesBodyProps {
@@ -113,10 +108,7 @@ export function ProfilesBody({
     />
   );
 
-  const listClassName = cn(
-    settingsListContainerClassName,
-    settingsListDividerClassName,
-  );
+  const listClassName = "flex min-w-0 flex-col gap-3";
 
   if (isLoading) {
     return (
@@ -161,7 +153,7 @@ export function ProfilesBody({
 
   const groups = groupProfilesByConnection(profiles, connectionNamesById);
   return (
-    <div className="flex flex-col gap-4">
+    <div className="@container flex flex-col gap-4">
       {groups.map((group) => (
         <div
           key={group.connectionId ?? "__unlinked__"}

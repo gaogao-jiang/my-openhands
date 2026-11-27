@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
+import { renderWithProviders as render } from "test-utils";
 import type { MouseEventHandler } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ConversationNameWithStatus } from "#/components/features/conversation/conversation-name-with-status";

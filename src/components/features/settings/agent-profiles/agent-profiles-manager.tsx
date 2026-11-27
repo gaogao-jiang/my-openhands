@@ -10,6 +10,8 @@ import { useCanManageOrgProfiles } from "#/hooks/use-can-manage-org-profiles";
 import { displaySuccessToast } from "#/utils/custom-toast-handlers";
 import { I18nKey } from "#/i18n/declaration";
 import { getAgentProfileDisplayName } from "#/utils/agent-profile-display-name";
+import { Plus } from "lucide-react";
+import { useActiveBackend } from "#/contexts/active-backend-context";
 
 interface AgentProfilesManagerProps {
   onAddProfile?: () => void;
@@ -22,6 +24,7 @@ export function AgentProfilesManager({
 }: AgentProfilesManagerProps) {
   const { t } = useTranslation("openhands");
   const { data, isLoading, error } = useAgentProfiles();
+  const { backend } = useActiveBackend();
   const activateProfile = useActivateAgentProfile();
   // Cloud members are view-only; only owners/admins (and all local users) may
   // add, edit, delete, or activate agent profiles (org-scoped, same permission
@@ -50,22 +53,34 @@ export function AgentProfilesManager({
 
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-base font-medium text-contrast">
-            {t(I18nKey.CHAT$MANAGE_AGENTS)}
-          </h2>
-          {onAddProfile && canManage ? (
-            <BrandButton
-              testId="add-agent-profile"
-              type="button"
-              variant="secondary"
-              className="ml-auto"
-              onClick={onAddProfile}
-            >
-              {t(I18nKey.SETTINGS$ADD_AGENT_PROFILE)}
-            </BrandButton>
-          ) : null}
+      <div className="flex w-full max-w-168 flex-col gap-5">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-tertiary-alt">
+            {t(I18nKey.SETTINGS$AGENT_PAGE_BREADCRUMB)}
+          </span>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-xl font-semibold text-contrast">
+                {t(I18nKey.SETTINGS$AGENT_PAGE_TITLE)}
+              </h2>
+              <span className="sr-only">{t(I18nKey.CHAT$MANAGE_AGENTS)}</span>
+              <p className="mt-1 text-sm text-muted">
+                {t(I18nKey.SETTINGS$AGENT_PAGE_SUBTITLE)}
+              </p>
+            </div>
+            {onAddProfile && canManage ? (
+              <BrandButton
+                testId="add-agent-profile"
+                type="button"
+                variant="primary"
+                startContent={<Plus size={16} aria-hidden="true" />}
+                className="ml-auto"
+                onClick={onAddProfile}
+              >
+                {t(I18nKey.SETTINGS$AGENT_CARD_CREATE)}
+              </BrandButton>
+            ) : null}
+          </div>
         </div>
 
         <AgentProfilesBody
@@ -78,6 +93,7 @@ export function AgentProfilesManager({
           onEdit={(profile) => onEditProfile?.(profile)}
           onDelete={setProfileToDelete}
           isActivating={activateProfile.isPending}
+          showSyncStatus={backend.kind === "local"}
         />
       </div>
 

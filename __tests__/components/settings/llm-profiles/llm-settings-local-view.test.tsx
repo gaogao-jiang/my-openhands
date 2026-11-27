@@ -252,15 +252,14 @@ describe("LlmSettingsLocalView", () => {
   it("shows Add LLM Profile button", () => {
     renderWithProviders(<LlmSettingsLocalView />);
 
-    expect(screen.getByTestId("add-llm-profile")).toBeInTheDocument();
+    expect(screen.getByTestId("add-model-menu-trigger")).toBeInTheDocument();
   });
 
   it("switches to create view when Add button clicked", async () => {
     const user = userEvent.setup();
     renderWithProviders(<LlmSettingsLocalView />);
 
-    const addButton = screen.getByTestId("add-llm-profile");
-    await user.click(addButton);
+    await openManualProfile(user);
 
     // Should show create view elements (profile name input and back button)
     expect(screen.getByTestId("profile-name-input")).toBeInTheDocument();
@@ -278,7 +277,7 @@ describe("LlmSettingsLocalView", () => {
     renderWithProviders(<LlmSettingsLocalView />);
 
     // Go to create view
-    await user.click(screen.getByTestId("add-llm-profile"));
+    await openManualProfile(user);
     expect(screen.getByTestId("profile-name-input")).toBeInTheDocument();
 
     // Click back
@@ -293,7 +292,7 @@ describe("LlmSettingsLocalView", () => {
     renderWithProviders(<LlmSettingsLocalView />);
 
     // Go to create view
-    await user.click(screen.getByTestId("add-llm-profile"));
+    await openManualProfile(user);
 
     // Click cancel
     await user.click(screen.getByTestId("cancel-profile-btn"));
@@ -336,12 +335,12 @@ describe("LlmSettingsLocalView", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps the create view stable when save controls are incomplete", () => {
+  it("keeps the create view stable when save controls are incomplete", async () => {
     mockSaveMutateAsync.mockResolvedValueOnce({ success: true });
 
     renderWithProviders(<LlmSettingsLocalView />);
 
-    fireEvent.click(screen.getByTestId("add-llm-profile"));
+    await openManualProfile(userEvent.setup());
 
     expect(screen.getByTestId("profile-name-input")).toBeInTheDocument();
 
@@ -361,7 +360,7 @@ describe("LlmSettingsLocalView", () => {
       renderWithProviders(<LlmSettingsLocalView />);
 
       // Navigate to create view
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
 
       // Should be in create view
       expect(screen.getByTestId("profile-name-input")).toBeInTheDocument();
@@ -384,7 +383,7 @@ describe("LlmSettingsLocalView", () => {
       const user = userEvent.setup();
       renderWithProviders(<LlmSettingsLocalView />);
 
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
 
       expect(screen.getByTestId("profile-name-input")).toHaveValue("gpt-5.2");
       expect(screen.getByTestId("mock-basic-model-input")).toHaveValue(
@@ -397,7 +396,7 @@ describe("LlmSettingsLocalView", () => {
       renderWithProviders(<LlmSettingsLocalView />);
 
       // Navigate to create view
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
       expect(screen.getByTestId("profile-name-input")).toBeInTheDocument();
 
       // The profile name starts from the free-model derived default.
@@ -409,7 +408,7 @@ describe("LlmSettingsLocalView", () => {
       expect(screen.getByText("gpt-4-profile")).toBeInTheDocument();
 
       // Navigate to create view again
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
 
       // The profile name should return to the free-model derived default
       // again (fresh form).
@@ -425,7 +424,7 @@ describe("LlmSettingsLocalView", () => {
       expect(screen.getByText("gpt-4-profile")).toBeInTheDocument();
 
       // Navigate directly to create view (not edit)
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
 
       // Should be in create view with the free-model derived profile name.
       const nameInput = screen.getByTestId("profile-name-input");
@@ -443,7 +442,7 @@ describe("LlmSettingsLocalView", () => {
       const user = userEvent.setup();
       renderWithProviders(<LlmSettingsLocalView />);
 
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
 
       // While the DB default is unresolved, the form is replaced by a skeleton
       // (no model input / save control to accept yet).
@@ -480,7 +479,7 @@ describe("LlmSettingsLocalView", () => {
     it("keeps the untouched name following the selected model", async () => {
       const user = userEvent.setup();
       renderWithProviders(<LlmSettingsLocalView />);
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
       const nameInput = screen.getByTestId("profile-name-input");
       expect(nameInput).toHaveValue("gpt-5.6-sol");
 
@@ -494,7 +493,7 @@ describe("LlmSettingsLocalView", () => {
     it("stops following the model once the user types a name, and resumes after the name is cleared", async () => {
       const user = userEvent.setup();
       renderWithProviders(<LlmSettingsLocalView />);
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
       const nameInput = screen.getByTestId("profile-name-input");
 
       fireEvent.change(nameInput, { target: { value: "my-profile" } });
@@ -509,7 +508,7 @@ describe("LlmSettingsLocalView", () => {
     it("clears the auto-filled name instead of using an existing profile's name", async () => {
       const user = userEvent.setup();
       renderWithProviders(<LlmSettingsLocalView />);
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
       const nameInput = screen.getByTestId("profile-name-input");
       expect(nameInput).toHaveValue("gpt-5.6-sol");
 
@@ -524,7 +523,7 @@ describe("LlmSettingsLocalView", () => {
     it("tells the user a new profile's name is taken until it is unique", async () => {
       const user = userEvent.setup();
       renderWithProviders(<LlmSettingsLocalView />);
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
       const nameInput = screen.getByTestId("profile-name-input");
 
       await user.clear(nameInput);
@@ -1058,7 +1057,7 @@ describe("LlmSettingsLocalView", () => {
       const user = userEvent.setup();
       mockSaveMutateAsync.mockResolvedValueOnce({ success: true });
       renderWithProviders(<LlmSettingsLocalView />);
-      await user.click(screen.getByTestId("add-llm-profile"));
+      await openManualProfile(user);
       await waitFor(() =>
         expect(screen.getByTestId("profile-name-input")).toHaveValue(
           "gpt-5.6-sol",
@@ -1261,7 +1260,7 @@ describe("LlmSettingsLocalView - OpenHands provider on cloud", () => {
     const user = userEvent.setup();
     renderWithProviders(<LlmSettingsLocalView />);
 
-    await user.click(screen.getByTestId("add-llm-profile"));
+    await openManualProfile(user);
 
     // The mocked LlmSettingsScreen seeds an openai model by default; switch to
     // an OpenHands provider model and enter an api_key the save must drop.
@@ -1285,3 +1284,8 @@ describe("LlmSettingsLocalView - OpenHands provider on cloud", () => {
     expect(request.llm).not.toHaveProperty("base_url");
   });
 });
+
+async function openManualProfile(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(await screen.findByTestId("add-model-menu-trigger"));
+  await user.click(screen.getByTestId("add-llm-profile"));
+}

@@ -4,14 +4,26 @@ import { ChatInterfaceWrapper } from "#/components/features/conversation/convers
 import { useConversationStore } from "#/stores/conversation-store";
 
 vi.mock("#/components/features/chat/chat-interface", () => ({
-  ChatInterface: () => <div data-testid="chat-interface" />,
-}));
-
-vi.mock("#/components/features/conversation/conversation-overview-panel", () => ({
-  ConversationOverviewPanel: () => (
-    <div data-testid="conversation-overview-panel" />
+  ChatInterface: ({
+    timelineContainer,
+  }: {
+    timelineContainer?: HTMLElement;
+  }) => (
+    <div
+      data-testid="chat-interface"
+      data-timeline-anchor={timelineContainer?.dataset.testid}
+    />
   ),
 }));
+
+vi.mock(
+  "#/components/features/conversation/conversation-overview-panel",
+  () => ({
+    ConversationOverviewPanel: () => (
+      <div data-testid="conversation-overview-panel" />
+    ),
+  }),
+);
 
 vi.mock("#/hooks/use-breakpoint", () => ({
   useBreakpoint: () => false,
@@ -46,12 +58,28 @@ describe("ChatInterfaceWrapper", () => {
     expect(screen.getByTestId("chat-interface")).toBeInTheDocument();
   });
 
+  it("anchors the conversation timeline to the full chat column", () => {
+    render(<ChatInterfaceWrapper isRightPanelShown={false} />);
+
+    expect(screen.getByTestId("chat-timeline-anchor")).toContainElement(
+      screen.getByTestId("chat-interface"),
+    );
+    expect(screen.getByTestId("chat-interface")).toHaveAttribute(
+      "data-timeline-anchor",
+      "chat-timeline-anchor",
+    );
+  });
+
   it("uses the overview grid layout when space is available", () => {
     useConversationStore.setState({ isOverviewPanelShown: true });
     render(<ChatInterfaceWrapper isRightPanelShown={false} />);
 
-    expect(screen.getByTestId("conversation-overview-column")).toBeInTheDocument();
-    expect(screen.getByTestId("conversation-overview-panel")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("conversation-overview-column"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("conversation-overview-panel"),
+    ).toBeInTheDocument();
   });
 
   it("keeps the thread in a height-constrained flex column when overview is shown", () => {

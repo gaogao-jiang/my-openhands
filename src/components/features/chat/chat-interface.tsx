@@ -9,6 +9,7 @@ import {
 } from "./chat-layout";
 import { TaskStartupProgress } from "./task-startup-progress";
 import React from "react";
+import { createPortal } from "react-dom";
 import { AppearancePortal } from "#/components/shared/appearance-portal";
 import { useNavigate } from "react-router";
 import { useTracking } from "#/hooks/use-tracking";
@@ -82,6 +83,7 @@ import { I18nKey } from "#/i18n/declaration";
 import { hasConversationStarted } from "./components/resolve-picker-kind";
 import { ComposerDockedProvider } from "#/context/composer-docked-context";
 import { isContentEmpty } from "./utils/chat-input.utils";
+import { ConversationTimeline } from "./conversation-timeline";
 
 // Ctrl/Cmd+Enter in a text field that holds text belongs to that field (the
 // composer sends it); an empty field or any other target builds the plan.
@@ -102,6 +104,7 @@ function isTextFieldWithText(target: EventTarget | null): boolean {
 export function ChatInterface({
   showGitControlBar = true,
   showEmptyStateSuggestions = true,
+  timelineContainer = null,
   composerDockTarget = null,
   onDockedComposerSubmit,
   minimalComposer = false,
@@ -109,6 +112,7 @@ export function ChatInterface({
 }: {
   showGitControlBar?: boolean;
   showEmptyStateSuggestions?: boolean;
+  timelineContainer?: HTMLDivElement | null;
   composerDockTarget?: HTMLElement | null;
   onDockedComposerSubmit?: () => void;
   minimalComposer?: boolean;
@@ -167,6 +171,93 @@ export function ChatInterface({
   // drop a scroll correction still buffered from the prepended rows'
   // measurement, which would otherwise apply the same shift a second time.
   const messagesRef = React.useRef<MessagesHandle>(null);
+  // A selected message may be below the viewport top when scrolling is clamped
+  // at the end of the history. Keep that selection until the reader takes over.
+  const selectedTimelineRowRef = React.useRef<string | null>(null);
+  const [timelinePreviews, setTimelinePreviews] = React.useState<
+    Record<string, string>
+  >({});
+  const [visibleTimelineRowKeys, setVisibleTimelineRowKeys] = React.useState<
+    string[]
+  >([]);
+  const handleTimelineVisibilityChange = React.useCallback((keys: string[]) => {
+    setVisibleTimelineRowKeys((current) =>
+      current.length === keys.length &&
+      current.every((key, index) => key === keys[index])
+        ? current
+        : keys,
+    );
+  }, []);
+  const [timelineRowKeys, setTimelineRowKeys] = React.useState<string[]>([]);
+  const [currentTimelineRowKey, setCurrentTimelineRowKey] = React.useState<
+    string | null
+  >(null);
+  const [timelineBounds, setTimelineBounds] = React.useState<{
+    top: number;
+    height: number;
+  } | null>(null);
+  const handleTimelineRowsChange = React.useCallback(
+    (rowKeys: string[], previews: Record<string, string>) => {
+      if (
+        selectedTimelineRowRef.current &&
+        !rowKeys.includes(selectedTimelineRowRef.current)
+      ) {
+        selectedTimelineRowRef.current = null;
+      }
+      setTimelinePreviews(previews);
+      setTimelineRowKeys((current) =>
+        current.length === rowKeys.length &&
+        current.every((key, index) => key === rowKeys[index])
+          ? current
+          : rowKeys,
+      );
+      const visibleRowKey = messagesRef.current?.getCurrentRowKey() ?? null;
+      setCurrentTimelineRowKey(
+        (current) =>
+          selectedTimelineRowRef.current ??
+          (visibleRowKey && rowKeys.includes(visibleRowKey)
+            ? visibleRowKey
+            : current && rowKeys.includes(current)
+              ? current
+              : (rowKeys[0] ?? null)),
+      );
+    },
+    [],
+  );
+  React.useLayoutEffect(() => {
+    if (!scrollElement || !timelineContainer) {
+      setTimelineBounds(null);
+      return undefined;
+    }
+
+    const updateBounds = () => {
+      const scrollRect = scrollElement.getBoundingClientRect();
+      const containerRect = timelineContainer.getBoundingClientRect();
+      const nextBounds = {
+        top: Math.max(0, scrollRect.top - containerRect.top + 12),
+        height: Math.max(0, scrollRect.height - 24),
+      };
+      setTimelineBounds((current) =>
+        current?.top === nextBounds.top && current.height === nextBounds.height
+          ? current
+          : nextBounds,
+      );
+    };
+
+    updateBounds();
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(updateBounds);
+    resizeObserver?.observe(scrollElement);
+    resizeObserver?.observe(timelineContainer);
+    window.addEventListener("resize", updateBounds);
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("resize", updateBounds);
+    };
+  }, [scrollElement, timelineContainer]);
   // A streamed reply grows inside one event as it is revealed, so follow it
   // frame by frame while it does.
   const isRevealingStreamedText = useIsRevealingStreamedText();
@@ -258,6 +349,9 @@ export function ChatInterface({
   ]);
 
   const { conversationId } = useOptionalConversationId();
+  React.useLayoutEffect(() => {
+    selectedTimelineRowRef.current = null;
+  }, [conversationId]);
 
   // The live goal banner renders in the scroll stream but advances via store
   // updates (in-progress goal events are filtered out of `renderableEvents`),
@@ -422,6 +516,44 @@ export function ChatInterface({
     },
     [maybeLoadOlder],
   );
+
+  React.useEffect(() => {
+    if (!timelineContainer || !scrollElement) return undefined;
+    const onGutterWheel = (event: WheelEvent) => {
+      // Only the surrounding blank area belongs here. Descendants retain
+      // native scrolling for messages, code blocks, the composer and the rail.
+      if (
+        event.target !== timelineContainer ||
+        event.defaultPrevented ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.deltaY === 0 ||
+        Math.abs(event.deltaX) > Math.abs(event.deltaY)
+      )
+        return;
+
+      event.preventDefault();
+      selectedTimelineRowRef.current = null;
+      setAutoScroll(false);
+      const scale =
+        event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? scrollElement.clientHeight
+          : event.deltaMode === WheelEvent.DOM_DELTA_LINE
+            ? Number.parseFloat(getComputedStyle(scrollElement).lineHeight) ||
+              16
+            : 1;
+      if (event.deltaY < 0 && scrollElement.scrollTop <= 0) {
+        maybeLoadOlder(scrollElement);
+      }
+      scrollElement.scrollBy({ top: event.deltaY * scale, behavior: "auto" });
+    };
+    // React's delegated wheel listener is passive; this native listener can
+    // consume the gutter event without scrolling an ancestor as well.
+    timelineContainer.addEventListener("wheel", onGutterWheel, {
+      passive: false,
+    });
+    return () => timelineContainer.removeEventListener("wheel", onGutterWheel);
+  }, [timelineContainer, scrollElement, setAutoScroll, maybeLoadOlder]);
 
   const hasPendingUserMessages = React.useMemo(
     () =>
@@ -836,8 +968,35 @@ export function ChatInterface({
             onScroll={(e) => {
               onChatBodyScroll(e.currentTarget);
               maybeLoadOlder(e.currentTarget);
+              const currentRowKey =
+                selectedTimelineRowRef.current ??
+                messagesRef.current?.getCurrentRowKey();
+              setCurrentTimelineRowKey((current) =>
+                current === currentRowKey ? current : (currentRowKey ?? null),
+              );
             }}
-            onWheel={handleWheelForPagination}
+            onWheel={(event) => {
+              selectedTimelineRowRef.current = null;
+              handleWheelForPagination(event);
+            }}
+            onPointerDown={() => {
+              selectedTimelineRowRef.current = null;
+            }}
+            onKeyDown={(event) => {
+              if (
+                [
+                  "ArrowUp",
+                  "ArrowDown",
+                  "PageUp",
+                  "PageDown",
+                  "Home",
+                  "End",
+                  " ",
+                ].includes(event.key)
+              ) {
+                selectedTimelineRowRef.current = null;
+              }
+            }}
             className={cn(
               CHAT_SCROLL_CLASS_NAME,
               CHAT_SCROLL_BOTTOM_PADDING_CLASS_NAME,
@@ -893,6 +1052,8 @@ export function ChatInterface({
                 pendingMessages={pendingUserMessages}
                 pendingSessionId={isSessionStarting ? session?.id : undefined}
                 scrollParent={scrollElement}
+                onTimelineRowsChange={handleTimelineRowsChange}
+                onTimelineVisibilityChange={handleTimelineVisibilityChange}
               />
             )}
             {isTask && (
@@ -983,7 +1144,12 @@ export function ChatInterface({
 
                     {!hitBottom ? (
                       <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 pointer-events-auto">
-                        <ScrollToBottomButton onClick={scrollDomToBottom} />
+                        <ScrollToBottomButton
+                          onClick={() => {
+                            selectedTimelineRowRef.current = null;
+                            scrollDomToBottom();
+                          }}
+                        />
                       </div>
                     ) : null}
                   </div>
@@ -993,6 +1159,25 @@ export function ChatInterface({
               </div>
             )}
           </div>
+          {timelineContainer && timelineBounds && timelineBounds.height > 0
+            ? createPortal(
+                <ConversationTimeline
+                  rowKeys={timelineRowKeys}
+                  previews={timelinePreviews}
+                  currentRowKey={currentTimelineRowKey}
+                  visibleRowKeys={visibleTimelineRowKeys}
+                  placement={timelineBounds}
+                  onSelect={(rowKey) => {
+                    selectedTimelineRowRef.current = rowKey;
+                    setCurrentTimelineRowKey(rowKey);
+                    setAutoScroll(false);
+                    messagesRef.current?.clearPendingScrollCorrection();
+                    messagesRef.current?.scrollToRow(rowKey);
+                  }}
+                />,
+                timelineContainer,
+              )
+            : null}
         </div>
       </ScrollProvider>
     </WorkspaceFilesForChatProvider>

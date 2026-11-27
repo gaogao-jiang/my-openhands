@@ -54,6 +54,27 @@ describe("ProfileRow", () => {
     expect(screen.getByText("gpt-4-profile")).toBeInTheDocument();
   });
 
+  it("offers direct card editing and default selection", async () => {
+    const onEdit = vi.fn();
+    const onActivate = vi.fn();
+    render(
+      <ProfileRow {...defaultProps} onEdit={onEdit} onActivate={onActivate} />,
+    );
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTestId("profile-card-edit"));
+    await user.click(screen.getByTestId("profile-card-set-default"));
+
+    expect(onEdit).toHaveBeenCalledWith(mockProfile);
+    expect(onActivate).toHaveBeenCalledWith(mockProfile.name);
+  });
+
+  it("disables direct default selection while activation is pending", () => {
+    render(<ProfileRow {...defaultProps} isActivating />);
+
+    expect(screen.getByTestId("profile-card-set-default")).toBeDisabled();
+  });
+
   it("displays the model name when present", () => {
     render(<ProfileRow {...defaultProps} />);
 
@@ -112,6 +133,10 @@ describe("ProfileRow", () => {
     expect(
       screen.queryByTestId("profile-menu-trigger"),
     ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("profile-card-edit")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("profile-card-set-default"),
+    ).not.toBeInTheDocument();
   });
 
   it("opens menu when trigger button is clicked", async () => {
@@ -124,7 +149,7 @@ describe("ProfileRow", () => {
 
     expect(screen.getByText("Edit")).toBeInTheDocument();
     expect(screen.getByText("Rename")).toBeInTheDocument();
-    expect(screen.getByText("Set as default")).toBeInTheDocument();
+    expect(screen.getByTestId("profile-set-active")).toBeInTheDocument();
     expect(screen.getByText("Delete")).toBeInTheDocument();
   });
 
@@ -174,7 +199,7 @@ describe("ProfileRow", () => {
     render(<ProfileRow {...defaultProps} onActivate={handleActivate} />);
 
     await user.click(screen.getByTestId("profile-menu-trigger"));
-    await user.click(screen.getByText("Set as default"));
+    await user.click(screen.getByTestId("profile-set-active"));
 
     expect(handleActivate).toHaveBeenCalledWith(mockProfile.name);
   });

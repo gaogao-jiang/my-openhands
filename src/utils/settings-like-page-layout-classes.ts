@@ -3,13 +3,12 @@
  * /plugins) so mobile gets horizontal inset while desktop keeps the aside +
  * `gap-10` + right gutter pattern.
  *
- * `scrollbar-gutter: stable` keeps the gutter reserved when the page stops
- * overflowing. Without it, filtering a list short enough to fit drops the
- * scrollbar and the centered content jumps sideways into the freed space.
+ * The settings shell keeps native scrolling available while hiding the
+ * scrollbar chrome so the content area stays visually clean.
  */
 export const settingsLikeMainScrollClassName =
-  "flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable] custom-scrollbar-always px-4 pt-8 pb-12 lg:px-0 lg:pr-3.5";
+  "flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto scrollbar-hide px-4 pt-8 pb-12 lg:px-0 lg:pr-3.5";
 
 /** Same scroll shell as {@link settingsLikeMainScrollClassName} but desktop top padding comes from the outer `lg:pt-8` wrapper ({@link SettingsLayout}). */
 export const settingsLayoutMainScrollClassName =
-  "flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable] custom-scrollbar-always px-4 pt-8 pb-12 lg:px-0 lg:pt-0 lg:pr-3.5";
+  "flex min-h-0 min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto scrollbar-hide px-4 pt-8 pb-12 lg:px-0 lg:pt-0 lg:pr-3.5";

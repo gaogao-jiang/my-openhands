@@ -394,3 +394,23 @@ BrandButton/BrandBadge text retain these public roles, including host overrides.
 Do not substitute similarly colored Canvas or HeroUI roles. Caller color and
 font-size precedence stays covered by `cn` composition tests, and the scoped
 library CSS contract verifies the exact variable declarations.
+
+## Collapsed sidebar hover targets
+
+The logo-to-expand icon swap belongs only to the collapsed logo area, not the entire rail. Clear that hover state when leaving the logo even after expansion, so a later collapse does not reuse a stale hover. Collapsed command-search content must fill its row so the shared icon-slot background has the same hit-area geometry as neighboring navigation controls.
+
+Center the collapsed logo and navigation glyphs within the full rail width. Do not reuse expanded-row left padding for collapsed glyphs: the 24px logo and 18px navigation icons otherwise acquire different center lines. The expand overlay shares that same rail center.
+
+## Agent profile cards
+
+The agent profile manager uses a container-responsive two-column card grid, falling back to one column in narrow settings panes and embedded hosts. Active state stays owned by the existing profile query/mutation flow. Direct Edit and Use actions must keep the existing permissions and activation-pending guards; the more menu retains protected-default deletion behavior. Model metadata is the referenced LLM configuration, not an inferred model ID. Known local Jora presets reuse their localized descriptions; custom and Cloud profiles retain their actual identities, and ACP profiles are identified as external agents.
+
+Keep cards compact with content-driven description height and the current marker beside the name. Cap the manager width at 42rem and share one footer row between model metadata and actions. Allow long names, descriptions, and model references to wrap or truncate accessibly instead of imposing a fixed card height.
+
+## Toast placement
+
+Shared toast options use top-right placement. The standalone Toaster leaves at least 4rem above notifications and respects the titlebar-area environment height plus 1rem, keeping messages below desktop caption controls. The shell uses the current theme's overlay surface, contrast text, subtle border, and soft shadow. Keep helper options and the standalone Toaster on the same placement contract; preserve readable durations, message wrapping, and action-link navigation ownership.
+
+## Model profile cards
+
+The model manager uses the same 42rem width cap and container-responsive two-column grid as agent cards. Provider grouping, broken-connection notices and catalog warnings remain visible. An active LLM profile is labeled Default: it seeds new agent configurations and does not replace the active agent's model. Direct Edit and Set default actions keep the existing permissions and pending guard. The single Add model menu preserves manual creation and provider discovery, including keyless discovery with no connections; provider actions remain unavailable on Cloud backends without an organization. Its appearance-scoped portal supports keyboard navigation, Escape focus restoration and outside dismissal. Keep provider connection CRUD and profile mutations with their existing owners.
